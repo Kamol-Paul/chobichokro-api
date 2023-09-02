@@ -1,10 +1,13 @@
 package com.chobichokro.payload.response;
 
+import lombok.Getter;
+
 import java.util.List;
 
 public class JwtResponse {
 	private String token;
 	private String type = "Bearer";
+	@Getter
 	private String id;
 	private String username;
 	private String email;
@@ -34,31 +37,18 @@ public class JwtResponse {
 		this.type = tokenType;
 	}
 
-	public String getId() {
-		return id;
-	}
-
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	public String getEmail() {
-		return email;
-	}
 
 	public void setEmail(String email) {
 		this.email = email;
 	}
 
-	public String getUsername() {
-		return username;
-	}
 
 	public void setUsername(String username) {
 		this.username = username;
 	}
 
-	public List<String> getRoles() {
-		return roles;
-	}
 }

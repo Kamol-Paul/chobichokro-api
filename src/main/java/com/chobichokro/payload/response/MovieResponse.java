@@ -1,5 +1,4 @@
-package com.chobichokro.models;
-
+package com.chobichokro.payload.response;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -7,29 +6,31 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "movies")
-public class Movie {
-    @Id
+public class MovieResponse {
+//    @?
     private String id;
-    @NotBlank
+//    @NotBlank
     private String movieName;
-//    private String description;
-    @NotBlank
+    //    private String description;
+//    @NotBlank
     private String[] genre;
-    @NotBlank
+//    @NotBlank
     private String[] cast;
     private String[] director;
 
     private Date releaseDate;
-    @NotBlank
+//    @NotBlank
     private String trailerLink;
     private String posterImageLink;
+    private String message;
 
+    public MovieResponse(String message) {
+        this.message = message;
+    }
 }
