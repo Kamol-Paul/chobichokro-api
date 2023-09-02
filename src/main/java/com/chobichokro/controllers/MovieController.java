@@ -26,8 +26,10 @@ public class MovieController {
     public List<Movie> getAllMovies() {
         return movieRepository.findAll();
     }
+
+
     @PostMapping("/add")
-//    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
     public ResponseEntity<?> addMovie(@RequestBody MovieRequest movie) throws ParseException {
         MovieResponse movieResponse = new MovieResponse();
         System.out.println(movie);
@@ -44,6 +46,7 @@ public class MovieController {
         newMovie.setReleaseDate(df.parse(movie.getReleaseDate()));
         newMovie.setTrailerLink(movie.getTrailerLink());
 //        newMovie.setPosterImageLink(movie.getImage().getOriginalFilename());
+        System.out.println(newMovie);
         movieRepository.save(newMovie);
         movieResponse.setMessage("Movie added successfully");
         return ResponseEntity.ok(movieResponse);

@@ -2,10 +2,7 @@ package com.chobichokro.models;
 
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,9 +11,11 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Document(collection = "movies")
 public class Movie {
     @Id
+    @NotBlank
     private String id;
     @NotBlank
     private String movieName;
