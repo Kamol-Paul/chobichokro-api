@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -37,5 +38,12 @@ public class FileServicesImpl implements FileServices {
             throw new RuntimeException(e);
         }
         return filePath; // return the file name
+    }
+
+    @Override
+    public InputStream getImage(String imagePath) throws IOException {
+//        String filePath = path + File.separator + imagePath;
+        return Files.newInputStream(Paths.get(imagePath));
+
     }
 }

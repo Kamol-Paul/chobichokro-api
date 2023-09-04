@@ -5,19 +5,24 @@ import com.chobichokro.payload.request.MovieRequest;
 import com.chobichokro.payload.response.MovieResponse;
 import com.chobichokro.repository.MovieRepository;
 import com.chobichokro.services.FileServices;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -39,7 +44,7 @@ public class MovieController {
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
-    public ResponseEntity<?> addMovie(@ModelAttribute("movie") MovieRequest movie) throws ParseException {
+    public ResponseEntity<?> addMovie(@ModelAttribute("movie") MovieRequest movie) throws ParseException, IOException {
         MovieResponse movieResponse = new MovieResponse();
 //        System.out.println(movie);
         if (movieRepository.existsByMovieName(movie.getMovieName())) {
@@ -66,6 +71,41 @@ public class MovieController {
         System.out.println(newMovie);
         movieRepository.save(newMovie);
         movieResponse.setMessage("Movie added successfully");
+//        movieResponse
+        InputStream imageStream = fileServices.getImage(fileName);
+        movieResponse.setMovieName(movie.getMovieName());
+        movieResponse.setGenre(movie.getGenre());
+        movieResponse.setCast(movie.getCast());
+        movieResponse.setDirector(movie.getDirector());
+        movieResponse.setReleaseDate(df.parse(movie.getReleaseDate()));
+        movieResponse.setTrailerLink(movie.getTrailerLink());
+        movieResponse.setPosterImageLink(fileName);
+//        movieResponse.setImage(imageStream);
+        System.out.println(movieResponse);
         return ResponseEntity.ok(movieResponse);
+    }
+
+    @GetMapping("/get/{imagePath}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+    ResponseEntity<?> getImage(@PathVariable("imagePath") String imagePath, HttpServletResponse httpServletResponse) throws IOException {
+        httpServletResponse.setContentType("image/jpeg");
+        httpServletResponse.getOutputStream().write(fileServices.getImage(path + File.separator + imagePath).readAllBytes());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @GetMapping("/get/movie/{name}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+    ResponseEntity<MovieResponse> getMovie(@PathVariable("name") String name){
+        Optional<Movie> movie = movieRepository.findByMovieName(name);
+        if(movie.isEmpty()){
+
+            MovieResponse movieResponse = new MovieResponse("movie not found");
+            return ResponseEntity.ok(movieResponse);
+        }
+        System.out.println(movie.get());
+        MovieResponse movieResponse = new MovieResponse();
+        movieResponse.setCast(movie.get().getCast());
+        movieResponse.setId(movie.get().getId());
+        return ResponseEntity.ok(movieResponse);
+
     }
 }

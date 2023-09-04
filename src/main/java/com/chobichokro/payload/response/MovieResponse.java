@@ -1,17 +1,15 @@
 package com.chobichokro.payload.response;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.annotation.Id;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class MovieResponse {
 //    @?
     private String id;
@@ -29,6 +27,7 @@ public class MovieResponse {
     private String trailerLink;
     private String posterImageLink;
     private String message;
+    private InputStream image;
 
     public MovieResponse(String message) {
         this.message = message;
