@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -106,5 +107,30 @@ public class MovieController {
         movieResponse.setId(movie.get().getId());
         return ResponseEntity.ok(movieResponse);
 
+    }
+    @GetMapping("/query/{queryString}")
+    public List<Movie> searchMovie(@PathVariable String queryString){
+        List<Movie> allMovie = movieRepository.findAll();
+        List<Movie> for_ans = new ArrayList<>();
+        for(Movie movie : allMovie){
+            if(isSameMovie(movie, queryString)){
+                for_ans.add(movie);
+            }
+        }
+        return for_ans;
+
+    }
+    private  boolean isSameMovie(Movie movie, String matching){
+        if(movie.getMovieName()!= null && movie.getMovieName().contains(matching)) return true;
+        for(String genre : movie.getGenre()){
+            if(genre.contains(matching)) return true;
+        }
+        for(String cast : movie.getCast()){
+            if(cast.contains(matching)) return true;
+        }
+        for(String director : movie.getDirector()){
+            if(director.contains(matching)) return true;
+        }
+        return false;
     }
 }

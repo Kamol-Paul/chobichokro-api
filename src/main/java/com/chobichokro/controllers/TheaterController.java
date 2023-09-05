@@ -8,7 +8,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.chobichokro.repository.TheaterRepository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -40,6 +42,22 @@ public class TheaterController {
     @GetMapping("/name/{name}")
     public Optional<Theater> getTheaterByName(@PathVariable String name){
         return theaterRepository.findByName(name);
+    }
+
+    @GetMapping("/query/{queryString}")
+    public List<Theater> searchTheater(@PathVariable String queryString){
+        List<Theater> for_ans = new ArrayList<>();
+        List<Theater> allTheater = theaterRepository.findAll();
+        for(Theater theater : allTheater){
+            if(isSameTheater(theater, queryString)) for_ans.add(theater);
+        }
+        return for_ans;
+
+    }
+
+    private boolean isSameTheater(Theater theater, String matching){
+        if(theater.getName().contains(matching)) return true;
+        return theater.getAddress().contains(matching);
     }
 
 
