@@ -1,6 +1,5 @@
 package com.chobichokro.repository;
 
-import com.chobichokro.models.Movie;
 import com.chobichokro.models.Theater;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
