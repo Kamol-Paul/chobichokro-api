@@ -63,16 +63,16 @@ public class LicenseController {
             return ResponseEntity.badRequest().body("License number does not exists" + license.getLicenseNumber());
         }
         else if(!licenseRepository.existsByPhoneNumber(license.getPhoneNumber())){
-            return ResponseEntity.badRequest().body("License phonenumber does not exists" + license.getPhoneNumber());
+            return ResponseEntity.badRequest().body("License phone number does not exists" + license.getPhoneNumber());
         }
         else if(!licenseRepository.existsByEmail(license.getEmail())){
             return ResponseEntity.badRequest().body("License email does not exists" + license.getEmail());
         }
         else if(!licenseRepository.existsByTransactionNumber(license.getTransactionNumber())){
-            return ResponseEntity.badRequest().body("License thans does not exists" + license.getTransactionNumber());
+            return ResponseEntity.badRequest().body("License transactions does not exists" + license.getTransactionNumber());
         }
 
-        license = licenseRepository.save(license);
+        license = licenseRepository.updateLicenseStatusByPhoneNumber(license.getPhoneNumber(), "activated");
         System.out.println(license);
         return ResponseEntity.ok(license);
 

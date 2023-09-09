@@ -14,6 +14,19 @@ public interface LicenseRepository extends MongoRepository<License, String> {
     public Boolean existsByTransactionNumber(String transactionNumber);
     public Optional<License> findLicenseByEmail(String email);
     public Boolean existsByEmail(String email);
+    // update a license status by phone number
+    public default License updateLicenseStatusByPhoneNumber(String phoneNumber, String status){
+        License license = findLicenseByPhoneNumber(phoneNumber).orElse(null);
+        if(license == null){
+            return null;
+        }
+        license.setStatus(status);
+        delete(license);
+        return save(license);
+    }
+
+    // delete a document by phone number
+
 
 
 
