@@ -33,7 +33,7 @@ import com.chobichokro.payload.response.JwtResponse;
 import com.chobichokro.payload.response.MessageResponse;
 import com.chobichokro.security.jwt.JwtUtils;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:3000/")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
