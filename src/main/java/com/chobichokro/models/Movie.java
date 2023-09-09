@@ -30,5 +30,6 @@ public class Movie {
     @NotBlank
     private String trailerLink;
     private String posterImageLink;
+    private String status;
 
 }

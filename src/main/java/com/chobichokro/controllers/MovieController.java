@@ -69,6 +69,7 @@ public class MovieController {
         }
         newMovie.setPosterImageLink(fileName);
         System.out.println(newMovie);
+        newMovie.setStatus(movie.getStatus());
         movieRepository.save(newMovie);
         movieResponse.setMessage("Movie added successfully");
 //        movieResponse
@@ -81,7 +82,9 @@ public class MovieController {
         movieResponse.setTrailerLink(movie.getTrailerLink());
         movieResponse.setPosterImageLink(fileName);
 //        movieResponse.setImage(imageStream);
+        movieResponse.setStatus(movie.getStatus());
         System.out.println(movieResponse);
+
         return ResponseEntity.ok(movieResponse);
     }
 

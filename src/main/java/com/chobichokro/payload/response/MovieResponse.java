@@ -28,6 +28,7 @@ public class MovieResponse {
     private String posterImageLink;
     private String message;
     private InputStream image;
+    private String status;
 
     public MovieResponse(String message) {
         this.message = message;

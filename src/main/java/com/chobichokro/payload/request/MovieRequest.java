@@ -25,4 +25,5 @@ public class MovieRequest {
     @NotBlank
     private String trailerLink;
     private MultipartFile image;
+    private String status;
 }

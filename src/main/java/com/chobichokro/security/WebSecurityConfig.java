@@ -26,14 +26,16 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebSecurity
-@EnableWebMvc
-@EnableMethodSecurity
-(securedEnabled = true,
-jsr250Enabled = true,
-prePostEnabled = true) // by default
+//@EnableWebMvc
+//@EnableMethodSecurity
+//(securedEnabled = true,
+//jsr250Enabled = true,
+//prePostEnabled = true) // by default
 public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
   private final String[] PUBLIC_URLS = {
-          "/api/auth/**"
+          "/api/auth/**",
+          "/api/license/add",
+
   };
   private final String[] PRIVATE_URLS = {"/api/test/**","/api/movies/**"};
   @Autowired

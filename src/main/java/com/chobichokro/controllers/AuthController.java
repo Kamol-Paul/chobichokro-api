@@ -128,6 +128,8 @@ public class AuthController {
 		}
 
 		user.setRoles(roles);
+		if(signUpRequest.getLicenseNumber() != null)
+			user.setLicenseNumber(signUpRequest.getLicenseNumber());
 		userRepository.save(user);
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
