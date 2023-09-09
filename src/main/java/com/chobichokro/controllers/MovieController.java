@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,7 +43,7 @@ public class MovieController {
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
-    public ResponseEntity<?> addMovie(@ModelAttribute("movie") MovieRequest movie) throws ParseException, IOException {
+    public ResponseEntity<?> addMovie(@ModelAttribute("movie") MovieRequest movie) throws ParseException {
         MovieResponse movieResponse = new MovieResponse();
 //        System.out.println(movie);
         if (movieRepository.existsByMovieName(movie.getMovieName())) {
@@ -73,7 +72,7 @@ public class MovieController {
         movieRepository.save(newMovie);
         movieResponse.setMessage("Movie added successfully");
 //        movieResponse
-        InputStream imageStream = fileServices.getImage(fileName);
+//        InputStream imageStream = fileServices.getImage(fileName);
         movieResponse.setMovieName(movie.getMovieName());
         movieResponse.setGenre(movie.getGenre());
         movieResponse.setCast(movie.getCast());
