@@ -30,6 +30,7 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
   private final String[] PUBLIC_URLS = {
           "/api/auth/**",
           "/api/license/add",
+            "/api/movies/all",
           "/api/theater/all",
             "/api/test/all"
 
