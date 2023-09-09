@@ -33,7 +33,7 @@ import com.chobichokro.payload.response.JwtResponse;
 import com.chobichokro.payload.response.MessageResponse;
 import com.chobichokro.security.jwt.JwtUtils;
 
-@CrossOrigin(origins = "http://localhost:3000/")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -118,6 +118,16 @@ public class AuthController {
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(modRole);
                     }
+					case "theaterOwner" ->{
+						Role theaterOwner = roleRepository.findByName(ERole.ROLE_THEATER_OWNER)
+								.orElseThrow(() -> new RuntimeException("Error : Role is not found."));
+						roles.add(theaterOwner);
+					}
+					case "distributor" -> {
+						Role distributor = roleRepository.findByName(ERole.ROLE_DISTRIBUTOR)
+								.orElseThrow(() -> new RuntimeException("Error: Role not found"));
+						roles.add(distributor);
+					}
                     default -> {
                         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
