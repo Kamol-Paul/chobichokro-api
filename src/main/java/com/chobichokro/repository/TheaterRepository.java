@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TheaterRepository extends MongoRepository<Theater, String> {
-    public Optional<Theater> findById(String id);
-    public Optional<Theater> findByName(String name);
-    public boolean existsByName(String name);
+     Optional<Theater> findById(String id);
+     Optional<Theater> findByName(String name);
+     boolean existsByName(String name);
 
     List<Theater> findAll();
 }
