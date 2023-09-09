@@ -72,7 +72,7 @@ public class LicenseController {
             return ResponseEntity.badRequest().body("License transactions does not exists" + license.getTransactionNumber());
         }
 
-        license = licenseRepository.updateLicenseStatusByPhoneNumber(license.getPhoneNumber(), "activated");
+        license = licenseRepository.updateLicenseStatusByPhoneNumber(license.getPhoneNumber(), "approved");
         System.out.println(license);
         return ResponseEntity.ok(license);
 

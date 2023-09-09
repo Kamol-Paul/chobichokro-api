@@ -1,15 +1,19 @@
 package com.chobichokro.controllers;
 
 
+import com.chobichokro.models.License;
 import com.chobichokro.models.Theater;
 import com.chobichokro.payload.request.TheaterRequest;
+import com.chobichokro.repository.LicenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.chobichokro.repository.TheaterRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*")
@@ -18,6 +22,8 @@ import java.util.Optional;
 public class TheaterController {
     @Autowired
     private TheaterRepository theaterRepository;
+    @Autowired
+    private LicenseRepository licenseRepository;
 
     @GetMapping("/all")
     public List<Theater> getAllTheaters() {
@@ -25,13 +31,32 @@ public class TheaterController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
-    public Theater addTheater(@ModelAttribute TheaterRequest theaterRequest) {
+    @PreAuthorize("hasRole('ROLE_THEATER_OWNER') or hasRole('ADMIN')")
+    public ResponseEntity<?> addTheater(@ModelAttribute TheaterRequest theaterRequest) {
         Theater theater = new Theater();
+        String licenseId = theaterRequest.getLicenseId();
+        if(licenseId == null || !licenseRepository.existsById(licenseId)){
+            return ResponseEntity.badRequest().body("License not found");
+        }
+        License license = licenseRepository.findById(licenseId).orElse(null);
+        if(license == null){
+            return ResponseEntity.badRequest().body("License not found");
+        }
+        if(theaterRepository.existsByName(theaterRequest.getName())){
+            return ResponseEntity.badRequest().body("Theater already exists");
+        }
+        System.out.println(license);
+        if(!Objects.equals(license.getStatus(), "approved")){
+            return ResponseEntity.badRequest().body("License not approved");
+        }
         theater.setName(theaterRequest.getName());
         theater.setAddress(theaterRequest.getAddress());
-        theater.setContactNumber(theaterRequest.getContactNumber());
-        return theaterRepository.save(theater);
+        theater.setNumberOfScreens(theaterRequest.getNumberOfScreens());
+        theater.setLicenseId(licenseId);
+        theater = theaterRepository.save(theater);
+        return ResponseEntity.ok(theater);
+
+
 
     }
     @GetMapping("/{id}")

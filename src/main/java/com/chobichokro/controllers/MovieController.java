@@ -42,7 +42,7 @@ public class MovieController {
 
 
     @PostMapping("/add")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ROLE_DISTRIBUTOR')")
     public ResponseEntity<?> addMovie(@ModelAttribute("movie") MovieRequest movie) throws ParseException {
         MovieResponse movieResponse = new MovieResponse();
 //        System.out.println(movie);
@@ -95,7 +95,6 @@ public class MovieController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/get/movie/{name}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
     ResponseEntity<MovieResponse> getMovie(@PathVariable("name") String name){
         Optional<Movie> movie = movieRepository.findByMovieName(name);
         if(movie.isEmpty()){

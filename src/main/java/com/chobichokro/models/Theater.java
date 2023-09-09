@@ -19,11 +19,11 @@ public class Theater {
     @NotBlank
     @Size(min = 3, max = 50)
     private String name;
-
-    @NotBlank
     private String address;
-
-    private String contactNumber;
+    private  int numberOfScreens;
+//    private int[] numberOfSeats;
+    @NotBlank
+    private String licenseId;
 
 
 }

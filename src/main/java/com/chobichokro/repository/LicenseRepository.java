@@ -9,6 +9,8 @@ public interface LicenseRepository extends MongoRepository<License, String> {
     Optional<License> findLicenseByPhoneNumber(String phoneNumber);
      Boolean existsByPhoneNumber(String phoneNumber);
      Boolean existsByLicenseNumber(String licenseNumber);
+     boolean existsById(String id);
+     Optional<License> findLicenseById(String id);
 
     Boolean existsByTransactionNumber(String transactionNumber);
     Optional<License> findLicenseByEmail(String email);

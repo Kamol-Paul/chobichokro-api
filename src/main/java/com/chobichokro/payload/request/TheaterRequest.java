@@ -10,12 +10,14 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class TheaterRequest {
+
     @NotBlank
     @Size(min = 3, max = 50)
     private String name;
-
-    @NotBlank
     private String address;
+    private  int numberOfScreens;
+    //    private int[] numberOfSeats;
+    @NotBlank
+    private String licenseId;
 
-    private String contactNumber;
 }
