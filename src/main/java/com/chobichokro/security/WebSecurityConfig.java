@@ -29,7 +29,7 @@ import com.chobichokro.security.services.UserDetailsServiceImpl;
 public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
   private final String[] PUBLIC_URLS = {
           "/api/auth/**",
-          "/api/license/add",
+          "/api/license/add"
 
   };
   private final String[] PRIVATE_URLS = {"/api/test/**","/api/movies/**"};

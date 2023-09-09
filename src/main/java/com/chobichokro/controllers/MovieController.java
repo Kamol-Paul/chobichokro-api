@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"*", "http://localhost:3000"})
 @RestController
 @RequestMapping("api/movies")
 public class MovieController {
@@ -35,7 +35,7 @@ public class MovieController {
     @Autowired
     private MovieRepository movieRepository;
     @GetMapping("/all")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public List<Movie> getAllMovies() {
         return movieRepository.findAll();
     }

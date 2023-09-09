@@ -1,6 +1,7 @@
 package com.chobichokro.security.jwt;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import com.chobichokro.security.services.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
@@ -31,6 +32,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
     System.out.println("inside doFilterInternal");
+//    System.out.println("request: " + request);
+    // now try to print the request header
+    System.out.println("request header: " + request.getHeader("Authorization"));
+//    System.out.println("request body: " + request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
     try {
       String jwt = parseJwt(request);
       System.out.println("jwt: " + jwt);
