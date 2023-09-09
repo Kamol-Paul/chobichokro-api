@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/theater")
 public class TheaterController {

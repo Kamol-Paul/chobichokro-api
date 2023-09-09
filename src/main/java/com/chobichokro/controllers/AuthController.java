@@ -33,7 +33,7 @@ import com.chobichokro.payload.response.JwtResponse;
 import com.chobichokro.payload.response.MessageResponse;
 import com.chobichokro.security.jwt.JwtUtils;
 
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
