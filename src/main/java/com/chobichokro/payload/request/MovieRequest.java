@@ -26,4 +26,5 @@ public class MovieRequest {
     private String trailerLink;
     private MultipartFile image;
     private String status;
+    private String description;
 }

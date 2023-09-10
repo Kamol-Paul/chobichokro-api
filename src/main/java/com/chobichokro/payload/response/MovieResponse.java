@@ -29,6 +29,7 @@ public class MovieResponse {
     private String message;
     private InputStream image;
     private String status;
+    private String description;
 
     public MovieResponse(String message) {
         this.message = message;

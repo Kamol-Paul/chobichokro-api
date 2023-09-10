@@ -31,5 +31,6 @@ public class Movie {
     private String trailerLink;
     private String posterImageLink;
     private String status;
+    private String description;
 
 }

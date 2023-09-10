@@ -69,6 +69,7 @@ public class MovieController {
         newMovie.setPosterImageLink(fileName);
         System.out.println(newMovie);
         newMovie.setStatus(movie.getStatus());
+        newMovie.setDescription(movie.getDescription());
         movieRepository.save(newMovie);
         movieResponse.setMessage("Movie added successfully");
 //        movieResponse
@@ -82,6 +83,7 @@ public class MovieController {
         movieResponse.setPosterImageLink(fileName);
 //        movieResponse.setImage(imageStream);
         movieResponse.setStatus(movie.getStatus());
+        movieResponse.setDescription(movie.getDescription());
         System.out.println(movieResponse);
 
         return ResponseEntity.ok(movieResponse);
@@ -131,4 +133,16 @@ public class MovieController {
         }
         return false;
     }
+//    @PutMapping("/update/{movieName}")
+//    void update_description (@PathVariable("movieName") String movieName, @RequestBody String description){
+//        System.out.println(description);
+//        Optional<Movie> movie = movieRepository.findByMovieName(movieName);
+//        if(movie.isEmpty()){
+//            System.out.println("movie not found");
+//            return;
+//        }
+//        movieRepository.delete(movie.get());
+//        movie.get().setDescription(description);
+//        movieRepository.save(movie.get());
+//    }
 }
