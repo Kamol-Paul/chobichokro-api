@@ -31,11 +31,12 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
           "/api/auth/**",
           "/api/license/add",
             "/api/movies/all",
+          "api/movies/get/**",
           "/api/theater/all",
             "/api/test/all"
 
   };
-  private final String[] PRIVATE_URLS = {"/api/test/**","/api/movies/**", "api/theater/**"};
+  private final String[] PRIVATE_URLS = {"/api/test/**", "api/theater/**"};
   @Autowired
   UserDetailsServiceImpl userDetailsService;
 

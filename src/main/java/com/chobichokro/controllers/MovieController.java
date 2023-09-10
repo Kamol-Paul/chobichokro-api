@@ -88,25 +88,22 @@ public class MovieController {
     }
 
     @GetMapping("/get/{imagePath}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+//    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
     ResponseEntity<?> getImage(@PathVariable("imagePath") String imagePath, HttpServletResponse httpServletResponse) throws IOException {
+        System.out.println(imagePath);
         httpServletResponse.setContentType("image/jpeg");
         httpServletResponse.getOutputStream().write(fileServices.getImage(path + File.separator + imagePath).readAllBytes());
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/get/movie/{name}")
-    ResponseEntity<MovieResponse> getMovie(@PathVariable("name") String name){
+    ResponseEntity<?> getMovie(@PathVariable("name") String name){
         Optional<Movie> movie = movieRepository.findByMovieName(name);
         if(movie.isEmpty()){
 
-            MovieResponse movieResponse = new MovieResponse("movie not found");
-            return ResponseEntity.ok(movieResponse);
+//            MovieResponse movieResponse = new MovieResponse("movie not found");
+            return ResponseEntity.ok("movie not found");
         }
-        System.out.println(movie.get());
-        MovieResponse movieResponse = new MovieResponse();
-        movieResponse.setCast(movie.get().getCast());
-        movieResponse.setId(movie.get().getId());
-        return ResponseEntity.ok(movieResponse);
+        return ResponseEntity.ok(movie);
 
     }
     @GetMapping("/query/{queryString}")
