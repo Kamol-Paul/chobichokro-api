@@ -31,7 +31,7 @@ public class TheaterController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasRole('ROLE_THEATER_OWNER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_THEATER_OWNER') or hasRole('ADMIN')")
     public ResponseEntity<?> addTheater(@ModelAttribute TheaterRequest theaterRequest) {
         Theater theater = new Theater();
         String licenseId = theaterRequest.getLicenseId();

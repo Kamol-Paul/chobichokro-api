@@ -1,9 +1,11 @@
 package com.chobichokro.controllers;
 
 import com.chobichokro.models.Movie;
+import com.chobichokro.models.User;
 import com.chobichokro.payload.request.MovieRequest;
 import com.chobichokro.payload.response.MovieResponse;
 import com.chobichokro.repository.MovieRepository;
+import com.chobichokro.repository.UserRepository;
 import com.chobichokro.services.FileServices;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,8 @@ import java.util.Optional;
 public class MovieController {
     @Autowired
     private FileServices fileServices;
+    @Autowired
+    private UserRepository userRepository;
 
     @Value("${project.image}")
     String path;
@@ -42,9 +46,20 @@ public class MovieController {
 
 
     @PostMapping("/add")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('ROLE_DISTRIBUTOR')")
+//    @PreAuthorize("hasRole('ADMIN') or hasRole('ROLE_DISTRIBUTOR')")
     public ResponseEntity<?> addMovie(@ModelAttribute("movie") MovieRequest movie) throws ParseException {
         MovieResponse movieResponse = new MovieResponse();
+        String distributorId = movie.getDistributorId();
+        System.out.println(distributorId);
+        if(distributorId == null){
+            movieResponse.setMessage("Distributor id is null");
+            return ResponseEntity.badRequest().body(movieResponse);
+        }
+        User distributor = userRepository.findById(distributorId).orElse(null);
+        if(distributor == null){
+            movieResponse.setMessage("Distributor not found");
+            return ResponseEntity.badRequest().body(movieResponse);
+        }
 //        System.out.println(movie);
         if (movieRepository.existsByMovieName(movie.getMovieName())) {
             movieResponse.setMessage("Movie already exists" + movie.getMovieName());
@@ -70,6 +85,7 @@ public class MovieController {
         System.out.println(newMovie);
         newMovie.setStatus(movie.getStatus());
         newMovie.setDescription(movie.getDescription());
+        newMovie.setDistributorId(movie.getDistributorId());
         movieRepository.save(newMovie);
         movieResponse.setMessage("Movie added successfully");
 //        movieResponse
@@ -84,6 +100,7 @@ public class MovieController {
 //        movieResponse.setImage(imageStream);
         movieResponse.setStatus(movie.getStatus());
         movieResponse.setDescription(movie.getDescription());
+        movieResponse.setDistributorId(movie.getDistributorId());
         System.out.println(movieResponse);
 
         return ResponseEntity.ok(movieResponse);

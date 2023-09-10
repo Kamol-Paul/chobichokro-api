@@ -30,6 +30,7 @@ public class MovieResponse {
     private InputStream image;
     private String status;
     private String description;
+    private String distributorId;
 
     public MovieResponse(String message) {
         this.message = message;
