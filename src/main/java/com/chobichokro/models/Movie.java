@@ -20,14 +20,14 @@ public class Movie {
     @NotBlank
     private String movieName;
 //    private String description;
-    @NotBlank
+//    @NotBlank
     private String[] genre;
-    @NotBlank
+//    @NotBlank
     private String[] cast;
     private String[] director;
 
     private Date releaseDate;
-    @NotBlank
+//    @NotBlank
     private String trailerLink;
     private String posterImageLink;
     private String status;
