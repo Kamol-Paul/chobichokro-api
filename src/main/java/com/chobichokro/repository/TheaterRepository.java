@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TheaterRepository extends MongoRepository<Theater, String> {
-     Optional<Theater> findById(String id);
+
      Optional<Theater> findByName(String name);
      boolean existsByName(String name);
-
-    List<Theater> findAll();
+     Optional<Theater> findByLicenseId(String licenseId);
 }

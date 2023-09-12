@@ -3,8 +3,11 @@ package com.chobichokro.controllers;
 
 import com.chobichokro.models.License;
 import com.chobichokro.models.Theater;
+import com.chobichokro.models.User;
 import com.chobichokro.payload.request.TheaterRequest;
 import com.chobichokro.repository.LicenseRepository;
+import com.chobichokro.repository.UserRepository;
+import com.chobichokro.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +27,10 @@ public class TheaterController {
     private TheaterRepository theaterRepository;
     @Autowired
     private LicenseRepository licenseRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    com.chobichokro.security.jwt.JwtUtils jwtUtils;
 
     @GetMapping("/all")
     public List<Theater> getAllTheaters() {
@@ -31,10 +38,13 @@ public class TheaterController {
     }
 
     @PostMapping("/add")
-//    @PreAuthorize("hasRole('ROLE_THEATER_OWNER') or hasRole('ADMIN')")
-    public ResponseEntity<?> addTheater(@ModelAttribute TheaterRequest theaterRequest) {
+    @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
+    public ResponseEntity<?> addTheater(@ModelAttribute TheaterRequest theaterRequest, @RequestHeader("Authorization") String token) {
         Theater theater = new Theater();
-        String licenseId = theaterRequest.getLicenseId();
+        User user = userRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(token.substring(7))).orElse(null);
+
+        assert user != null;
+        String licenseId = user.getLicenseId();
         if(licenseId == null || !licenseRepository.existsById(licenseId)){
             return ResponseEntity.badRequest().body("License not found");
         }
@@ -83,7 +93,19 @@ public class TheaterController {
         if(theater.getName().contains(matching)) return true;
         return theater.getAddress().contains(matching);
     }
+    @GetMapping("/myTheater")
+    @PreAuthorize("hasRole('THEATER_OWNER')")
+    ResponseEntity<?> getTheaterByOwner(@RequestHeader("Authorization") String token){
+        String licenseId = authenticate(token);
+        Theater theater =  theaterRepository.findByLicenseId(licenseId).orElse(null);
+        return ResponseEntity.ok(Objects.requireNonNullElse(theater, "No Theater found"));
+    }
+    String authenticate(String authHeader){
+        String token = authHeader.split(" ")[1];
+        String userName =  jwtUtils.getUserNameFromJwtToken(token);
+        return Objects.requireNonNull(userRepository.findByUsername(userName).orElse(null)).getLicenseId();
 
+    }
 
 
 }

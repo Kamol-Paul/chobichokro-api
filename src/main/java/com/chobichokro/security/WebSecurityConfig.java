@@ -36,7 +36,7 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
             "/api/test/all"
 
   };
-  private final String[] PRIVATE_URLS = {"/api/test/**", "api/theater/**"};
+  private final String[] PRIVATE_URLS = {"/api/test/**", "api/theater/**", "api/movies/add"};
   @Autowired
   UserDetailsServiceImpl userDetailsService;
 
@@ -98,6 +98,7 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
                 auth -> auth.requestMatchers(PUBLIC_URLS).permitAll()
+                        .requestMatchers(PRIVATE_URLS).authenticated()
                 .anyRequest()
                 .permitAll());
 

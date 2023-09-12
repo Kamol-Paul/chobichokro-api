@@ -46,8 +46,9 @@ public class MovieController {
 
 
     @PostMapping("/add")
-//    @PreAuthorize("hasRole('ADMIN') or hasRole('ROLE_DISTRIBUTOR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ROLE_DISTRIBUTOR')")
     public ResponseEntity<?> addMovie(@ModelAttribute("movie") MovieRequest movie) throws ParseException {
+
         MovieResponse movieResponse = new MovieResponse();
         String distributorId = movie.getDistributorId();
         System.out.println(distributorId);

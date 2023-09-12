@@ -1,16 +1,18 @@
 package com.chobichokro.controllers;
 
-import com.chobichokro.models.Movie;
-import com.chobichokro.models.Schedule;
-import com.chobichokro.models.Ticket;
+import com.chobichokro.models.*;
 import com.chobichokro.repository.MovieRepository;
 import com.chobichokro.repository.ScheduleRepository;
 import com.chobichokro.repository.TheaterRepository;
+import com.chobichokro.repository.UserRepository;
+import com.chobichokro.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController()
@@ -25,15 +27,22 @@ public class ScheduleController {
     private TheaterRepository theaterRepository;
 
     @PostMapping("/add")
+    @PreAuthorize("hasRole('THEATER_OWNER')")
     public ResponseEntity<?> addSchedule(@ModelAttribute Schedule schedule){
         boolean freeNaki = isFree(schedule);
         if(!freeNaki){
             return ResponseEntity.badRequest().body("Schedule already At that time and hall");
         }
         Movie movie = movieRepository.findByMovieName(schedule.getMovieName()).orElse(null);
+        if(movie == null){
+            return ResponseEntity.badRequest().body("Movie not found");
+        }
+        Theater theater = theaterRepository.findById(schedule.getTheaterId()).orElse(null);
+        schedule = scheduleRepository.save(schedule);
+        return ResponseEntity.ok(schedule);
 
-        List<Ticket> for_ans = Ticket.getTicketForSchedule(schedule.getScheduleId(), 100);
-        return ResponseEntity.ok(for_ans);
+//        List<Ticket> for_ans = Ticket.getTicketForSchedule(schedule.getScheduleId(), 100);
+//        return ResponseEntity.ok(for_ans);
     }
     boolean isFree(Schedule schedule){
         return scheduleRepository.existsByHallNumber(schedule.getHallNumber())
@@ -65,6 +74,7 @@ public class ScheduleController {
     public ResponseEntity<?> getScheduleByDate(@PathVariable String date){
         return ResponseEntity.ok(scheduleRepository.findByScheduleDate(date));
     }
+
 
 
 

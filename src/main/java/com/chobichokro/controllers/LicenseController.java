@@ -4,6 +4,7 @@ import com.chobichokro.models.License;
 import com.chobichokro.repository.LicenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 //@CrossOrigin(origins = "*")
@@ -54,30 +55,32 @@ public class LicenseController {
         return ResponseEntity.ok(license);
 
     }
-    @PutMapping("/update")
-    private ResponseEntity<?> updateLicense(@ModelAttribute License license) {
-        System.out.println(license);
-        license.setPhoneNumber(formatPhoneNumber(license.getPhoneNumber()));
-
-        if (!licenseRepository.existsByLicenseNumber(license.getLicenseNumber())) {
-            return ResponseEntity.badRequest().body("License number does not exists" + license.getLicenseNumber());
-        }
-        else if(!licenseRepository.existsByPhoneNumber(license.getPhoneNumber())){
-            return ResponseEntity.badRequest().body("License phone number does not exists" + license.getPhoneNumber());
-        }
-        else if(!licenseRepository.existsByEmail(license.getEmail())){
-            return ResponseEntity.badRequest().body("License email does not exists" + license.getEmail());
-        }
-        else if(!licenseRepository.existsByTransactionNumber(license.getTransactionNumber())){
-            return ResponseEntity.badRequest().body("License transactions does not exists" + license.getTransactionNumber());
-        }
-
-        license = licenseRepository.updateLicenseStatusByPhoneNumber(license.getPhoneNumber(), "approved");
-        System.out.println(license);
-        return ResponseEntity.ok(license);
-
-    }
+//    @PutMapping("/update")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    private ResponseEntity<?> updateLicense(@ModelAttribute License license) {
+//        System.out.println(license);
+//        license.setPhoneNumber(formatPhoneNumber(license.getPhoneNumber()));
+//
+//        if (!licenseRepository.existsByLicenseNumber(license.getLicenseNumber())) {
+//            return ResponseEntity.badRequest().body("License number does not exists" + license.getLicenseNumber());
+//        }
+//        else if(!licenseRepository.existsByPhoneNumber(license.getPhoneNumber())){
+//            return ResponseEntity.badRequest().body("License phone number does not exists" + license.getPhoneNumber());
+//        }
+//        else if(!licenseRepository.existsByEmail(license.getEmail())){
+//            return ResponseEntity.badRequest().body("License email does not exists" + license.getEmail());
+//        }
+//        else if(!licenseRepository.existsByTransactionNumber(license.getTransactionNumber())){
+//            return ResponseEntity.badRequest().body("License transactions does not exists" + license.getTransactionNumber());
+//        }
+//
+//        license = licenseRepository.updateLicenseStatusByPhoneNumber(license.getPhoneNumber(), "approved");
+//        System.out.println(license);
+//        return ResponseEntity.ok(license);
+//
+//    }
     @PutMapping("/update_status")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     private ResponseEntity<?> updateLicenseStatus(@RequestParam("licenseId") String licenseId, @RequestParam("status") String status) {
         System.out.println(licenseId);
         System.out.println(status);

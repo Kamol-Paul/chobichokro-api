@@ -52,7 +52,7 @@ public class AuthController {
 	JwtUtils jwtUtils;
 
 	@PostMapping("/signin")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<?> authenticateUser(@ModelAttribute LoginRequest loginRequest) {
 		System.out.println("signin");
 
 		Authentication authentication = authenticationManager.authenticate(
@@ -192,5 +192,11 @@ public class AuthController {
 
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+	}
+
+	User authenticate(String authHeader){
+		String token = authHeader.split(" ")[1];
+        String userName =  jwtUtils.getUserNameFromJwtToken(token);
+		return userRepository.findByUsername(userName).orElse(null);
 	}
 }

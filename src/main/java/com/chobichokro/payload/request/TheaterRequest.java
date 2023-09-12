@@ -17,7 +17,5 @@ public class TheaterRequest {
     private String address;
     private  int numberOfScreens;
     //    private int[] numberOfSeats;
-    @NotBlank
-    private String licenseId;
 
 }
