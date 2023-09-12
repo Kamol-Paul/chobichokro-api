@@ -135,3 +135,6 @@ The endpoint is used to add a new license to the system.
   ""
 }
 ```
+### api / license / get / pending ###
+### Get Method ###
+Preauthorize for Admin user

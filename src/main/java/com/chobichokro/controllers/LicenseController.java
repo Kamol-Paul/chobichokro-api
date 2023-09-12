@@ -55,31 +55,12 @@ public class LicenseController {
         return ResponseEntity.ok(license);
 
     }
-//    @PutMapping("/update")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    private ResponseEntity<?> updateLicense(@ModelAttribute License license) {
-//        System.out.println(license);
-//        license.setPhoneNumber(formatPhoneNumber(license.getPhoneNumber()));
-//
-//        if (!licenseRepository.existsByLicenseNumber(license.getLicenseNumber())) {
-//            return ResponseEntity.badRequest().body("License number does not exists" + license.getLicenseNumber());
-//        }
-//        else if(!licenseRepository.existsByPhoneNumber(license.getPhoneNumber())){
-//            return ResponseEntity.badRequest().body("License phone number does not exists" + license.getPhoneNumber());
-//        }
-//        else if(!licenseRepository.existsByEmail(license.getEmail())){
-//            return ResponseEntity.badRequest().body("License email does not exists" + license.getEmail());
-//        }
-//        else if(!licenseRepository.existsByTransactionNumber(license.getTransactionNumber())){
-//            return ResponseEntity.badRequest().body("License transactions does not exists" + license.getTransactionNumber());
-//        }
-//
-//        license = licenseRepository.updateLicenseStatusByPhoneNumber(license.getPhoneNumber(), "approved");
-//        System.out.println(license);
-//        return ResponseEntity.ok(license);
-//
-//    }
-    @PutMapping("/update_status")
+    @GetMapping("/get/pending")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> getPendingLicense() {
+        return ResponseEntity.ok(licenseRepository.getPendingLicenses());
+    }
+@PutMapping("/update_status")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     private ResponseEntity<?> updateLicenseStatus(@RequestParam("licenseId") String licenseId, @RequestParam("status") String status) {
         System.out.println(licenseId);
