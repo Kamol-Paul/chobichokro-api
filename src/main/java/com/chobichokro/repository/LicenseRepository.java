@@ -30,7 +30,4 @@ public interface LicenseRepository extends MongoRepository<License, String> {
 
 
 
-
-
-
 }

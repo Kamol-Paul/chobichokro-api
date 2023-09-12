@@ -3,9 +3,13 @@ package com.chobichokro.payload.request;
 import java.util.Set;
 
 import jakarta.validation.constraints.*;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
+@AllArgsConstructor
+@Setter
+@NoArgsConstructor
+@ToString
 public class SignupRequest {
     @NotBlank
     @Size(min = 3, max = 20)
@@ -22,7 +26,7 @@ public class SignupRequest {
     @Size(min = 4, max = 40)
     private String password;
 
-    private String licenseNumber;
+    private String licenseId;
 
     public void setUsername(String username) {
         this.username = username;

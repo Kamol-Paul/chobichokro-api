@@ -1,10 +1,10 @@
 package com.chobichokro.controllers;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.chobichokro.models.License;
+import com.chobichokro.repository.LicenseRepository;
 import com.chobichokro.repository.RoleRepository;
 import com.chobichokro.repository.UserRepository;
 import com.chobichokro.security.services.UserDetailsImpl;
@@ -18,11 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.chobichokro.models.ERole;
 import com.chobichokro.models.Role;
@@ -39,6 +35,9 @@ import com.chobichokro.security.jwt.JwtUtils;
 public class AuthController {
 	@Autowired
 	AuthenticationManager authenticationManager;
+
+	@Autowired
+	LicenseRepository licenseRepository;
 
 	@Autowired
     UserRepository userRepository;
@@ -75,11 +74,15 @@ public class AuthController {
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+	public ResponseEntity<?> registerUser(@ModelAttribute SignupRequest signUpRequest) {
 		System.out.println("signup");
 		System.out.println(signUpRequest.getUsername());
 		System.out.println(signUpRequest.getEmail());
 		System.out.println(signUpRequest.getPassword());
+		System.out.println("signUpRequest " + signUpRequest );
+		String licenseId = signUpRequest.getLicenseId();
+		System.out.println(licenseId);
+
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return ResponseEntity
 					.badRequest()
@@ -97,16 +100,40 @@ public class AuthController {
 							 signUpRequest.getEmail(),
 							 encoder.encode(signUpRequest.getPassword()));
 
+
 		Set<String> strRoles = signUpRequest.getRoles();
 		System.out.println(strRoles);
 		Set<Role> roles = new HashSet<>();
+		Optional<License> license = Optional.empty();
+		if(licenseId != null){
+			license = licenseRepository.findLicenseById(licenseId);
+			if(license.isPresent()){
+				String have_role = license.get().getLicenseType();
+				System.out.println(have_role);
+				if(Objects.equals(have_role, "distributor")){
+					System.out.println("adding distributor");
+					Role distributor = roleRepository.findByName(ERole.ROLE_DISTRIBUTOR)
+							.orElseThrow(() -> new RuntimeException("Error: Role not found"));
+					roles.add(distributor);
+					System.out.println(distributor);
+				}
+				else if(Objects.equals(have_role, "theaterOwner")){
+					Role theaterOwner = roleRepository.findByName(ERole.ROLE_THEATER_OWNER)
+							.orElseThrow(() -> new RuntimeException("Error : Role is not found."));
+					roles.add(theaterOwner);
+				}
+			}
+		}
 
 		if (strRoles == null) {
+			System.out.println("in null");
 			Role userRole = roleRepository.findByName(ERole.ROLE_USER)
 					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 			roles.add(userRole);
-		} else {
-			strRoles.forEach(role -> {
+			System.out.println(userRole);
+		}
+		else if(!strRoles.isEmpty()){
+            strRoles.forEach(role -> {
                 switch (role) {
                     case "admin" -> {
                         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
@@ -138,9 +165,21 @@ public class AuthController {
 		}
 
 		user.setRoles(roles);
-		if(signUpRequest.getLicenseNumber() != null)
-			user.setLicenseNumber(signUpRequest.getLicenseNumber());
-		userRepository.save(user);
+		if(licenseId != null){
+			user.setLicenseId(licenseId);
+		}
+		user = userRepository.save(user);
+		if(license.isPresent()){
+			License license1 = licenseRepository.findLicenseById(licenseId).orElse(null);
+            assert license1 != null;
+            license1.setLicenseOwner(user.getId());
+			licenseRepository.delete(license.get());
+			licenseRepository.save(license1);
+
+
+		}
+		System.out.println(user);
+
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}

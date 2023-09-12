@@ -30,11 +30,11 @@ public class Ticket {
         this.price = price;
     }
 
-    public List<Ticket> getTicketForSchedule(String scheduleId, int price) {
+    public static List<Ticket> getTicketForSchedule(String scheduleId, int price) {
         List<Ticket> tickets = new LinkedList<>();
         for(char ch = 'A'; ch <= 'G'; ch++) {
             for(int i = 1; i < 10; i++){
-                String str = ch + '0' + String.valueOf(i);
+                String str = String.valueOf(ch) + '0' + i;
                 tickets.add(new Ticket(scheduleId, str, price));
             }
             for(int i = 10; i <= 20; i++) {

@@ -21,7 +21,7 @@ public class Schedule {
     @NotBlank
     private String TheaterId;
     @NotBlank
-    private Date scheduleDate;
+    private String scheduleDate;
     @NotBlank
     private int hallNumber;
 }

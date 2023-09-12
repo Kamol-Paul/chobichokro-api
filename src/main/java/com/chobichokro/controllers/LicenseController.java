@@ -77,6 +77,19 @@ public class LicenseController {
         return ResponseEntity.ok(license);
 
     }
+    @PutMapping("/update_status")
+    private ResponseEntity<?> updateLicenseStatus(@RequestParam("licenseId") String licenseId, @RequestParam("status") String status) {
+        System.out.println(licenseId);
+        System.out.println(status);
+        License license = licenseRepository.findLicenseById(licenseId).orElse(null);
+        if(license == null){
+            return ResponseEntity.badRequest().body("License not found");
+        }
+        license.setStatus(status);
+        System.out.println(license);
+        return ResponseEntity.ok(license);
+
+    }
     private String  formatPhoneNumber(String phoneNumber){
         // number will be the last 10 digit
         return phoneNumber.substring(phoneNumber.length() - 10);

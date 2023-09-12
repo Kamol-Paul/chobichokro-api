@@ -47,7 +47,7 @@ public class User {
   }
 
 
-  private String licenseNumber;
+  private String licenseId;
 
 
 }
