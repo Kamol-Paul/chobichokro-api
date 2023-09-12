@@ -33,7 +33,21 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
             "/api/movies/all",
           "api/movies/get/**",
           "/api/theater/all",
-            "/api/test/all"
+            "/api/test/all",
+          "/api/v1/**",
+          "/v2/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/swagger-resources/**",
+            "/webjars/**",
+            "/actuator/**",
+          "/configuration/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-resources",
+            "/swagger-resources/configuration/ui",
+            "/swagger-resources/configuration/security",
+          "/v3/api-docs/**"
 
   };
   private final String[] PRIVATE_URLS = {"/api/test/**", "api/theater/**", "api/movies/add"};
