@@ -37,13 +37,6 @@
             <artifactId>spring-boot-starter-validation</artifactId>
             <version>3.1.2</version>
         </dependency>
-
-
-        <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>2.3.2</version>
-        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
