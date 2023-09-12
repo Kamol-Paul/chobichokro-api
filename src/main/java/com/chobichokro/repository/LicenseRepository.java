@@ -3,6 +3,7 @@ package com.chobichokro.repository;
 import com.chobichokro.models.License;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface LicenseRepository extends MongoRepository<License, String> {
@@ -27,7 +28,11 @@ public interface LicenseRepository extends MongoRepository<License, String> {
 
         return save(license);
     }
-
+    default List<License> getPendingLicenses(){
+        List<License> licenses = findAll();
+        licenses.removeIf(license -> license.getStatus().equals("approved"));
+        return licenses;
+    }
 
 
 }

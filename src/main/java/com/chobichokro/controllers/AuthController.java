@@ -109,6 +109,12 @@ public class AuthController {
 			license = licenseRepository.findLicenseById(licenseId);
 			if(license.isPresent()){
 				String have_role = license.get().getLicenseType();
+				String status = license.get().getStatus();
+				if(!Objects.equals(status, "approved")){
+					return ResponseEntity
+							.badRequest()
+							.body(new MessageResponse("Error: Your License is not approved yet!"));
+				}
 				System.out.println(have_role);
 				if(Objects.equals(have_role, "distributor")){
 					System.out.println("adding distributor");
@@ -163,7 +169,11 @@ public class AuthController {
                 }
 			});
 		}
-
+		if(roles.isEmpty()){
+			Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+			roles.add(userRole);
+		}
 		user.setRoles(roles);
 		if(licenseId != null){
 			user.setLicenseId(licenseId);
@@ -173,7 +183,7 @@ public class AuthController {
 			License license1 = licenseRepository.findLicenseById(licenseId).orElse(null);
             assert license1 != null;
             license1.setLicenseOwner(user.getId());
-			licenseRepository.delete(license.get());
+//			licenseRepository.delete(license.get());
 			licenseRepository.save(license1);
 
 
