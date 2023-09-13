@@ -1,6 +1,7 @@
 package com.chobichokro.controllers;
 
 
+import com.chobichokro.controllerHelper.Helper;
 import com.chobichokro.models.License;
 import com.chobichokro.models.Theater;
 import com.chobichokro.models.User;
@@ -23,6 +24,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/theater")
 public class TheaterController {
+    @Autowired
+    Helper helper;
     @Autowired
     private TheaterRepository theaterRepository;
     @Autowired
@@ -105,6 +108,28 @@ public class TheaterController {
         String userName =  jwtUtils.getUserNameFromJwtToken(token);
         return Objects.requireNonNull(userRepository.findByUsername(userName).orElse(null)).getLicenseId();
 
+    }
+
+    @PostMapping("/want_to_buy/{name}")
+    @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
+    public ResponseEntity<?> whatToByeMove(@PathVariable String name, @RequestHeader("Authorization") String token){
+        String message = helper.sendBuyRequestOfMovie(name, token);
+        return ResponseEntity.ok(message);
+    }
+    @GetMapping("/pending")
+    @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
+    public ResponseEntity<?> getPendingMovies(@RequestHeader("Authorization") String token){
+        return ResponseEntity.ok(helper.getPendingTheater(token));
+    }
+    @GetMapping("/new_movie")
+    @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
+    public ResponseEntity<?> getNewMovies(@RequestHeader("Authorization") String token){
+        return ResponseEntity.ok(helper.getNewMovies(token));
+    }
+    @GetMapping("/all_my_movie")
+    @PreAuthorize("hasRole('ROLE_DISTRIBUTOR') or hasRole('ADMIN')")
+    public ResponseEntity<?> getAllTheaterOwnerMovie(@RequestHeader("Authorization") String token){
+        return ResponseEntity.ok(helper.getAllTheaterOwnerMovie(token));
     }
 
 

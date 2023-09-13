@@ -5,11 +5,13 @@ import com.chobichokro.models.Movie;
 import com.chobichokro.models.User;
 import com.chobichokro.payload.request.MovieRequest;
 import com.chobichokro.payload.response.MovieResponse;
+import com.chobichokro.relation.TheaterMoviePending;
 import com.chobichokro.repository.MovieRepository;
 import com.chobichokro.repository.UserRepository;
 import com.chobichokro.security.jwt.JwtUtils;
 import com.chobichokro.services.FileServices;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -158,9 +160,9 @@ public class MovieController {
 
     @GetMapping("/myMovie")
     @PreAuthorize("hasRole('ROLE_DISTRIBUTOR') or hasRole('ADMIN')")
-    List<Movie> getMyMovie(@RequestHeader("Authorization") String token){
+    ResponseEntity<?> getMyMovie(@RequestHeader("Authorization") String token){
         System.out.println("token :" + token);
-        return movieRepository.findAllByDistributorId(authenticate(token));
+        return ResponseEntity.ok(movieRepository.findAllByDistributorId(authenticate(token)));
     }
 
     @Autowired
@@ -171,4 +173,18 @@ public class MovieController {
         return Objects.requireNonNull(userRepository.findByUsername(userName).orElse(null)).getId();
 
     }
+
+    @GetMapping("/pending_movie_request")
+    @PreAuthorize("hasRole('ROLE_DISTRIBUTOR') or hasRole('ADMIN')")
+    ResponseEntity<?> getPendingMovie(@RequestHeader("Authorization") String token){
+        System.out.println("token :" + token);
+        return ResponseEntity.ok(helper.getPendingMovies(token));
+    }
+
+    @PostMapping("/accept_pending_request/{id}")
+    @PreAuthorize("hasRole('ROLE_DISTRIBUTOR') or hasRole('ADMIN')")
+    ResponseEntity<?> acceptPendingRequest(@RequestHeader("Authorization") String token, @PathVariable("id") String id){
+            return ResponseEntity.ok(helper.acceptPendingRequest(token,id));
+    }
+
 }
