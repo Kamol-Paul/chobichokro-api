@@ -1,6 +1,7 @@
 package com.chobichokro.controllers;
 
 import com.chobichokro.controllerHelper.UserHelper;
+import com.chobichokro.payload.request.ReviewRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -60,6 +61,11 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> bookMultiple(@RequestHeader("Authorization") String token, @PathVariable("scheduleId") String scheduleId, @RequestParam("seatNumbers") String[] seatNumbers, @RequestParam("paymentId") String paymentId) {
         return userHelper.bookMultiple(token, scheduleId, seatNumbers, paymentId);
+    }
+    @PostMapping("/add_review")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> addReview(@RequestHeader("Authorization") String token, @ModelAttribute ReviewRequest review) {
+        return userHelper.addReview(token , review);
     }
 
 

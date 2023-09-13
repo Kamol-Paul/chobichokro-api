@@ -190,4 +190,10 @@ public class MovieController {
         return ResponseEntity.ok(helper.acceptPendingRequest(token, id));
     }
 
+    @PostMapping("/get_movie_id/{movieName}")
+    ResponseEntity<?> getMovieId(@PathVariable("movieName") String movieName) {
+        Optional<Movie> movie = movieRepository.findByMovieName(movieName);
+        return movie.<ResponseEntity<?>>map(value -> ResponseEntity.ok(value.getId())).orElseGet(() -> ResponseEntity.ok("movie not found"));
+    }
+
 }

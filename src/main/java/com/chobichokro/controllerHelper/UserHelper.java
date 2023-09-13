@@ -1,9 +1,7 @@
 package com.chobichokro.controllerHelper;
 
-import com.chobichokro.models.Schedule;
-import com.chobichokro.models.Tax;
-import com.chobichokro.models.Ticket;
-import com.chobichokro.models.User;
+import com.chobichokro.models.*;
+import com.chobichokro.payload.request.ReviewRequest;
 import com.chobichokro.relationRepository.TheaterMoviePendingRepository;
 import com.chobichokro.relationRepository.TheaterMovieRelationRepository;
 import com.chobichokro.relationRepository.TheaterNewMovieRelationRepository;
@@ -21,9 +19,6 @@ import java.util.Optional;
 
 @Component
 public class UserHelper {
-    private final double distributorPercentage = 0.5;
-    private final double theaterOwnerPercentage = 0.3;
-    private final double taxPercentage = 0.2;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -51,6 +46,8 @@ public class UserHelper {
     private TheaterOwnerMovieRelationRepository theaterOwnerMovieRelationRepository;
     @Autowired
     private TaxRepository taxRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     public User getMe(String token) {
         String username = jwtUtils.getUserNameFromJwtToken(token.substring(7));
@@ -130,8 +127,11 @@ public class UserHelper {
     private Tax getTax(Pair<User, User> owner, Ticket ticket, Schedule schedule) {
         var distributor = owner.getLeft();
         var theaterOwner = owner.getRight();
+        double distributorPercentage = 0.5;
         var distributorAmount = ticket.getPrice() * distributorPercentage + distributor.getAmountBalance();
+        double theaterOwnerPercentage = 0.3;
         var theaterOwnerAmount = ticket.getPrice() * theaterOwnerPercentage + theaterOwner.getAmountBalance();
+        double taxPercentage = 0.2;
         var taxAmount = ticket.getPrice() * taxPercentage;
         distributor.setAmountBalance(distributorAmount);
         theaterOwner.setAmountBalance(theaterOwnerAmount);
@@ -181,7 +181,7 @@ public class UserHelper {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElse(null);
         if (schedule == null) return ResponseEntity.ok("Schedule not found");
         List<Ticket> tickets = getSeat(scheduleId, seatNumbers);
-        if(tickets==null) return ResponseEntity.ok("Seat not found");
+        if (tickets == null) return ResponseEntity.ok("Seat not found");
         User user = getMe(token);
         if (user == null) return ResponseEntity.ok("User not found");
         double totalTicketPrice = 0.0;
@@ -199,7 +199,7 @@ public class UserHelper {
         }
         var owner = getMovieDirectorAndTheaterOwner(scheduleId);
         if (owner == null) return ResponseEntity.ok("Owner not found");
-        for(Ticket ticket:tickets){
+        for (Ticket ticket : tickets) {
             Tax tax = getTax(owner, ticket, schedule);
             taxRepository.save(tax);
         }
@@ -207,6 +207,7 @@ public class UserHelper {
 
 
     }
+
     List<Ticket> getSeat(String scheduleId, String[] seatNumber) {
         List<Ticket> tickets = new LinkedList<>();
         for (String s : seatNumber) {
@@ -216,6 +217,28 @@ public class UserHelper {
             tickets.add(ticket);
         }
         return tickets;
+
+    }
+
+    public ResponseEntity<?> addReview(String token, ReviewRequest review) {
+        User user = getMe(token);
+        if (user == null) return ResponseEntity.ok("User not found");
+        var schedule = scheduleRepository.findById(review.getScheduleId());
+        if (schedule.isEmpty()) return ResponseEntity.ok("Invalid ticket");
+        var movie = movieRepository.findByMovieName(schedule.get().getMovieName());
+        if (movie.isEmpty()) return ResponseEntity.ok("Movie not found");
+        var theaterId = schedule.get().getTheaterId();
+        if (theaterId == null) return ResponseEntity.ok("Theater not found");
+
+        Review newReview = new Review();
+        newReview.setMovieId(movie.get().getId());
+        newReview.setTheatreId(theaterId);
+        newReview.setUserId(user.getId());
+        newReview.setOpinion(review.getOpinion());
+        newReview.setSentimentScore(0);
+        newReview = reviewRepository.save(newReview);
+        return ResponseEntity.ok(newReview);
+
 
     }
 }
