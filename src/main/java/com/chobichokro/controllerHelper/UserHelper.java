@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -176,4 +177,45 @@ public class UserHelper {
 
     }
 
+    public ResponseEntity<?> bookMultiple(String token, String scheduleId, String[] seatNumbers, String paymentId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElse(null);
+        if (schedule == null) return ResponseEntity.ok("Schedule not found");
+        List<Ticket> tickets = getSeat(scheduleId, seatNumbers);
+        if(tickets==null) return ResponseEntity.ok("Seat not found");
+        User user = getMe(token);
+        if (user == null) return ResponseEntity.ok("User not found");
+        double totalTicketPrice = 0.0;
+        for (Ticket ticket : tickets) {
+            totalTicketPrice += ticket.getPrice();
+        }
+        if (user.getAmountBalance() < totalTicketPrice) return ResponseEntity.ok("Not enough money");
+        user.setAmountBalance(user.getAmountBalance() - totalTicketPrice);
+        user = userRepository.save(user);
+        for (Ticket ticket : tickets) {
+            ticket.setBooked(true);
+            ticket.setUserId(user.getId());
+            ticket.setPaymentId(paymentId);
+            ticketRepository.save(ticket);
+        }
+        var owner = getMovieDirectorAndTheaterOwner(scheduleId);
+        if (owner == null) return ResponseEntity.ok("Owner not found");
+        for(Ticket ticket:tickets){
+            Tax tax = getTax(owner, ticket, schedule);
+            taxRepository.save(tax);
+        }
+        return ResponseEntity.ok(tickets);
+
+
+    }
+    List<Ticket> getSeat(String scheduleId, String[] seatNumber) {
+        List<Ticket> tickets = new LinkedList<>();
+        for (String s : seatNumber) {
+            Ticket ticket = ticketRepository.findByScheduleIdAndSeatNumber(scheduleId, s);
+            if (ticket == null) return null;
+            if (ticket.isBooked()) return null;
+            tickets.add(ticket);
+        }
+        return tickets;
+
+    }
 }

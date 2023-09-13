@@ -56,6 +56,11 @@ public class UserController {
     public ResponseEntity<?> myTickets(@RequestHeader("Authorization") String token) {
         return userHelper.myTickets(token);
     }
+    @PostMapping("/book_multiple/{scheduleId}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> bookMultiple(@RequestHeader("Authorization") String token, @PathVariable("scheduleId") String scheduleId, @RequestParam("seatNumbers") String[] seatNumbers, @RequestParam("paymentId") String paymentId) {
+        return userHelper.bookMultiple(token, scheduleId, seatNumbers, paymentId);
+    }
 
 
 }
