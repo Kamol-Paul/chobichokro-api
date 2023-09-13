@@ -1,5 +1,6 @@
 package com.chobichokro.controllers;
 
+import com.chobichokro.controllerHelper.Helper;
 import com.chobichokro.models.Movie;
 import com.chobichokro.models.User;
 import com.chobichokro.payload.request.MovieRequest;
@@ -32,6 +33,8 @@ import java.util.Optional;
 @RequestMapping("api/movies")
 public class MovieController {
     @Autowired
+    private Helper helper;
+    @Autowired
     private FileServices fileServices;
     @Autowired
     private UserRepository userRepository;
@@ -49,10 +52,10 @@ public class MovieController {
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ROLE_DISTRIBUTOR')")
-    public ResponseEntity<?> addMovie(@ModelAttribute("movie") MovieRequest movie) throws ParseException {
+    public ResponseEntity<?> addMovie(@ModelAttribute("movie") MovieRequest movie, @RequestHeader("Authorization") String auth) throws ParseException {
 
         MovieResponse movieResponse = new MovieResponse();
-        String distributorId = movie.getDistributorId();
+        String distributorId = helper.getUserId(auth);
         System.out.println(distributorId);
         if(distributorId == null){
             movieResponse.setMessage("Distributor id is null");
@@ -69,6 +72,7 @@ public class MovieController {
             return ResponseEntity.badRequest().body(movieResponse);
         }
         Movie newMovie = new Movie();
+
         newMovie.setMovieName(movie.getMovieName());
         newMovie.setGenre(movie.getGenre());
         newMovie.setCast(movie.getCast());
@@ -88,11 +92,9 @@ public class MovieController {
         System.out.println(newMovie);
         newMovie.setStatus(movie.getStatus());
         newMovie.setDescription(movie.getDescription());
-        newMovie.setDistributorId(movie.getDistributorId());
+        newMovie.setDistributorId(distributorId);
         movieRepository.save(newMovie);
         movieResponse.setMessage("Movie added successfully");
-//        movieResponse
-//        InputStream imageStream = fileServices.getImage(fileName);
         movieResponse.setMovieName(movie.getMovieName());
         movieResponse.setGenre(movie.getGenre());
         movieResponse.setCast(movie.getCast());
@@ -100,12 +102,12 @@ public class MovieController {
         movieResponse.setReleaseDate(df.parse(movie.getReleaseDate()));
         movieResponse.setTrailerLink(movie.getTrailerLink());
         movieResponse.setPosterImageLink(fileName);
-//        movieResponse.setImage(imageStream);
         movieResponse.setStatus(movie.getStatus());
         movieResponse.setDescription(movie.getDescription());
-        movieResponse.setDistributorId(movie.getDistributorId());
+        movieResponse.setDistributorId(distributorId);
         System.out.println(movieResponse);
-
+//        helper.sendAllTheaterOwner(newMovie.getId());
+        movieResponse.setTheaterOwnerToSend(helper.sendAllTheaterOwner(newMovie.getId()));
         return ResponseEntity.ok(movieResponse);
     }
 

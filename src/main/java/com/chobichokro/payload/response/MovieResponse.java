@@ -1,10 +1,13 @@
 package com.chobichokro.payload.response;
 
+import com.chobichokro.models.User;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -31,6 +34,7 @@ public class MovieResponse {
     private String status;
     private String description;
     private String distributorId;
+    private List<User> theaterOwnerToSend;
 
     public MovieResponse(String message) {
         this.message = message;

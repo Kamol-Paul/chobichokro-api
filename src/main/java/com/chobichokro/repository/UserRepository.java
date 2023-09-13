@@ -1,7 +1,12 @@
 package com.chobichokro.repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import com.chobichokro.models.License;
+import com.chobichokro.models.Role;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.chobichokro.models.User;
@@ -13,4 +18,7 @@ public interface UserRepository extends MongoRepository<User, String> {
 
   Boolean existsByEmail(String email);
   Optional<User> findById(String id);
+
+
+
 }
