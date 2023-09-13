@@ -9,6 +9,7 @@ import java.io.InputStream;
 @Service
 public interface FileServices {
     String uploadImage(String path, MultipartFile file) throws IOException;
+
     InputStream getImage(String imagePath) throws IOException;
 
 }

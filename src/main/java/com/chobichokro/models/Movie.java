@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,15 +20,15 @@ public class Movie {
     private String id;
     @NotBlank
     private String movieName;
-//    private String description;
+    //    private String description;
 //    @NotBlank
     private String[] genre;
-//    @NotBlank
+    //    @NotBlank
     private String[] cast;
     private String[] director;
 
     private Date releaseDate;
-//    @NotBlank
+    //    @NotBlank
     private String trailerLink;
     private String posterImageLink;
     private String status;

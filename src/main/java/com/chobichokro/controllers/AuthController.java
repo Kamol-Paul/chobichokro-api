@@ -1,15 +1,18 @@
 package com.chobichokro.controllers;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
+import com.chobichokro.models.ERole;
 import com.chobichokro.models.License;
+import com.chobichokro.models.Role;
+import com.chobichokro.models.User;
+import com.chobichokro.payload.request.LoginRequest;
+import com.chobichokro.payload.request.SignupRequest;
+import com.chobichokro.payload.response.JwtResponse;
+import com.chobichokro.payload.response.MessageResponse;
 import com.chobichokro.repository.LicenseRepository;
 import com.chobichokro.repository.RoleRepository;
 import com.chobichokro.repository.UserRepository;
+import com.chobichokro.security.jwt.JwtUtils;
 import com.chobichokro.security.services.UserDetailsImpl;
-import jakarta.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,127 +21,122 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.chobichokro.models.ERole;
-import com.chobichokro.models.Role;
-import com.chobichokro.models.User;
-import com.chobichokro.payload.request.LoginRequest;
-import com.chobichokro.payload.request.SignupRequest;
-import com.chobichokro.payload.response.JwtResponse;
-import com.chobichokro.payload.response.MessageResponse;
-import com.chobichokro.security.jwt.JwtUtils;
+import java.util.*;
+import java.util.stream.Collectors;
 
 //@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-	@Autowired
-	AuthenticationManager authenticationManager;
+    @Autowired
+    AuthenticationManager authenticationManager;
 
-	@Autowired
-	LicenseRepository licenseRepository;
+    @Autowired
+    LicenseRepository licenseRepository;
 
-	@Autowired
+    @Autowired
     UserRepository userRepository;
 
-	@Autowired
+    @Autowired
     RoleRepository roleRepository;
 
-	@Autowired
-	PasswordEncoder encoder;
+    @Autowired
+    PasswordEncoder encoder;
 
-	@Autowired
-	JwtUtils jwtUtils;
+    @Autowired
+    JwtUtils jwtUtils;
 
-	@PostMapping("/signin")
-	public ResponseEntity<?> authenticateUser(@ModelAttribute LoginRequest loginRequest) {
-		System.out.println("signin");
+    @PostMapping("/signin")
+    public ResponseEntity<?> authenticateUser(@ModelAttribute LoginRequest loginRequest) {
+        System.out.println("signin");
 
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtils.generateJwtToken(authentication);
-		
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-		List<String> roles = userDetails.getAuthorities().stream()
-				.map(GrantedAuthority::getAuthority)
-				.collect(Collectors.toList());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
 
-		return ResponseEntity.ok(new JwtResponse(jwt, 
-												 userDetails.getId(), 
-												 userDetails.getUsername(), 
-												 userDetails.getEmail(), 
-												 roles));
-	}
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
 
-	@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(@ModelAttribute SignupRequest signUpRequest) {
-		System.out.println("signup");
-		System.out.println(signUpRequest.getUsername());
-		System.out.println(signUpRequest.getEmail());
-		System.out.println(signUpRequest.getPassword());
-		System.out.println("signUpRequest " + signUpRequest );
-		String licenseId = signUpRequest.getLicenseId();
-		System.out.println(licenseId);
+        return ResponseEntity.ok(new JwtResponse(jwt,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                roles));
+    }
 
-		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("Error: Username is already taken!"));
-		}
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@ModelAttribute SignupRequest signUpRequest) {
+        System.out.println("signup");
+        System.out.println(signUpRequest.getUsername());
+        System.out.println(signUpRequest.getEmail());
+        System.out.println(signUpRequest.getPassword());
+        System.out.println("signUpRequest " + signUpRequest);
+        String licenseId = signUpRequest.getLicenseId();
+        System.out.println(licenseId);
 
-		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("Error: Email is already in use!"));
-		}
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Username is already taken!"));
+        }
 
-		// Create new user's account
-		User user = new User(signUpRequest.getUsername(), 
-							 signUpRequest.getEmail(),
-							 encoder.encode(signUpRequest.getPassword()));
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Email is already in use!"));
+        }
+
+        // Create new user's account
+        User user = new User(signUpRequest.getUsername(),
+                signUpRequest.getEmail(),
+                encoder.encode(signUpRequest.getPassword()));
 
 
-		Set<String> strRoles = signUpRequest.getRoles();
-		System.out.println(strRoles);
-		Set<Role> roles = new HashSet<>();
-		Optional<License> license = Optional.empty();
-		if(licenseId != null){
-			license = licenseRepository.findLicenseById(licenseId);
-			if(license.isPresent()){
-				String have_role = license.get().getLicenseType();
-				String status = license.get().getStatus();
-				if(!Objects.equals(status, "approved")){
-					return ResponseEntity
-							.badRequest()
-							.body(new MessageResponse("Error: Your License is not approved yet!"));
-				}
-				System.out.println(have_role);
-				if(Objects.equals(have_role, "distributor")){
-					System.out.println("adding distributor");
-					Role distributor = roleRepository.findByName(ERole.ROLE_DISTRIBUTOR)
-							.orElseThrow(() -> new RuntimeException("Error: Role not found"));
-					roles.add(distributor);
-					System.out.println(distributor);
-				}
-				else if(Objects.equals(have_role, "theaterOwner")){
-					Role theaterOwner = roleRepository.findByName(ERole.ROLE_THEATER_OWNER)
-							.orElseThrow(() -> new RuntimeException("Error : Role is not found."));
-					roles.add(theaterOwner);
-				}
-			}
-		}
+        Set<String> strRoles = signUpRequest.getRoles();
+        System.out.println(strRoles);
+        Set<Role> roles = new HashSet<>();
+        Optional<License> license = Optional.empty();
+        if (licenseId != null) {
+            license = licenseRepository.findLicenseById(licenseId);
+            if (license.isPresent()) {
+                String have_role = license.get().getLicenseType();
+                String status = license.get().getStatus();
+                if (!Objects.equals(status, "approved")) {
+                    return ResponseEntity
+                            .badRequest()
+                            .body(new MessageResponse("Error: Your License is not approved yet!"));
+                }
+                System.out.println(have_role);
+                if (Objects.equals(have_role, "distributor")) {
+                    System.out.println("adding distributor");
+                    Role distributor = roleRepository.findByName(ERole.ROLE_DISTRIBUTOR)
+                            .orElseThrow(() -> new RuntimeException("Error: Role not found"));
+                    roles.add(distributor);
+                    System.out.println(distributor);
+                } else if (Objects.equals(have_role, "theaterOwner")) {
+                    Role theaterOwner = roleRepository.findByName(ERole.ROLE_THEATER_OWNER)
+                            .orElseThrow(() -> new RuntimeException("Error : Role is not found."));
+                    roles.add(theaterOwner);
+                }
+            }
+        }
 
-		if (strRoles == null) {
-			System.out.println("in null");
-			Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-			roles.add(userRole);
-			System.out.println(userRole);
-		}
-		else if(!strRoles.isEmpty()){
+        if (strRoles == null) {
+            System.out.println("in null");
+            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(userRole);
+            System.out.println(userRole);
+        } else if (!strRoles.isEmpty()) {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "admin" -> {
@@ -151,52 +149,53 @@ public class AuthController {
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(modRole);
                     }
-					case "theaterOwner" ->{
-						Role theaterOwner = roleRepository.findByName(ERole.ROLE_THEATER_OWNER)
-								.orElseThrow(() -> new RuntimeException("Error : Role is not found."));
-						roles.add(theaterOwner);
-					}
-					case "distributor" -> {
-						Role distributor = roleRepository.findByName(ERole.ROLE_DISTRIBUTOR)
-								.orElseThrow(() -> new RuntimeException("Error: Role not found"));
-						roles.add(distributor);
-					}
+                    case "theaterOwner" -> {
+                        Role theaterOwner = roleRepository.findByName(ERole.ROLE_THEATER_OWNER)
+                                .orElseThrow(() -> new RuntimeException("Error : Role is not found."));
+                        roles.add(theaterOwner);
+                    }
+                    case "distributor" -> {
+                        Role distributor = roleRepository.findByName(ERole.ROLE_DISTRIBUTOR)
+                                .orElseThrow(() -> new RuntimeException("Error: Role not found"));
+                        roles.add(distributor);
+                    }
                     default -> {
                         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(userRole);
                     }
                 }
-			});
-		}
-		if(roles.isEmpty()){
-			Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-			roles.add(userRole);
-		}
-		user.setRoles(roles);
-		if(licenseId != null){
-			user.setLicenseId(licenseId);
-		}
-		user = userRepository.save(user);
-		if(license.isPresent()){
-			License license1 = licenseRepository.findLicenseById(licenseId).orElse(null);
+            });
+        }
+        if (roles.isEmpty()) {
+            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(userRole);
+        }
+        user.setRoles(roles);
+        if (licenseId != null) {
+            user.setLicenseId(licenseId);
+        }
+        user.setAmountBalance(0.0);
+        user = userRepository.save(user);
+        if (license.isPresent()) {
+            License license1 = licenseRepository.findLicenseById(licenseId).orElse(null);
             assert license1 != null;
             license1.setLicenseOwner(user.getId());
 //			licenseRepository.delete(license.get());
-			licenseRepository.save(license1);
+            licenseRepository.save(license1);
 
 
-		}
-		System.out.println(user);
+        }
+        System.out.println(user);
 
 
-		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
-	}
+        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
 
-	User authenticate(String authHeader){
-		String token = authHeader.split(" ")[1];
-        String userName =  jwtUtils.getUserNameFromJwtToken(token);
-		return userRepository.findByUsername(userName).orElse(null);
-	}
+    User authenticate(String authHeader) {
+        String token = authHeader.split(" ")[1];
+        String userName = jwtUtils.getUserNameFromJwtToken(token);
+        return userRepository.findByUsername(userName).orElse(null);
+    }
 }

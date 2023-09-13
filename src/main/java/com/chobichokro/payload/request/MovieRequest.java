@@ -12,12 +12,12 @@ import org.springframework.web.multipart.MultipartFile;
 @ToString
 public class MovieRequest {
 
-//    @NotBlank
+    //    @NotBlank
     private String movieName;
     //    private String description;
 //    @NotBlank
     private String[] genre;
-//    @NotBlank
+    //    @NotBlank
     private String[] cast;
     private String[] director;
 

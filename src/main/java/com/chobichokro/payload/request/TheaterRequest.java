@@ -15,7 +15,7 @@ public class TheaterRequest {
     @Size(min = 3, max = 50)
     private String name;
     private String address;
-    private  int numberOfScreens;
+    private int numberOfScreens;
     //    private int[] numberOfSeats;
 
 }

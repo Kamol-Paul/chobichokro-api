@@ -10,10 +10,12 @@ public interface TicketRepository extends MongoRepository<Ticket, String> {
 
     @Override
     Optional<Ticket> findById(String string);
+
     List<Ticket> findAllByScheduleId(String scheduleId);
+
     List<Ticket> findAllByUserId(String userId);
 
-    public default Ticket bookTicket(String ticketId, String userId, String paymentId){
+    public default Ticket bookTicket(String ticketId, String userId, String paymentId) {
         Ticket ticket = findById(ticketId).get();
         ticket.setBooked(true);
         ticket.setUserId(userId);
@@ -21,4 +23,8 @@ public interface TicketRepository extends MongoRepository<Ticket, String> {
         return ticket;
     }
 
+
+    List<Ticket> findByScheduleId(String scheduleId);
+
+    Ticket findByScheduleIdAndSeatNumber(String scheduleId, String seatNumber);
 }

@@ -5,13 +5,11 @@ import com.chobichokro.models.Movie;
 import com.chobichokro.models.User;
 import com.chobichokro.payload.request.MovieRequest;
 import com.chobichokro.payload.response.MovieResponse;
-import com.chobichokro.relation.TheaterMoviePending;
 import com.chobichokro.repository.MovieRepository;
 import com.chobichokro.repository.UserRepository;
 import com.chobichokro.security.jwt.JwtUtils;
 import com.chobichokro.services.FileServices;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.ws.rs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -45,6 +43,7 @@ public class MovieController {
     String path;
     @Autowired
     private MovieRepository movieRepository;
+
     @GetMapping("/all")
 //    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public List<Movie> getAllMovies() {
@@ -59,12 +58,12 @@ public class MovieController {
         MovieResponse movieResponse = new MovieResponse();
         String distributorId = helper.getUserId(auth);
         System.out.println(distributorId);
-        if(distributorId == null){
+        if (distributorId == null) {
             movieResponse.setMessage("Distributor id is null");
             return ResponseEntity.badRequest().body(movieResponse);
         }
         User distributor = userRepository.findById(distributorId).orElse(null);
-        if(distributor == null){
+        if (distributor == null) {
             movieResponse.setMessage("Distributor not found");
             return ResponseEntity.badRequest().body(movieResponse);
         }
@@ -121,10 +120,11 @@ public class MovieController {
         httpServletResponse.getOutputStream().write(fileServices.getImage(path + File.separator + imagePath).readAllBytes());
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @GetMapping("/get/movie/{name}")
-    ResponseEntity<?> getMovie(@PathVariable("name") String name){
+    ResponseEntity<?> getMovie(@PathVariable("name") String name) {
         Optional<Movie> movie = movieRepository.findByMovieName(name);
-        if(movie.isEmpty()){
+        if (movie.isEmpty()) {
 
 //            MovieResponse movieResponse = new MovieResponse("movie not found");
             return ResponseEntity.ok("movie not found");
@@ -132,59 +132,62 @@ public class MovieController {
         return ResponseEntity.ok(movie);
 
     }
+
     @GetMapping("/query/{queryString}")
-    public List<Movie> searchMovie(@PathVariable String queryString){
+    public List<Movie> searchMovie(@PathVariable String queryString) {
         List<Movie> allMovie = movieRepository.findAll();
         List<Movie> for_ans = new ArrayList<>();
-        for(Movie movie : allMovie){
-            if(isSameMovie(movie, queryString)){
+        for (Movie movie : allMovie) {
+            if (isSameMovie(movie, queryString)) {
                 for_ans.add(movie);
             }
         }
         return for_ans;
 
     }
-    private  boolean isSameMovie(Movie movie, String matching){
-        if(movie.getMovieName()!= null && movie.getMovieName().contains(matching)) return true;
-        for(String genre : movie.getGenre()){
-            if(genre.contains(matching)) return true;
+
+    private boolean isSameMovie(Movie movie, String matching) {
+        if (movie.getMovieName() != null && movie.getMovieName().contains(matching)) return true;
+        for (String genre : movie.getGenre()) {
+            if (genre.contains(matching)) return true;
         }
-        for(String cast : movie.getCast()){
-            if(cast.contains(matching)) return true;
+        for (String cast : movie.getCast()) {
+            if (cast.contains(matching)) return true;
         }
-        for(String director : movie.getDirector()){
-            if(director.contains(matching)) return true;
+        for (String director : movie.getDirector()) {
+            if (director.contains(matching)) return true;
         }
         return false;
     }
 
     @GetMapping("/myMovie")
     @PreAuthorize("hasRole('ROLE_DISTRIBUTOR') or hasRole('ADMIN')")
-    ResponseEntity<?> getMyMovie(@RequestHeader("Authorization") String token){
+    ResponseEntity<?> getMyMovie(@RequestHeader("Authorization") String token) {
         System.out.println("token :" + token);
         return ResponseEntity.ok(movieRepository.findAllByDistributorId(authenticate(token)));
     }
 
     @Autowired
     JwtUtils jwtUtils;
-    String authenticate(String authHeader){
+
+    String authenticate(String authHeader) {
         String token = authHeader.split(" ")[1];
-        String userName =  jwtUtils.getUserNameFromJwtToken(token);
+        String userName = jwtUtils.getUserNameFromJwtToken(token);
         return Objects.requireNonNull(userRepository.findByUsername(userName).orElse(null)).getId();
 
     }
 
     @GetMapping("/pending_movie_request")
     @PreAuthorize("hasRole('ROLE_DISTRIBUTOR') or hasRole('ADMIN')")
-    ResponseEntity<?> getPendingMovie(@RequestHeader("Authorization") String token){
+    ResponseEntity<?> getPendingMovie(@RequestHeader("Authorization") String token) {
         System.out.println("token :" + token);
         return ResponseEntity.ok(helper.getPendingMovies(token));
     }
 
     @PostMapping("/accept_pending_request/{id}")
     @PreAuthorize("hasRole('ROLE_DISTRIBUTOR') or hasRole('ADMIN')")
-    ResponseEntity<?> acceptPendingRequest(@RequestHeader("Authorization") String token, @PathVariable("id") String id){
-            return ResponseEntity.ok(helper.acceptPendingRequest(token,id));
+    ResponseEntity<?> acceptPendingRequest(@RequestHeader("Authorization") String token, @PathVariable("id") String id) {
+        return ResponseEntity.ok(helper.acceptPendingRequest(token, id));
     }
 
 }

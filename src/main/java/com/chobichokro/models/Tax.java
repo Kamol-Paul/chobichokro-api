@@ -1,6 +1,5 @@
 package com.chobichokro.models;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,16 +9,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Document(collection = "schedules")
-public class Schedule {
+@Document(collection = "taxes")
+public class Tax {
     @Id
-    private String scheduleId;
-    @NotBlank
+    private String id;
     private String movieName;
-    @NotBlank
     private String theaterId;
-    @NotBlank
-    private String scheduleDate;
-    @NotBlank
-    private int hallNumber;
+    private Double tax;
 }

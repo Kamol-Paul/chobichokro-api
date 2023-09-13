@@ -12,9 +12,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "TheaterMovieRelation")
 public class TheaterMovieRelation {
     /*
-    * The class is used to store the relation between theater and movie
-    * That is, which theater has the access of which movie
-    */
+     * The class is used to store the relation between theater and movie
+     * That is, which theater has the access of which movie
+     */
     @Id
     private String id;
     private String theaterId;

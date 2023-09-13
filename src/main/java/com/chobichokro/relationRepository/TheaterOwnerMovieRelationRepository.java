@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface TheaterOwnerMovieRelationRepository extends MongoRepository<TheaterOwnerMovieRelation, String> {
     List<TheaterOwnerMovieRelation> findAllByTheaterOwnerId(String theaterOwnerId);
+
     boolean existsByTheaterOwnerIdAndMovieId(String theaterOwnerId, String movieId);
 }

@@ -32,12 +32,12 @@ public class Ticket {
 
     public static List<Ticket> getTicketForSchedule(String scheduleId, int price) {
         List<Ticket> tickets = new LinkedList<>();
-        for(char ch = 'A'; ch <= 'G'; ch++) {
-            for(int i = 1; i < 10; i++){
+        for (char ch = 'A'; ch <= 'G'; ch++) {
+            for (int i = 1; i < 10; i++) {
                 String str = String.valueOf(ch) + '0' + i;
                 tickets.add(new Ticket(scheduleId, str, price));
             }
-            for(int i = 10; i <= 20; i++) {
+            for (int i = 10; i <= 20; i++) {
                 String str = ch + String.valueOf(i);
                 tickets.add(new Ticket(scheduleId, str, price));
             }

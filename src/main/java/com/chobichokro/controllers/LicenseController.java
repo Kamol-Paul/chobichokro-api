@@ -17,9 +17,9 @@ public class LicenseController {
     @GetMapping("/get/{queryString}")
     public ResponseEntity<?> getLicense(@PathVariable String queryString) {
         System.out.println(queryString);
-        if(queryString.contains("@")){
+        if (queryString.contains("@")) {
             License license = licenseRepository.findLicenseByEmail(queryString).orElse(null);
-            if(license == null){
+            if (license == null) {
                 return ResponseEntity.badRequest().body("License not found");
             }
             return ResponseEntity.ok(licenseRepository.findLicenseByEmail(queryString));
@@ -27,11 +27,12 @@ public class LicenseController {
 
         queryString = formatPhoneNumber(queryString);
         License license = licenseRepository.findLicenseByPhoneNumber(queryString).orElse(null);
-        if(license == null){
+        if (license == null) {
             return ResponseEntity.badRequest().body("License not found");
         }
         return ResponseEntity.ok(licenseRepository.findLicenseByPhoneNumber(queryString));
     }
+
     @PostMapping("/add")
     public ResponseEntity<?> addLicense(@ModelAttribute License license) {
         System.out.println(license);
@@ -39,14 +40,11 @@ public class LicenseController {
 
         if (licenseRepository.existsByLicenseNumber(license.getLicenseNumber())) {
             return ResponseEntity.badRequest().body("License already exists" + license.getLicenseNumber());
-        }
-        else if(licenseRepository.existsByPhoneNumber(license.getPhoneNumber())){
+        } else if (licenseRepository.existsByPhoneNumber(license.getPhoneNumber())) {
             return ResponseEntity.badRequest().body("License already exists" + license.getPhoneNumber());
-        }
-        else if(licenseRepository.existsByEmail(license.getEmail())){
+        } else if (licenseRepository.existsByEmail(license.getEmail())) {
             return ResponseEntity.badRequest().body("License already exists" + license.getEmail());
-        }
-        else if(licenseRepository.existsByTransactionNumber(license.getTransactionNumber())){
+        } else if (licenseRepository.existsByTransactionNumber(license.getTransactionNumber())) {
             return ResponseEntity.badRequest().body("License already exists" + license.getTransactionNumber());
         }
 
@@ -55,18 +53,20 @@ public class LicenseController {
         return ResponseEntity.ok(license);
 
     }
+
     @GetMapping("/get/pending")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getPendingLicense() {
         return ResponseEntity.ok(licenseRepository.getPendingLicenses());
     }
-@PutMapping("/update_status")
+
+    @PutMapping("/update_status")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     private ResponseEntity<?> updateLicenseStatus(@RequestParam("licenseId") String licenseId, @RequestParam("status") String status) {
         System.out.println(licenseId);
         System.out.println(status);
         License license = licenseRepository.findLicenseById(licenseId).orElse(null);
-        if(license == null){
+        if (license == null) {
             return ResponseEntity.badRequest().body("License not found");
         }
         license.setStatus(status);
@@ -74,13 +74,12 @@ public class LicenseController {
         return ResponseEntity.ok(license);
 
     }
-    private String  formatPhoneNumber(String phoneNumber){
+
+    private String formatPhoneNumber(String phoneNumber) {
         // number will be the last 10 digit
         return phoneNumber.substring(phoneNumber.length() - 10);
 
     }
-
-
 
 
 }
