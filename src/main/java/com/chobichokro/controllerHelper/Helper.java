@@ -45,8 +45,9 @@ public class Helper {
     @Autowired
     private JwtUtils jwtUtils;
 
-    public List<User> sendAllTheaterOwner(String movieId){
+    public List<String> sendAllTheaterOwner(String movieId){
         List<User> allTheaterOwner = getAllTheaterOwner();
+        List<String> forReturn = new ArrayList<>();
         if(allTheaterOwner == null){
             return null;
         }
@@ -55,8 +56,9 @@ public class Helper {
             theaterNewMovieRelation.setMovieId(movieId);
             theaterNewMovieRelation.setTheaterId(user.getId());
             theaterNewMovieRelationRepository.save(theaterNewMovieRelation);
+            forReturn.add(user.getUsername());
         }
-        return allTheaterOwner;
+        return forReturn;
     }
 
     public String getUserId(String authorizationToken){
