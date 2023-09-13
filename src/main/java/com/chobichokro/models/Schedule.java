@@ -19,7 +19,7 @@ public class Schedule {
     @NotBlank
     private String movieName;
     @NotBlank
-    private String TheaterId;
+    private String theaterId;
     @NotBlank
     private String scheduleDate;
     @NotBlank

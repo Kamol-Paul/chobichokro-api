@@ -1,10 +1,7 @@
 package com.chobichokro.controllerHelper;
 
-import com.chobichokro.models.ERole;
-import com.chobichokro.models.License;
-import com.chobichokro.models.Role;
-import com.chobichokro.models.User;
-import com.chobichokro.models.Movie;
+import com.chobichokro.models.*;
+import com.chobichokro.payload.response.ScheduleResponse;
 import com.chobichokro.relation.TheaterMoviePending;
 import com.chobichokro.relation.TheaterNewMovieRelation;
 import com.chobichokro.relation.TheaterOwnerMovieRelation;
@@ -15,6 +12,7 @@ import com.chobichokro.relationRepository.TheaterOwnerMovieRelationRepository;
 import com.chobichokro.repository.*;
 import com.chobichokro.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -185,5 +183,70 @@ public class Helper {
             forReturn.add(movie);
         }
         return forReturn;
+    }
+
+    public ResponseEntity<?> myScheduleControllerHelper(Schedule schedule, String token){
+        String userId = getUserId(token);
+       if(userId == null){
+           return ResponseEntity.ok("Not valid user.");
+       }
+       String theaterId = schedule.getTheaterId();
+       String movieName = schedule.getMovieName();
+       String scheduleDate = schedule.getScheduleDate();
+       int hallNumber = schedule.getHallNumber();
+       if(theaterId == null || movieName == null || scheduleDate == null){
+              return ResponseEntity.ok("Invalid request");
+       }
+       if(!theaterRepository.existsById(theaterId)){
+              return ResponseEntity.ok("Theater not found");
+       }
+       Movie movie = movieRepository.findByMovieName(movieName).orElse(null);
+
+       if(movie == null){
+                return ResponseEntity.ok("Movie not found");
+       }
+       Theater theater = theaterRepository.findById(theaterId).orElse(null);
+       if(theater == null){
+                 return ResponseEntity.ok("Theater not found");
+       }
+        User user = getUser(token);
+         if(user == null){
+                  return ResponseEntity.ok("User not found");
+         }
+
+       if(!Objects.equals(theater.getLicenseId(), user.getLicenseId())){
+                  return ResponseEntity.ok("You are not the owner of this theater");
+       }
+        System.out.println("Theater owner id : " + userId);
+        System.out.println("Movie id : " + movie.getId());
+       if(!theaterOwnerMovieRelationRepository.existsByTheaterOwnerIdAndMovieId(userId, movie.getId())){
+                  return ResponseEntity.ok("You Do not have the right to schedule this movie");
+       }
+       if(hallNumber > theater.getNumberOfScreens() || hallNumber < 1){
+           return ResponseEntity.ok("Invalid hall number");
+       }
+
+       if(isFree(schedule)){
+                    return ResponseEntity.ok("Schedule already At that time and hall");
+       }
+
+       schedule = scheduleRepository.save(schedule);
+       List<Ticket> for_ans = Ticket.getTicketForSchedule(schedule.getScheduleId(), 100);
+
+        ticketRepository.saveAll(for_ans);
+        ScheduleResponse scheduleResponse = new ScheduleResponse(schedule, for_ans, "Schedule added successfully");
+
+        return ResponseEntity.ok(scheduleResponse);
+
+    }
+    boolean isFree(Schedule schedule){
+        return scheduleRepository.existsByHallNumber(schedule.getHallNumber())
+                && scheduleRepository.existsByScheduleDate(schedule.getScheduleDate())
+                && scheduleRepository.existsByTheaterId(schedule.getTheaterId());
+
+    }
+    User getUser(String token){
+        String username = jwtUtils.getUserNameFromJwtToken(token.substring(7));
+        return userRepository.findByUsername(username).orElse(null);
     }
 }

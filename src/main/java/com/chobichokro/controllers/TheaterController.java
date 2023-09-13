@@ -96,8 +96,8 @@ public class TheaterController {
         if(theater.getName().contains(matching)) return true;
         return theater.getAddress().contains(matching);
     }
-    @GetMapping("/myTheater")
-    @PreAuthorize("hasRole('THEATER_OWNER')")
+    @GetMapping("/my_theater")
+    @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
     ResponseEntity<?> getTheaterByOwner(@RequestHeader("Authorization") String token){
         String licenseId = authenticate(token);
         Theater theater =  theaterRepository.findByLicenseId(licenseId).orElse(null);

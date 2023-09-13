@@ -1,5 +1,6 @@
 package com.chobichokro.controllers;
 
+import com.chobichokro.controllerHelper.Helper;
 import com.chobichokro.models.*;
 import com.chobichokro.repository.MovieRepository;
 import com.chobichokro.repository.ScheduleRepository;
@@ -16,6 +17,8 @@ import java.util.Optional;
 @RequestMapping("/api/schedule")
 public class ScheduleController {
     @Autowired
+    Helper helper;
+    @Autowired
     private ScheduleRepository scheduleRepository;
     @Autowired
     private MovieRepository movieRepository;
@@ -25,28 +28,10 @@ public class ScheduleController {
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('THEATER_OWNER')")
-    public ResponseEntity<?> addSchedule(@ModelAttribute Schedule schedule){
-        boolean freeNaki = isFree(schedule);
-        if(!freeNaki){
-            return ResponseEntity.badRequest().body("Schedule already At that time and hall");
-        }
-        Movie movie = movieRepository.findByMovieName(schedule.getMovieName()).orElse(null);
-        if(movie == null){
-            return ResponseEntity.badRequest().body("Movie not found");
-        }
-        Theater theater = theaterRepository.findById(schedule.getTheaterId()).orElse(null);
-        schedule = scheduleRepository.save(schedule);
-        return ResponseEntity.ok(schedule);
-
-//        List<Ticket> for_ans = Ticket.getTicketForSchedule(schedule.getScheduleId(), 100);
-//        return ResponseEntity.ok(for_ans);
+    public ResponseEntity<?> addSchedule(@ModelAttribute Schedule schedule ,@RequestHeader("Authorization") String token){
+       return helper.myScheduleControllerHelper(schedule, token);
     }
-    boolean isFree(Schedule schedule){
-        return scheduleRepository.existsByHallNumber(schedule.getHallNumber())
-                && scheduleRepository.existsByScheduleDate(schedule.getScheduleDate())
-                && scheduleRepository.existsByTheaterId(schedule.getTheaterId());
 
-    }
     @GetMapping("/all")
     public ResponseEntity<?> getAllSchedules(){
         return ResponseEntity.ok(scheduleRepository.findAll());
