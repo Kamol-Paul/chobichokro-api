@@ -4,15 +4,12 @@ import com.chobichokro.models.*;
 import com.chobichokro.repository.MovieRepository;
 import com.chobichokro.repository.ScheduleRepository;
 import com.chobichokro.repository.TheaterRepository;
-import com.chobichokro.repository.UserRepository;
-import com.chobichokro.security.jwt.JwtUtils;
+;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RestController()
@@ -74,7 +71,6 @@ public class ScheduleController {
     public ResponseEntity<?> getScheduleByDate(@PathVariable String date){
         return ResponseEntity.ok(scheduleRepository.findByScheduleDate(date));
     }
-
 
 
 

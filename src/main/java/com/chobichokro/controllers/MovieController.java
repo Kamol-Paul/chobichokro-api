@@ -6,6 +6,7 @@ import com.chobichokro.payload.request.MovieRequest;
 import com.chobichokro.payload.response.MovieResponse;
 import com.chobichokro.repository.MovieRepository;
 import com.chobichokro.repository.UserRepository;
+import com.chobichokro.security.jwt.JwtUtils;
 import com.chobichokro.services.FileServices;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 //@CrossOrigin(origins = {"*", "http://localhost:3000"})
@@ -151,16 +153,20 @@ public class MovieController {
         }
         return false;
     }
-//    @PutMapping("/update/{movieName}")
-//    void update_description (@PathVariable("movieName") String movieName, @RequestBody String description){
-//        System.out.println(description);
-//        Optional<Movie> movie = movieRepository.findByMovieName(movieName);
-//        if(movie.isEmpty()){
-//            System.out.println("movie not found");
-//            return;
-//        }
-//        movieRepository.delete(movie.get());
-//        movie.get().setDescription(description);
-//        movieRepository.save(movie.get());
-//    }
+
+    @GetMapping("/myMovie")
+    @PreAuthorize("hasRole('ROLE_DISTRIBUTOR') or hasRole('ADMIN')")
+    List<Movie> getMyMovie(@RequestHeader("Authorization") String token){
+        System.out.println("token :" + token);
+        return movieRepository.findAllByDistributorId(authenticate(token));
+    }
+
+    @Autowired
+    JwtUtils jwtUtils;
+    String authenticate(String authHeader){
+        String token = authHeader.split(" ")[1];
+        String userName =  jwtUtils.getUserNameFromJwtToken(token);
+        return Objects.requireNonNull(userRepository.findByUsername(userName).orElse(null)).getId();
+
+    }
 }

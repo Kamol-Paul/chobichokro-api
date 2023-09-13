@@ -15,4 +15,5 @@ public interface MovieRepository extends MongoRepository<Movie, String> {
     List<Movie> findAll();
 
 
+    List<Movie> findAllByDistributorId(String distributorId);
 }
