@@ -13,6 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -220,7 +225,7 @@ public class UserHelper {
 
     }
 
-    public ResponseEntity<?> addReview(String token, ReviewRequest review) {
+    public ResponseEntity<?> addReview(String token, ReviewRequest review){
         User user = getMe(token);
         if (user == null) return ResponseEntity.ok("User not found");
         var schedule = scheduleRepository.findById(review.getScheduleId());
@@ -235,10 +240,53 @@ public class UserHelper {
         newReview.setTheatreId(theaterId);
         newReview.setUserId(user.getId());
         newReview.setOpinion(review.getOpinion());
-        newReview.setSentimentScore(0);
+        newReview.setSentimentScore(getSentimentScoreWithTry(review.getOpinion()));
         newReview = reviewRepository.save(newReview);
         return ResponseEntity.ok(newReview);
 
 
+    }
+
+    public Double getSentimentScore(String opinion) throws IOException {
+        URL url = new URL("http://localhost:5000");
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setDoOutput(true);
+        String jsonInputString = "{\"opinion\": \"" + opinion + "\"}";
+        System.out.println(jsonInputString);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(jsonInputString);
+        wr.flush();
+        wr.close();
+
+        int responseCode = con.getResponseCode();
+        System.out.println("Response Code: " + responseCode);
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        System.out.println(response.toString());
+
+        return get_double_from_string(response.toString());
+
+    }
+    double get_double_from_string(String s) {
+        s = s.substring(1, s.length() - 2);
+        return Double.parseDouble(s);
+    }
+    Double getSentimentScoreWithTry(String opinion) {
+        try {
+            return getSentimentScore(opinion);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

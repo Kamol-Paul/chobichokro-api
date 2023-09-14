@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -66,6 +68,10 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> addReview(@RequestHeader("Authorization") String token, @ModelAttribute ReviewRequest review) {
         return userHelper.addReview(token , review);
+    }
+    @GetMapping("/")
+    public ResponseEntity<?> score() throws IOException, InterruptedException {
+        return ResponseEntity.ok(userHelper.getSentimentScore("I hate this movie"));
     }
 
 
