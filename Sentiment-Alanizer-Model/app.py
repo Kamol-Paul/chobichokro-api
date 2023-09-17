@@ -1,7 +1,7 @@
 from flask import Flask, request
 model_path = "./model"
 from transformers import pipeline
-sentiment_task = pipeline("text-classification", model=model_path, device_map="cpu")
+sentiment_task = pipeline("text-classification", model=model_path, tokenizer= model_path, device_map="cpu")
 app = Flask(__name__)
 
 
@@ -17,7 +17,7 @@ def get_sentiment():
     print(label)
     if label == 'negative':
         score = -score
-        print('negetive')
+        print('negative')
     elif label == 'positive':
         score = score
         print('positive')
