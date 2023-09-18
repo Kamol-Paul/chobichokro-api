@@ -1,15 +1,25 @@
 package com.chobichokro.controllers;
 
 import com.chobichokro.controllerHelper.DirectorHelper;
+import com.chobichokro.controllerHelper.Helper;
+
+import com.chobichokro.payload.request.MovieRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+
+
 @RestController
-@RequestMapping("api/director")
+@RequestMapping("api/distributor")
 public class DirectorController {
     @Autowired
     DirectorHelper directorHelper;
+    @Autowired
+    Helper helper;
     @GetMapping("/get/analysis")
     public ResponseEntity<?> getAnalysis(@RequestHeader("Authorization") String token){
         return directorHelper.getDirectorAnalysis(token);
@@ -26,4 +36,21 @@ public class DirectorController {
     public ResponseEntity<?> getMyNameId(@RequestHeader("Authorization") String token){
         return directorHelper.getMyNameId(token);
     }
+    @PostMapping("/addMovie")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ROLE_DISTRIBUTOR')")
+    public ResponseEntity<?> addMovie(@ModelAttribute("movie") MovieRequest movie, @RequestHeader("Authorization") String auth) throws ParseException {
+        return directorHelper.addMovie(movie, auth);
+    }
+    @GetMapping("/pending_movie_request")
+    @PreAuthorize("hasRole('ROLE_DISTRIBUTOR') or hasRole('ADMIN')")
+    ResponseEntity<?> getPendingMovie(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(helper.getPendingMovies(token));
+    }
+
+    @PostMapping("/accept_pending_request/{id}")
+    @PreAuthorize("hasRole('ROLE_DISTRIBUTOR') or hasRole('ADMIN')")
+    ResponseEntity<?> acceptPendingRequest(@RequestHeader("Authorization") String token, @PathVariable("id") String id) {
+        return ResponseEntity.ok(helper.acceptPendingRequest(token, id));
+    }
+
 }

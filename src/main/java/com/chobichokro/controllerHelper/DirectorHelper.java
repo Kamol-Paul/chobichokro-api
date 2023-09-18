@@ -1,22 +1,35 @@
 package com.chobichokro.controllerHelper;
 
 import com.chobichokro.models.*;
+import com.chobichokro.payload.request.MovieRequest;
 import com.chobichokro.payload.response.DirectorAnalysis;
 import com.chobichokro.payload.response.MovieAnalysis;
+import com.chobichokro.payload.response.MovieResponse;
 import com.chobichokro.relationRepository.TheaterMoviePendingRepository;
 import com.chobichokro.relationRepository.TheaterMovieRelationRepository;
 import com.chobichokro.relationRepository.TheaterNewMovieRelationRepository;
 import com.chobichokro.relationRepository.TheaterOwnerMovieRelationRepository;
 import com.chobichokro.repository.*;
 import com.chobichokro.security.jwt.JwtUtils;
+import com.chobichokro.services.FileServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
 public class DirectorHelper {
+    @Value("${project.image}")
+    String path;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -44,6 +57,10 @@ public class DirectorHelper {
     private TheaterMoviePendingRepository theaterMoviePendingRepository;
     @Autowired
     private TheaterOwnerMovieRelationRepository theaterOwnerMovieRelationRepository;
+    @Autowired
+    FileServices fileServices;
+    @Autowired
+    Helper helper;
 
     public ResponseEntity<?> getDirectorAnalysis(String token) {
         User director = getMe(token);
@@ -168,5 +185,60 @@ public class DirectorHelper {
         map.put("id", user.getId());
         map.put("email", user.getEmail());
         return ResponseEntity.ok(map);
+    }
+    public ResponseEntity<?> addMovie(MovieRequest movie,String auth) throws ParseException {
+
+        MovieResponse movieResponse = new MovieResponse();
+        String distributorId = getMe(auth).getId();
+        if (distributorId == null) {
+            movieResponse.setMessage("Distributor id is null");
+            return ResponseEntity.badRequest().body(movieResponse);
+        }
+        User distributor = userRepository.findById(distributorId).orElse(null);
+        if (distributor == null) {
+            movieResponse.setMessage("Distributor not found");
+            return ResponseEntity.badRequest().body(movieResponse);
+        }
+        if (movieRepository.existsByMovieName(movie.getMovieName())) {
+            movieResponse.setMessage("Movie already exists" + movie.getMovieName());
+            return ResponseEntity.badRequest().body(movieResponse);
+        }
+        Movie newMovie = new Movie();
+
+        newMovie.setMovieName(movie.getMovieName());
+        newMovie.setGenre(movie.getGenre());
+        newMovie.setCast(movie.getCast());
+        newMovie.setDirector(movie.getDirector());
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        newMovie.setReleaseDate(df.parse(movie.getReleaseDate()));
+        newMovie.setTrailerLink(movie.getTrailerLink());
+        String fileName;
+        MultipartFile image = movie.getImage();
+        try {
+            fileName = fileServices.uploadImage(path, image);
+        } catch (IOException e) {
+            System.out.println("Error uploading image");
+            throw new RuntimeException(e);
+        }
+        newMovie.setPosterImageLink(fileName);
+        System.out.println(newMovie);
+        newMovie.setStatus(movie.getStatus());
+        newMovie.setDescription(movie.getDescription());
+        newMovie.setDistributorId(distributorId);
+        movieRepository.save(newMovie);
+        movieResponse.setMessage("Movie added successfully");
+        movieResponse.setMovieName(movie.getMovieName());
+        movieResponse.setGenre(movie.getGenre());
+        movieResponse.setCast(movie.getCast());
+        movieResponse.setDirector(movie.getDirector());
+        movieResponse.setReleaseDate(df.parse(movie.getReleaseDate()));
+        movieResponse.setTrailerLink(movie.getTrailerLink());
+        movieResponse.setPosterImageLink(fileName);
+        movieResponse.setStatus(movie.getStatus());
+        movieResponse.setDescription(movie.getDescription());
+        movieResponse.setDistributorId(distributorId);
+        System.out.println(movieResponse);
+        movieResponse.setTheaterOwnerToSend(helper.sendAllTheaterOwner(newMovie.getId()));
+        return ResponseEntity.ok(movieResponse);
     }
 }
