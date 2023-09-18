@@ -22,4 +22,8 @@ public class DirectorController {
     public ResponseEntity<?> getMyMovies(@RequestHeader("Authorization") String token){
         return directorHelper.getMyMovies(token);
     }
+    @GetMapping("/get/me")
+    public ResponseEntity<?> getMyNameId(@RequestHeader("Authorization") String token){
+        return directorHelper.getMyNameId(token);
+    }
 }

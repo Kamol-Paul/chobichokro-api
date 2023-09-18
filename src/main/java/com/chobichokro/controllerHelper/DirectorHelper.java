@@ -160,4 +160,13 @@ public class DirectorHelper {
         List<Movie> movieList = movieRepository.findAllByDistributorId(user.getId());
         return ResponseEntity.ok(movieList);
     }
+
+    public ResponseEntity<?> getMyNameId(String token) {
+        User user = getMe(token);
+        Map<String, String> map = new HashMap<>();
+        map.put("name", user.getUsername());
+        map.put("id", user.getId());
+        map.put("email", user.getEmail());
+        return ResponseEntity.ok(map);
+    }
 }
