@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ScheduleRepository extends MongoRepository<Schedule, String> {
-    @Override
-    Optional<Schedule> findById(String string);
+
 
     List<Schedule> findByMovieName(String movieName);
 
@@ -16,7 +15,6 @@ public interface ScheduleRepository extends MongoRepository<Schedule, String> {
 
     List<Schedule> findByScheduleDate(String scheduleDate);
 
-    List<Schedule> findAll();
 
     Boolean existsByScheduleId(String scheduleId);
 
