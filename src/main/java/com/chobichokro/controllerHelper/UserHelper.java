@@ -69,7 +69,7 @@ public class UserHelper {
         return Pair.of(user, "successfully set amount balance");
     }
 
-    public Object getAllSchedule() {
+    public List<Schedule> getAllSchedule() {
         return scheduleRepository.findAll();
     }
 
