@@ -27,4 +27,5 @@ public interface ScheduleRepository extends MongoRepository<Schedule, String> {
     Boolean existsByScheduleDate(String scheduleDate);
 
     Boolean existsByHallNumber(int hallNumber);
+    List<Schedule> findAllByMovieName(String movieName);
 }
