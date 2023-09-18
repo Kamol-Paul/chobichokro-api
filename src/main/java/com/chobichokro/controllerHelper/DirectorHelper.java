@@ -95,6 +95,46 @@ public class DirectorHelper {
         return ResponseEntity.ok(directorAnalysis);
 
     }
+    public ResponseEntity<?> getSingleMovieAnalysis(String token, String movieId){
+        User director = getMe(token);
+        if (director == null) {
+            return ResponseEntity.ok("Director not found");
+        }
+        Movie movie = movieRepository.findById(movieId).orElse(null);
+        if(movie == null){
+            return ResponseEntity.ok("Movie not found");
+        }
+        List<Schedule> scheduleList = scheduleRepository.findAllByMovieName(movie.getMovieName());
+        Set<String> theaterIdSet = new HashSet<>();
+        List<Ticket> tickets = ticketRepository.findAll();
+        MovieAnalysis movieAnalysis = new MovieAnalysis();
+        movieAnalysis.setMovie(movie);
+        movieAnalysis.setTotalScreening(scheduleList.size());
+        int totalTicketSell = 0;
+        int totalRevenue = 0;
+        int ticketPrice = 100;
+        for (Schedule schedule : scheduleList) {
+            theaterIdSet.add(schedule.getTheaterId());
+            int countTicket = countTickerOfSchedule(tickets, schedule.getScheduleId());
+            totalTicketSell += countTicket;
+            totalRevenue += totalTicketSell * ticketPrice;
+
+        }
+        movieAnalysis.setTotalTheater(theaterIdSet.size());
+        movieAnalysis.setTotalRevenue(totalRevenue);
+        movieAnalysis.setTotalTicket(totalTicketSell);
+        List<Review> reviews = reviewRepository.findAllByMovieId(movie.getId());
+        if(!reviews.isEmpty()){
+            double totalRating = 0;
+            for(Review review: reviews){
+                totalRating+=review.getSentimentScore();
+            }
+            movieAnalysis.setAverageSentiment(totalRating/reviews.size());
+        }else {
+            movieAnalysis.setAverageSentiment(0);
+        }
+        return ResponseEntity.ok(movieAnalysis);
+    }
     int countTickerOfSchedule(List<Ticket> tickets, String scheduleId) {
         int count = 0;
         for (Ticket ticket : tickets) {
@@ -112,4 +152,12 @@ public class DirectorHelper {
 
     }
 
+    public ResponseEntity<?> getMyMovies(String token) {
+        User user = getMe(token);
+        if(user == null){
+            return ResponseEntity.ok("User not found");
+        }
+        List<Movie> movieList = movieRepository.findAllByDistributorId(user.getId());
+        return ResponseEntity.ok(movieList);
+    }
 }
