@@ -2,6 +2,7 @@ package com.chobichokro.controllers;
 
 
 import com.chobichokro.controllerHelper.Helper;
+import com.chobichokro.controllerHelper.TheaterHelper;
 import com.chobichokro.models.License;
 import com.chobichokro.models.Theater;
 import com.chobichokro.models.User;
@@ -135,6 +136,16 @@ public class TheaterController {
     @PreAuthorize("hasRole('ROLE_DISTRIBUTOR') or hasRole('ADMIN')")
     public ResponseEntity<?> getAllTheaterOwnerMovie(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(helper.getAllTheaterOwnerMovie(token));
+    }
+    @Autowired
+    TheaterHelper theaterHelper;
+    @GetMapping("/running/{theaterId}")
+    public ResponseEntity<?> getRunningMovieInTheater(@PathVariable("theaterId") String theaterId){
+        return theaterHelper.getRunningMovieInTheater(theaterId);
+    }
+    @GetMapping("/upcoming/{theaterId}")
+    public ResponseEntity<?> getUpcomingMovieInTheater(@PathVariable("theaterId") String theaterId){
+        return theaterHelper.getUpcomingMovie(theaterId);
     }
 
 
