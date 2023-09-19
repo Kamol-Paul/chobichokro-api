@@ -14,6 +14,7 @@ import com.chobichokro.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -257,4 +258,10 @@ public class Helper {
         String username = jwtUtils.getUserNameFromJwtToken(token.substring(7));
         return userRepository.findByUsername(username).orElse(null);
     }
+
+    public ResponseEntity<?> getRunningMovie(String theaterId){
+        var schedules = scheduleRepository.findAllByTheaterId(theaterId);
+        return ResponseEntity.ok(Objects.requireNonNullElse(schedules, "No movie running"));
+    }
+
 }
