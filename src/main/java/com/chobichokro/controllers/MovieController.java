@@ -195,5 +195,9 @@ public class MovieController {
         Optional<Movie> movie = movieRepository.findByMovieName(movieName);
         return movie.<ResponseEntity<?>>map(value -> ResponseEntity.ok(value.getId())).orElseGet(() -> ResponseEntity.ok("movie not found"));
     }
+    @GetMapping("/get/running_movie/theater/{id}")
+    ResponseEntity<?> getRunningMovie(@PathVariable("id") String id){
+        return helper.getRunningMovie(id);
+    }
 
 }
