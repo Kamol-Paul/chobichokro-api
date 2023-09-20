@@ -147,6 +147,10 @@ public class TheaterController {
     public ResponseEntity<?> getUpcomingMovieInTheater(@PathVariable("theaterId") String theaterId){
         return theaterHelper.getUpcomingMovie(theaterId);
     }
+    @GetMapping("/get/myTheater")
+    public ResponseEntity<?> getMyTheater(@RequestHeader("Authorization") String token){
+        return ResponseEntity.ok(theaterHelper.getMyTheater(token));
+    }
 
 
 }
