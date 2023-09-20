@@ -7,10 +7,12 @@ import com.chobichokro.relationRepository.TheaterNewMovieRelationRepository;
 import com.chobichokro.relationRepository.TheaterOwnerMovieRelationRepository;
 import com.chobichokro.repository.*;
 import com.chobichokro.security.jwt.JwtUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -45,5 +47,19 @@ public class TicketHelper {
         List<Ticket> allAvailableTickets = ticketRepository.findAll();
         allAvailableTickets.removeIf(Ticket::isBooked);
         return ResponseEntity.ok(allAvailableTickets);
+    }
+
+    public ResponseEntity<?> getTicketsByScheduleId(String scheduleId) {
+        List<Ticket> tickets = ticketRepository.findAllByScheduleId(scheduleId);
+        List<Ticket> booked_tickets = new ArrayList<>();
+        List<Ticket> available_tickets = new ArrayList<>();
+        for (Ticket ticket : tickets) {
+            if (ticket.isBooked()) {
+                booked_tickets.add(ticket);
+            } else {
+                available_tickets.add(ticket);
+            }
+        }
+        return ResponseEntity.ok(Pair.of(booked_tickets, available_tickets));
     }
 }

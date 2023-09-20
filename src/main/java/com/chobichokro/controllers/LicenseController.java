@@ -71,6 +71,7 @@ public class LicenseController {
         }
         license.setStatus(status);
         System.out.println(license);
+        license = licenseRepository.save(license);
         return ResponseEntity.ok(license);
 
     }
