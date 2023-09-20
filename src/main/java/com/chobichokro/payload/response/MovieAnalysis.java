@@ -1,7 +1,10 @@
 package com.chobichokro.payload.response;
 
 import com.chobichokro.models.Movie;
+import com.chobichokro.models.Review;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,4 +19,5 @@ public class MovieAnalysis {
     private int totalTheater;
     private double averageSentiment;
     private String movieVerdict;
+    List<Review> reviews;
 }

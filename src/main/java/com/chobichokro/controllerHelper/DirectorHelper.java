@@ -96,6 +96,7 @@ public class DirectorHelper {
             movieAnalysis.setTotalRevenue(totalRevenue);
             movieAnalysis.setTotalTicket(totalTicketSell);
             List<Review> reviews = reviewRepository.findAllByMovieId(movie.getId());
+            movieAnalysis.setReviews(reviews);
             if(!reviews.isEmpty()){
                 double totalRating = 0;
                 for(Review review: reviews){
@@ -141,6 +142,7 @@ public class DirectorHelper {
         movieAnalysis.setTotalRevenue(totalRevenue);
         movieAnalysis.setTotalTicket(totalTicketSell);
         List<Review> reviews = reviewRepository.findAllByMovieId(movie.getId());
+        movieAnalysis.setReviews(reviews);
         if(!reviews.isEmpty()){
             double totalRating = 0;
             for(Review review: reviews){
