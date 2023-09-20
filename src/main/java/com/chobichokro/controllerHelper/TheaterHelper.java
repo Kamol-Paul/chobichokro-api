@@ -17,6 +17,8 @@ import java.util.*;
 @Component
 public class TheaterHelper {
     @Autowired
+    Helper helper;
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private TheaterRepository theaterRepository;
@@ -93,5 +95,18 @@ public class TheaterHelper {
         }
         return ResponseEntity.ok(forRet);
 
+    }
+
+    public ResponseEntity<?> getMyTheater(String token) {
+        User theaterOwner = helper.getUser(token);
+        if(theaterOwner == null){
+            return ResponseEntity.ok("User not found");
+        }
+        Optional<License> license = licenseRepository.findLicenseById(theaterOwner.getLicenseId());
+        if(license.isEmpty()){
+            return ResponseEntity.ok("License not found");
+        }
+        List<Theater> theaters = theaterRepository.findAllByLicenseId(license.get().getId());
+        return ResponseEntity.ok(theaters);
     }
 }
