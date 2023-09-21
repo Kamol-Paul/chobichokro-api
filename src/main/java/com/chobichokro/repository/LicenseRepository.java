@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface LicenseRepository extends MongoRepository<License, String> {
     Optional<License> findLicenseByPhoneNumber(String phoneNumber);
+    Optional<License> findByLicenseNumber(String licenseNumber);
 
     Boolean existsByPhoneNumber(String phoneNumber);
 

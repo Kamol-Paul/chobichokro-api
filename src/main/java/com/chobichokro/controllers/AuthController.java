@@ -107,8 +107,10 @@ public class AuthController {
         Set<Role> roles = new HashSet<>();
         Optional<License> license = Optional.empty();
         if (licenseId != null) {
-            license = licenseRepository.findLicenseById(licenseId);
+            license = licenseRepository.findByLicenseNumber(licenseId);
+
             if (license.isPresent()) {
+                licenseId = license.get().getId();
                 String have_role = license.get().getLicenseType();
                 String status = license.get().getStatus();
                 if (!Objects.equals(status, "approved")) {
