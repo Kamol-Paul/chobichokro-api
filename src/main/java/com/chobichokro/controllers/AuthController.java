@@ -1,15 +1,13 @@
 package com.chobichokro.controllers;
 
-import com.chobichokro.models.ERole;
-import com.chobichokro.models.License;
-import com.chobichokro.models.Role;
-import com.chobichokro.models.User;
+import com.chobichokro.models.*;
 import com.chobichokro.payload.request.LoginRequest;
 import com.chobichokro.payload.request.SignupRequest;
 import com.chobichokro.payload.response.JwtResponse;
 import com.chobichokro.payload.response.MessageResponse;
 import com.chobichokro.repository.LicenseRepository;
 import com.chobichokro.repository.RoleRepository;
+import com.chobichokro.repository.TheaterRepository;
 import com.chobichokro.repository.UserRepository;
 import com.chobichokro.security.jwt.JwtUtils;
 import com.chobichokro.security.services.UserDetailsImpl;
@@ -33,6 +31,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    @Autowired
+    TheaterRepository theaterRepository;
     @Autowired
     AuthenticationManager authenticationManager;
 
@@ -127,6 +127,14 @@ public class AuthController {
                     Role theaterOwner = roleRepository.findByName(ERole.ROLE_THEATER_OWNER)
                             .orElseThrow(() -> new RuntimeException("Error : Role is not found."));
                     roles.add(theaterOwner);
+
+                    Theater theater = new Theater();
+                    theater.setName(signUpRequest.getUsername());
+                    theater.setAddress(license.get().getAddress());
+                    theater.setLicenseId(licenseId);
+                    theater.setNumberOfScreens(signUpRequest.getNumberOfScreen());
+                    theaterRepository.save(theater);
+
                 }
             }
         }
