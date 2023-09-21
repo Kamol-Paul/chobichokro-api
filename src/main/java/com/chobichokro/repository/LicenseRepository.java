@@ -44,4 +44,10 @@ public interface LicenseRepository extends MongoRepository<License, String> {
     }
 
 
+    default List<License> getApproved(){
+        List<License> licenses = findAll();
+        licenses.removeIf(license -> !license.getStatus().equals("approved"));
+        return licenses;
+
+    }
 }
