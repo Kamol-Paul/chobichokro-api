@@ -243,4 +243,45 @@ public class DirectorHelper {
         movieResponse.setTheaterOwnerToSend(helper.sendAllTheaterOwner(newMovie.getId()));
         return ResponseEntity.ok(movieResponse);
     }
+
+    public ResponseEntity<?> getRunningMovie(String token) {
+        User user = getMe(token);
+        if(user == null){
+            return ResponseEntity.ok("User not found");
+        }
+        List<Movie> movieList = movieRepository.findAllByDistributorId(user.getId());
+        List<Movie> runningMovieList = new ArrayList<>();
+        Date currentDate = new Date();
+        List<Schedule> scheduleList = scheduleRepository.findAll();
+        Set<String> runningMovieName = new HashSet<>();
+        scheduleList.forEach(schedule -> {
+            runningMovieName.add(schedule.getMovieName());
+        });
+        for(Movie movie: movieList){
+            Date date = movie.getReleaseDate();
+            if(date.before(currentDate)){
+                if(runningMovieName.contains(movie.getMovieName())){
+                    runningMovieList.add(movie);
+                }
+            }
+        }
+        return ResponseEntity.ok(runningMovieList);
+    }
+    public ResponseEntity<?> getUpComingMovie(String token) {
+        User user = getMe(token);
+        if(user == null){
+            return ResponseEntity.ok("User not found");
+        }
+        List<Movie> movieList = movieRepository.findAllByDistributorId(user.getId());
+        List<Movie> upComingMovieList = new ArrayList<>();
+        Date currentDate = new Date();
+        List<Schedule> scheduleList = scheduleRepository.findAll();
+        for(Movie movie: movieList){
+            Date date = movie.getReleaseDate();
+            if(date.after(currentDate)){
+                upComingMovieList.add(movie);
+            }
+        }
+        return ResponseEntity.ok(upComingMovieList);
+    }
 }
