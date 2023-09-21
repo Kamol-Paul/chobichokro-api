@@ -60,6 +60,12 @@ public class LicenseController {
         return ResponseEntity.ok(licenseRepository.getPendingLicenses());
     }
 
+    @GetMapping("/get/approved")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> getApproved() {
+        return ResponseEntity.ok(licenseRepository.getApproved());
+    }
+
     @PutMapping("/update_status")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     private ResponseEntity<?> updateLicenseStatus(@RequestParam("licenseId") String licenseId, @RequestParam("status") String status) {
