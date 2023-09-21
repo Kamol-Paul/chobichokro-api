@@ -1,13 +1,14 @@
 package com.chobichokro.payload.response;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
-
+@ToString
+@Getter
 public class JwtResponse {
     private String token;
     private String type = "Bearer";
-    @Getter
     private String id;
     private String username;
     private String email;
@@ -19,22 +20,6 @@ public class JwtResponse {
         this.username = username;
         this.email = email;
         this.roles = roles;
-    }
-
-    public String getAccessToken() {
-        return token;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.token = accessToken;
-    }
-
-    public String getTokenType() {
-        return type;
-    }
-
-    public void setTokenType(String tokenType) {
-        this.type = tokenType;
     }
 
     public void setId(String id) {
