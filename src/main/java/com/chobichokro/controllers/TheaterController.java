@@ -132,8 +132,8 @@ public class TheaterController {
         return ResponseEntity.ok(helper.getNewMovies(token));
     }
 
-    @GetMapping("/all_my_movie")
-    @PreAuthorize("hasRole('ROLE_DISTRIBUTOR') or hasRole('ADMIN')")
+    @GetMapping("/get/all_my_movie")
+    @PreAuthorize("hasRole('ROLE_THEATER_OWNER') or hasRole('ADMIN')")
     public ResponseEntity<?> getAllTheaterOwnerMovie(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(helper.getAllTheaterOwnerMovie(token));
     }
@@ -145,11 +145,21 @@ public class TheaterController {
     }
     @GetMapping("/upcoming/{theaterId}")
     public ResponseEntity<?> getUpcomingMovieInTheater(@PathVariable("theaterId") String theaterId){
-        return theaterHelper.getUpcomingMovie(theaterId);
+        return theaterHelper.getUpcomingMovieInTheater(theaterId);
     }
     @GetMapping("/get/myTheater")
     public ResponseEntity<?> getMyTheater(@RequestHeader("Authorization") String token){
         return ResponseEntity.ok(theaterHelper.getMyTheater(token));
+    }
+    @GetMapping("/get/running_movie")
+    @PreAuthorize("hasRole('ROLE_THEATER_OWNER') or hasRole('ADMIN')")
+    ResponseEntity<?> getRunningMovie(@RequestHeader("Authorization") String token){
+        return theaterHelper.getRunningMovie(token);
+    }
+    @GetMapping("/get/upcoming_movie")
+    @PreAuthorize("hasRole('ROLE_THEATER_OWNER') or hasRole('ADMIN')")
+    ResponseEntity<?> getUpcomingMovie(@RequestHeader("Authorization") String token){
+        return theaterHelper.getUpComingMovie(token);
     }
 
 

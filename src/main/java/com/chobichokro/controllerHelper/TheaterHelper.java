@@ -46,50 +46,54 @@ public class TheaterHelper {
 
     public ResponseEntity<?> getRunningMovieInTheater(String theaterId) {
         List<Schedule> schedules = scheduleRepository.findByTheaterId(theaterId);
-        if(schedules == null){
+        if (schedules == null) {
             return ResponseEntity.ok("No movie running in this theater");
         }
         Set<Movie> movieSet = new HashSet<>();
-        for(Schedule schedule : schedules){
+        Date date = new Date();
+        for (Schedule schedule : schedules) {
             Optional<Movie> movie = movieRepository.findByMovieName(schedule.getMovieName());
-            movie.ifPresent(movieSet::add);
+            if (movie.isEmpty()) continue;
+            if (date.before(movie.get().getReleaseDate())) continue;
+            movieSet.add(movie.get());
         }
-        return  ResponseEntity.ok(movieSet);
+        return ResponseEntity.ok(movieSet);
     }
 
     public Set<Movie> getRunningMovieSetInTheater(String theaterId) {
         List<Schedule> schedules = scheduleRepository.findByTheaterId(theaterId);
-        if(schedules == null){
+        if (schedules == null) {
             return null;
         }
         Set<Movie> movieSet = new HashSet<>();
-        for(Schedule schedule : schedules){
+        for (Schedule schedule : schedules) {
             Optional<Movie> movie = movieRepository.findByMovieName(schedule.getMovieName());
             movie.ifPresent(movieSet::add);
         }
-        return  movieSet;
+        return movieSet;
     }
-    public ResponseEntity<?> getUpcomingMovie(String theaterId){
+
+    public ResponseEntity<?> getUpcomingMovieInTheater(String theaterId) {
         Theater theater = theaterRepository.findById(theaterId).orElse(null);
-        if(theater == null){
+        if (theater == null) {
             return ResponseEntity.ok("Theater not found");
         }
         Optional<License> license = licenseRepository.findLicenseById(theater.getLicenseId());
-        if(license.isEmpty()){
+        if (license.isEmpty()) {
             return ResponseEntity.ok("License not found");
         }
         Optional<User> theaterOwner = userRepository.findById(license.get().getLicenseOwner());
-        if(theaterOwner.isEmpty()){
+        if (theaterOwner.isEmpty()) {
             return ResponseEntity.ok("Theater owner not found");
         }
         List<TheaterOwnerMovieRelation> theaterOwnerMovieRelations = theaterOwnerMovieRelationRepository.findAllByTheaterOwnerId(theaterOwner.get().getId());
         Set<Movie> movieSet = getRunningMovieSetInTheater(theaterId);
         Set<Movie> forRet = new HashSet<>();
-
-        for(TheaterOwnerMovieRelation theaterOwnerMovieRelation: theaterOwnerMovieRelations){
+        Date date = new Date();
+        for (TheaterOwnerMovieRelation theaterOwnerMovieRelation : theaterOwnerMovieRelations) {
             Movie movie = movieRepository.findById(theaterOwnerMovieRelation.getMovieId()).orElse(null);
-            if(movie == null) continue;
-            if(movieSet.contains(movie)) continue;
+            if (movie == null) continue;
+            if (date.after(movie.getReleaseDate())) continue;
             forRet.add(movie);
 
         }
@@ -99,14 +103,78 @@ public class TheaterHelper {
 
     public ResponseEntity<?> getMyTheater(String token) {
         User theaterOwner = helper.getUser(token);
-        if(theaterOwner == null){
+        if (theaterOwner == null) {
             return ResponseEntity.ok("User not found");
         }
         Optional<License> license = licenseRepository.findLicenseById(theaterOwner.getLicenseId());
-        if(license.isEmpty()){
+        if (license.isEmpty()) {
             return ResponseEntity.ok("License not found");
         }
         List<Theater> theaters = theaterRepository.findAllByLicenseId(license.get().getId());
         return ResponseEntity.ok(theaters);
+    }
+
+    public ResponseEntity<?> getRunningMovie(String token) {
+        User theaterOwner = helper.getUser(token);
+        if (theaterOwner == null) {
+            return ResponseEntity.ok("theater owner not found");
+
+        }
+        Optional<License> license = licenseRepository.findLicenseById(theaterOwner.getLicenseId());
+        if (license.isEmpty()) {
+            return ResponseEntity.ok("License not found");
+        }
+        List<Theater> theaters = theaterRepository.findAllByLicenseId(license.get().getId());
+        Set<Movie> movieSet = new HashSet<>();
+        for (Theater theater : theaters) {
+            Set<Movie> movieSet1 = getRunningMovieSetInTheater(theater.getId());
+            if (movieSet1 == null) continue;
+            movieSet.addAll(movieSet1);
+        }
+        Set<String> movieIdSet = new HashSet<>();
+        for (Movie movie : movieSet) {
+            movieIdSet.add(movie.getId());
+        }
+        movieSet.clear();
+        for (String movieId : movieIdSet) {
+            Optional<Movie> movie = movieRepository.findById(movieId);
+            movie.ifPresent(movieSet::add);
+        }
+        return ResponseEntity.ok(movieSet);
+
+    }
+
+    public ResponseEntity<?> getUpComingMovie(String token) {
+        User theaterOwner = helper.getUser(token);
+        if (theaterOwner == null) {
+            return ResponseEntity.ok("theater owner not found");
+
+        }
+        Optional<License> license = licenseRepository.findLicenseById(theaterOwner.getLicenseId());
+        if (license.isEmpty()) {
+            return ResponseEntity.ok("License not found");
+        }
+        List<Theater> theaters = theaterRepository.findAllByLicenseId(license.get().getId());
+        Set<Movie> movieSet = new HashSet<>();
+        Date date = new Date();
+        List<TheaterOwnerMovieRelation> theaterOwnerMovieRelations = theaterOwnerMovieRelationRepository.findAllByTheaterOwnerId(theaterOwner.getId());
+        for(TheaterOwnerMovieRelation theaterOwnerMovieRelation: theaterOwnerMovieRelations){
+            Movie movie = movieRepository.findById(theaterOwnerMovieRelation.getMovieId()).orElse(null);
+            if(movie == null) continue;
+            if(date.after(movie.getReleaseDate())) continue;
+            movieSet.add(movie);
+        }
+
+        Set<String> movieIdSet = new HashSet<>();
+        for (Movie movie : movieSet) {
+            movieIdSet.add(movie.getId());
+        }
+        movieSet.clear();
+        for (String movieId : movieIdSet) {
+            Optional<Movie> movie = movieRepository.findById(movieId);
+            movie.ifPresent(movieSet::add);
+        }
+        return ResponseEntity.ok(movieSet);
+
     }
 }
