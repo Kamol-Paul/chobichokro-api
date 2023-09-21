@@ -86,14 +86,12 @@ public class AuthController {
 
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+                    .ok(new MessageResponse("Error: Username is already taken!"));
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+                    .ok(new MessageResponse("Error: Email is already in use!"));
         }
 
         // Create new user's account
@@ -115,8 +113,7 @@ public class AuthController {
                 String status = license.get().getStatus();
                 if (!Objects.equals(status, "approved")) {
                     return ResponseEntity
-                            .badRequest()
-                            .body(new MessageResponse("Error: Your License is not approved yet!"));
+                            .ok(new MessageResponse("Error: Your License is not approved yet!"));
                 }
                 System.out.println(have_role);
                 if (Objects.equals(have_role, "distributor")) {
