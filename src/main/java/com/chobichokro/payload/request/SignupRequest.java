@@ -29,6 +29,7 @@ public class SignupRequest {
     private String password;
 
     private String licenseId;
+    private int numberOfScreen;
 
     public void setUsername(String username) {
         this.username = username;
