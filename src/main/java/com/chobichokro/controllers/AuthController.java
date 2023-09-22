@@ -106,6 +106,7 @@ public class AuthController {
         Optional<License> license = Optional.empty();
         if (licenseId != null) {
             license = licenseRepository.findByLicenseNumber(licenseId);
+            System.out.println(license);
 
             if (license.isPresent()) {
                 licenseId = license.get().getId();
@@ -122,7 +123,8 @@ public class AuthController {
                             .orElseThrow(() -> new RuntimeException("Error: Role not found"));
                     roles.add(distributor);
                     System.out.println(distributor);
-                } else if (Objects.equals(have_role, "theater_owner")) {
+                } else if (Objects.equals(have_role, "theatre_owner")) {
+                    System.out.println("adding theater owner");
                     Role theaterOwner = roleRepository.findByName(ERole.ROLE_THEATER_OWNER)
                             .orElseThrow(() -> new RuntimeException("Error : Role is not found."));
                     roles.add(theaterOwner);
@@ -131,7 +133,7 @@ public class AuthController {
                     theater.setName(signUpRequest.getUsername());
                     theater.setAddress(license.get().getAddress());
                     theater.setLicenseId(licenseId);
-                    theater.setNumberOfScreens(signUpRequest.getNumberOfScreen());
+                    theater.setNumberOfScreens(signUpRequest.getNumberOfScreens());
                     theaterRepository.save(theater);
 
                 }
@@ -157,7 +159,7 @@ public class AuthController {
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(modRole);
                     }
-                    case "theaterOwner" -> {
+                    case "theatre_owner" -> {
                         Role theaterOwner = roleRepository.findByName(ERole.ROLE_THEATER_OWNER)
                                 .orElseThrow(() -> new RuntimeException("Error : Role is not found."));
                         roles.add(theaterOwner);
