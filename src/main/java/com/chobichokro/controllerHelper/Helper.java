@@ -58,6 +58,7 @@ public class Helper {
 
     public List<String> sendAllTheaterOwner(String movieId) {
         List<User> allTheaterOwner = getAllTheaterOwner();
+        System.out.println(allTheaterOwner);
         List<String> forReturn = new ArrayList<>();
         if (allTheaterOwner == null) {
             return null;
@@ -82,13 +83,14 @@ public class Helper {
     List<User> getAllTheaterOwner() {
         List<User> allUser = userRepository.findAll();
         List<User> allTheaterOwner = new ArrayList<>();
+        Role theater_owner_role = roleRepository.findByName(ERole.ROLE_THEATER_OWNER).orElse(null);
+
         for (User user : allUser) {
-            String licenseId = user.getLicenseId();
-            if (licenseId != null) {
-                License license = licenseRepository.findById(licenseId).orElse(null);
-                if (license == null) continue;
-                String roleId = license.getLicenseType();
-                if (Objects.equals(roleId, "theaterOwner")) {
+
+            for(Role role : user.getRoles()){
+                assert theater_owner_role != null;
+//                System.out.println(theater_owner_role);
+                if(role.getName() == theater_owner_role.getName()){
                     allTheaterOwner.add(user);
                 }
             }

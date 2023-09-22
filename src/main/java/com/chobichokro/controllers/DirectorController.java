@@ -67,6 +67,10 @@ public class DirectorController {
     ResponseEntity<?> getPendingMovieByName(@RequestHeader("Authorization") String token, @PathVariable("movieName") String movieName) {
         return ResponseEntity.ok(helper.getPendingMoviesByName(token, movieName));
     }
+//    @PostMapping("/send_movie/{movieId}")
+//    public ResponseEntity<?> sendMovie(@PathVariable("movieId") String movieId){
+//        return ResponseEntity.ok(helper.sendAllTheaterOwner(movieId));
+//    }
 
 
 }
