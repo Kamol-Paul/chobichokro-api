@@ -62,6 +62,11 @@ public class DirectorController {
     ResponseEntity<?> getUpcomingMovie(@RequestHeader("Authorization") String token){
         return directorHelper.getUpComingMovie(token);
     }
+    @GetMapping("pending_movie_request/{movieName}")
+    @PreAuthorize("hasRole('ROLE_DISTRIBUTOR') or hasRole('ADMIN')")
+    ResponseEntity<?> getPendingMovieByName(@RequestHeader("Authorization") String token, @PathVariable("movieName") String movieName) {
+        return ResponseEntity.ok(helper.getPendingMoviesByName(token, movieName));
+    }
 
 
 }
