@@ -199,5 +199,9 @@ public class MovieController {
     ResponseEntity<?> getRunningMovie(@PathVariable("id") String id){
         return helper.getRunningMovie(id);
     }
+    @GetMapping("/get/distributor_information/{movieId}")
+    ResponseEntity<?> getDistributorInformation(@PathVariable("movieId") String movieId){
+        return helper.getDistributorInformation(movieId);
+    }
 
 }
