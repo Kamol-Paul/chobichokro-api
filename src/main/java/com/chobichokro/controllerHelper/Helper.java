@@ -3,6 +3,7 @@ package com.chobichokro.controllerHelper;
 import com.chobichokro.models.*;
 import com.chobichokro.payload.response.DistributorMovieResponse;
 import com.chobichokro.payload.response.JwtResponse;
+import com.chobichokro.payload.response.PendingResponses;
 import com.chobichokro.payload.response.ScheduleResponse;
 import com.chobichokro.relation.TheaterMoviePending;
 import com.chobichokro.relation.TheaterNewMovieRelation;
@@ -143,20 +144,29 @@ public class Helper {
         return theaterNewMovieRelationRepository.findAllByTheaterOwnerId(userId);
     }
 
-    public List<TheaterMoviePending> getPendingMovies(String token) {
+    public List<PendingResponses> getPendingMovies(String token) {
         String userId = getUserId(token);
         if (userId == null) {
             return null;
         }
         List<TheaterMoviePending> all = theaterMoviePendingRepository.findAll();
-        List<TheaterMoviePending> forReturn = new ArrayList<>();
+        List<PendingResponses> forReturn = new ArrayList<>();
         for (TheaterMoviePending theaterMoviePending : all) {
             String movieId = theaterMoviePending.getMovieId();
             Movie movie = movieRepository.findById(movieId).orElse(null);
             if (movie == null) continue;
             String distributorId = movie.getDistributorId();
             if (Objects.equals(distributorId, userId)) {
-                forReturn.add(theaterMoviePending);
+                PendingResponses pendingResponses = new PendingResponses();
+                pendingResponses.setId(theaterMoviePending.getId());
+                pendingResponses.setMovie(movie);
+                String theaterOwnerId = theaterMoviePending.getTheaterOwnerId();
+                User user = userRepository.findById(theaterOwnerId).orElse(null);
+                if (user == null) continue;
+                Theater theater = theaterRepository.findByLicenseId(user.getLicenseId()).orElse(null);
+                if (theater == null) continue;
+                pendingResponses.setTheater(theater);
+                forReturn.add(pendingResponses);
             }
         }
         return forReturn;
