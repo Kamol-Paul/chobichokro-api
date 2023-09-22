@@ -1,6 +1,8 @@
 package com.chobichokro.controllerHelper;
 
 import com.chobichokro.models.*;
+import com.chobichokro.payload.response.DistributorMovieResponse;
+import com.chobichokro.payload.response.JwtResponse;
 import com.chobichokro.payload.response.ScheduleResponse;
 import com.chobichokro.relation.TheaterMoviePending;
 import com.chobichokro.relation.TheaterNewMovieRelation;
@@ -11,9 +13,11 @@ import com.chobichokro.relationRepository.TheaterNewMovieRelationRepository;
 import com.chobichokro.relationRepository.TheaterOwnerMovieRelationRepository;
 import com.chobichokro.repository.*;
 import com.chobichokro.security.jwt.JwtUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
@@ -262,6 +266,30 @@ public class Helper {
     public ResponseEntity<?> getRunningMovie(String theaterId){
         var schedules = scheduleRepository.findAllByTheaterId(theaterId);
         return ResponseEntity.ok(Objects.requireNonNullElse(schedules, "No movie running"));
+    }
+
+    public ResponseEntity<?> getDistributorInformation(String movieId) {
+        Movie movie = movieRepository.findById(movieId).orElse(null);
+        if(movie == null) return ResponseEntity.ok("Movie not found");
+        String distributorId = movie.getDistributorId();
+        User user = userRepository.findById(distributorId).orElse(null);
+        if(user == null) {
+            return ResponseEntity.ok("Distributor not found");
+        }
+        DistributorMovieResponse distributorMovieResponse = new DistributorMovieResponse();
+        distributorMovieResponse.setDistributorId(distributorId);
+        distributorMovieResponse.setDistributorName(user.getUsername());
+        distributorMovieResponse.setMovieName(movie.getMovieName());
+        distributorMovieResponse.setCast(movie.getCast());
+        distributorMovieResponse.setDirector(movie.getDirector());
+        distributorMovieResponse.setGenre(movie.getGenre());
+        distributorMovieResponse.setPosterImageLink(movie.getPosterImageLink());
+        distributorMovieResponse.setReleaseDate(movie.getReleaseDate());
+        distributorMovieResponse.setStatus(movie.getStatus());
+        distributorMovieResponse.setTrailerLink(movie.getTrailerLink());
+        distributorMovieResponse.setDescription(movie.getDescription());
+        distributorMovieResponse.setId(movie.getId());
+        return ResponseEntity.ok(distributorMovieResponse);
     }
 
 }
