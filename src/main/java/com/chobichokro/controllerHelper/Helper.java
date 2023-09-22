@@ -292,4 +292,25 @@ public class Helper {
         return ResponseEntity.ok(distributorMovieResponse);
     }
 
+    public ResponseEntity<?> getPendingMoviesByName(String token, String movieName) {
+        String userId = getUserId(token);
+        if (userId == null) {
+            return ResponseEntity.ok("User not found");
+        }
+        List<TheaterMoviePending> all = theaterMoviePendingRepository.findAll();
+        List<TheaterMoviePending> forReturn = new ArrayList<>();
+        for (TheaterMoviePending theaterMoviePending : all) {
+            String movieId = theaterMoviePending.getMovieId();
+            Movie movie = movieRepository.findById(movieId).orElse(null);
+            if (movie == null) continue;
+            if(Objects.equals(movie.getMovieName(), movieName)){
+                String distributorId = movie.getDistributorId();
+                if (Objects.equals(distributorId, userId)) {
+                    forReturn.add(theaterMoviePending);
+                }
+            }
+        }
+        return ResponseEntity.ok(forReturn);
+
+    }
 }
