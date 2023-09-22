@@ -310,7 +310,7 @@ public class Helper {
             return ResponseEntity.ok("User not found");
         }
         List<TheaterMoviePending> all = theaterMoviePendingRepository.findAll();
-        List<TheaterMoviePending> forReturn = new ArrayList<>();
+        List<PendingResponses> forReturn = new ArrayList<>();
         for (TheaterMoviePending theaterMoviePending : all) {
             String movieId = theaterMoviePending.getMovieId();
             Movie movie = movieRepository.findById(movieId).orElse(null);
@@ -318,7 +318,16 @@ public class Helper {
             if(Objects.equals(movie.getMovieName(), movieName)){
                 String distributorId = movie.getDistributorId();
                 if (Objects.equals(distributorId, userId)) {
-                    forReturn.add(theaterMoviePending);
+                    PendingResponses pendingResponses = new PendingResponses();
+                    pendingResponses.setId(theaterMoviePending.getId());
+                    pendingResponses.setMovie(movie);
+                    String theaterOwnerId = theaterMoviePending.getTheaterOwnerId();
+                    User user = userRepository.findById(theaterOwnerId).orElse(null);
+                    if (user == null) continue;
+                    Theater theater = theaterRepository.findByLicenseId(user.getLicenseId()).orElse(null);
+                    if (theater == null) continue;
+                    pendingResponses.setTheater(theater);
+                    forReturn.add(pendingResponses);
                 }
             }
         }
