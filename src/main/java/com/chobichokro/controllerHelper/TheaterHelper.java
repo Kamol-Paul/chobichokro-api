@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
@@ -60,20 +62,27 @@ public class TheaterHelper {
         return ResponseEntity.ok(movieSet);
     }
 
-    public Set<Movie> getRunningMovieSetInTheater(String theaterId) {
+    public Set<Movie> getRunningMovieSetInTheater(String theaterId) throws ParseException {
         List<Schedule> schedules = scheduleRepository.findByTheaterId(theaterId);
         if (schedules == null) {
             return null;
         }
         Set<Movie> movieSet = new HashSet<>();
+        Date date = new Date();
         for (Schedule schedule : schedules) {
             Optional<Movie> movie = movieRepository.findByMovieName(schedule.getMovieName());
-            movie.ifPresent(movieSet::add);
+            if (movie.isEmpty()) continue;
+            String str = schedule.getScheduleDate();
+            // 22/09/2023 8:30 am
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
+            Date date1 = formatter.parse(str);
+            if (date1.before(date)) continue;
+            movieSet.add(movie.get());
         }
         return movieSet;
     }
 
-    public ResponseEntity<?> getUpcomingMovieInTheater(String theaterId) {
+    public ResponseEntity<?> getUpcomingMovieInTheater(String theaterId) throws ParseException {
         Theater theater = theaterRepository.findById(theaterId).orElse(null);
         if (theater == null) {
             return ResponseEntity.ok("Theater not found");
@@ -114,7 +123,7 @@ public class TheaterHelper {
         return ResponseEntity.ok(theaters);
     }
 
-    public ResponseEntity<?> getRunningMovie(String token) {
+    public ResponseEntity<?> getRunningMovie(String token) throws ParseException {
         User theaterOwner = helper.getUser(token);
         if (theaterOwner == null) {
             return ResponseEntity.ok("theater owner not found");

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -144,7 +145,7 @@ public class TheaterController {
         return theaterHelper.getRunningMovieInTheater(theaterId);
     }
     @GetMapping("/upcoming/{theaterId}")
-    public ResponseEntity<?> getUpcomingMovieInTheater(@PathVariable("theaterId") String theaterId){
+    public ResponseEntity<?> getUpcomingMovieInTheater(@PathVariable("theaterId") String theaterId) throws ParseException {
         return theaterHelper.getUpcomingMovieInTheater(theaterId);
     }
     @GetMapping("/get/myTheater")
@@ -153,7 +154,7 @@ public class TheaterController {
     }
     @GetMapping("/get/running_movie")
     @PreAuthorize("hasRole('ROLE_THEATER_OWNER') or hasRole('ADMIN')")
-    ResponseEntity<?> getRunningMovie(@RequestHeader("Authorization") String token){
+    ResponseEntity<?> getRunningMovie(@RequestHeader("Authorization") String token) throws ParseException {
         return theaterHelper.getRunningMovie(token);
     }
     @GetMapping("/get/upcoming_movie")
