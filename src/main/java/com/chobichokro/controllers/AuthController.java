@@ -122,7 +122,7 @@ public class AuthController {
                             .orElseThrow(() -> new RuntimeException("Error: Role not found"));
                     roles.add(distributor);
                     System.out.println(distributor);
-                } else if (Objects.equals(have_role, "theaterOwner")) {
+                } else if (Objects.equals(have_role, "theater_owner")) {
                     Role theaterOwner = roleRepository.findByName(ERole.ROLE_THEATER_OWNER)
                             .orElseThrow(() -> new RuntimeException("Error : Role is not found."));
                     roles.add(theaterOwner);
