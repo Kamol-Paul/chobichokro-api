@@ -1,10 +1,7 @@
 package com.chobichokro.controllerHelper;
 
 import com.chobichokro.models.*;
-import com.chobichokro.payload.response.DistributorMovieResponse;
-import com.chobichokro.payload.response.JwtResponse;
-import com.chobichokro.payload.response.PendingResponses;
-import com.chobichokro.payload.response.ScheduleResponse;
+import com.chobichokro.payload.response.*;
 import com.chobichokro.relation.TheaterMoviePending;
 import com.chobichokro.relation.TheaterNewMovieRelation;
 import com.chobichokro.relation.TheaterOwnerMovieRelation;
@@ -14,12 +11,9 @@ import com.chobichokro.relationRepository.TheaterNewMovieRelationRepository;
 import com.chobichokro.relationRepository.TheaterOwnerMovieRelationRepository;
 import com.chobichokro.repository.*;
 import com.chobichokro.security.jwt.JwtUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -192,20 +186,28 @@ public class Helper {
         return "Request accepted";
     }
 
-    public List<Movie> getAllTheaterOwnerMovie(String token) {
+    public List<MyMovieResponse> getAllTheaterOwnerMovie(String token) {
         String userId = getUserId(token);
         if (userId == null) {
             return null;
         }
         List<TheaterOwnerMovieRelation> all = theaterOwnerMovieRelationRepository.findAllByTheaterOwnerId(userId);
-        List<Movie> forReturn = new ArrayList<>();
+        List<MyMovieResponse> myMovieResponses = new ArrayList<>();
         for (TheaterOwnerMovieRelation theaterOwnerMovieRelation : all) {
             String movieId = theaterOwnerMovieRelation.getMovieId();
             Movie movie = movieRepository.findById(movieId).orElse(null);
             if (movie == null) continue;
-            forReturn.add(movie);
+            String distributorId = movie.getDistributorId();
+            User distributor = userRepository.findById(distributorId).orElse(null);
+            assert distributor != null;
+            String distributorName = distributor.getUsername();
+            MyMovieResponse myMovieResponse = new MyMovieResponse();
+            myMovieResponse.setMovie(movie);
+            myMovieResponse.setDistributorName(distributorName);
+            myMovieResponse.setTheaterOwnerId(theaterOwnerMovieRelation.getTheaterOwnerId());
+            myMovieResponses.add(myMovieResponse);
         }
-        return forReturn;
+        return myMovieResponses;
     }
 
     public ResponseEntity<?> myScheduleControllerHelper(Schedule schedule, String token) {
