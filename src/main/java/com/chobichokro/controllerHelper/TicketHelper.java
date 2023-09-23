@@ -51,15 +51,6 @@ public class TicketHelper {
 
     public ResponseEntity<?> getTicketsByScheduleId(String scheduleId) {
         List<Ticket> tickets = ticketRepository.findAllByScheduleId(scheduleId);
-        List<Ticket> booked_tickets = new ArrayList<>();
-        List<Ticket> available_tickets = new ArrayList<>();
-        for (Ticket ticket : tickets) {
-            if (ticket.isBooked()) {
-                booked_tickets.add(ticket);
-            } else {
-                available_tickets.add(ticket);
-            }
-        }
-        return ResponseEntity.ok(Pair.of(booked_tickets, available_tickets));
+        return ResponseEntity.ok(tickets);
     }
 }
