@@ -186,4 +186,47 @@ public class TheaterHelper {
         return ResponseEntity.ok(movieSet);
 
     }
+
+    public ResponseEntity<?> getMovieTheaterShowTime(String movieName, String theaterOwnerId){
+        Theater theater = getTheaterFromTheaterOwner(theaterOwnerId);
+        if(theater == null){
+            return ResponseEntity.ok("getting theater has a problem.");
+        }
+        System.out.println(theater);
+        List<Schedule> schedules = scheduleRepository.findAllByMovieName(movieName);
+        String theaterId = theater.getId();
+        List<Map<String,String>> forReturn = new ArrayList<>();
+        for (Schedule schedule : schedules) {
+            if (schedule.getTheaterId().equals(theaterId)) {
+                Map<String, String> potol = new HashMap<>();
+                potol.put("showtime", schedule.getScheduleDate());
+                potol.put("hallNumber", String.valueOf(schedule.getHallNumber()));
+                forReturn.add(potol);
+                System.out.println(potol);
+
+            }
+        }
+        return ResponseEntity.ok(forReturn);
+
+    }
+    public Theater getTheaterFromTheaterOwner(String theaterOwnerId){
+        Optional<User> theaterOwner = userRepository.findById(theaterOwnerId);
+        if(theaterOwner.isEmpty()){
+            return null;
+        }
+        List<Theater> theaters = theaterRepository.findAllByLicenseId(theaterOwner.get().getLicenseId());
+        if (theaters == null){
+            return null;
+
+        }
+        return theaters.get(0);
+    }
+
+    public ResponseEntity<?> getScheduleId(String movieName, String theaterId, String date, int hallNumber) {
+        List<Schedule> schedules = scheduleRepository.findAllByMovieNameAndTheaterIdAndScheduleDateAndAndHallNumber(movieName,theaterId,date,hallNumber);
+        if(schedules.isEmpty()){
+            return  ResponseEntity.ok("Schedule not found");
+        }
+        return ResponseEntity.ok(schedules);
+    }
 }
