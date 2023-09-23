@@ -49,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/book/{scheduleId}/{seatNumber}")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_THEATER_OWNER')")
     public ResponseEntity<?> book(@RequestHeader("Authorization") String token, @PathVariable("scheduleId") String scheduleId, @PathVariable("seatNumber") String seatNumber, @RequestParam("paymentId") String paymentId) {
         return userHelper.book(token, scheduleId, seatNumber, paymentId);
     }
@@ -60,8 +60,10 @@ public class UserController {
         return userHelper.myTickets(token);
     }
     @PostMapping("/book_multiple/{scheduleId}")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<?> bookMultiple(@RequestHeader("Authorization") String token, @PathVariable("scheduleId") String scheduleId, @RequestParam("seatNumbers") String[] seatNumbers, @RequestParam("paymentId") String paymentId) {
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_THEATER_OWNER')")
+    public ResponseEntity<?> bookMultiple(@RequestHeader("Authorization") String token, @PathVariable("scheduleId") String scheduleId,@RequestParam("paymentId") String paymentId, @RequestParam("seatNumbers") String[] seatNumbers) {
+        System.out.println(seatNumbers);
+        System.out.println(paymentId);
         return userHelper.bookMultiple(token, scheduleId, seatNumbers, paymentId);
     }
     @PostMapping("/add_review")
