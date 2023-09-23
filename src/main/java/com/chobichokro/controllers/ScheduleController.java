@@ -87,7 +87,7 @@ public class ScheduleController {
         }
         return ResponseEntity.ok(scheduleSet);
     }
-    @GetMapping("/getScheduleId)")
+    @GetMapping("/getScheduleId")
     public ResponseEntity<?> getSchedule(@ModelAttribute Schedule schedule) {
         List<Schedule> schedules = scheduleRepository.findAllByMovieName(schedule.getMovieName());
         for(Schedule sch : schedules) {

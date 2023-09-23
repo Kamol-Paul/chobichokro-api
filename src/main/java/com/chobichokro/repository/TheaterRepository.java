@@ -14,4 +14,5 @@ public interface TheaterRepository extends MongoRepository<Theater, String> {
 
     Optional<Theater> findByLicenseId(String licenseId);
     List<Theater> findAllByLicenseId(String licenseId);
+
 }
