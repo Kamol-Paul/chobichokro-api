@@ -188,6 +188,19 @@ public class TheaterController {
         }
         return ResponseEntity.ok(theaterHelper.getMovieAnalysis(theater.getId(), movieName));
     }
+    @GetMapping("/get/analysis/{movieName}")
+    @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
+    ResponseEntity<?> getMovieAnalysisForTheater(@RequestHeader("Authorization") String token, @PathVariable("movieName") String movieName){
+        String theaterOwner = helper.getUserId(token);
+        if(theaterOwner == null){
+            return  ResponseEntity.ok("Theater owner not found");
+        }
+        Theater theater = theaterHelper.getTheaterFromTheaterOwner(theaterOwner);
+        if(theater == null){
+            return ResponseEntity.ok("Theater not found.");
+        }
+        return ResponseEntity.ok(theaterHelper.getMovieAnalysisForTheater(theater.getId(), movieName));
+    }
 
 
 }

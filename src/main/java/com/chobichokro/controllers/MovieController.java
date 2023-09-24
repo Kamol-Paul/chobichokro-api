@@ -2,10 +2,12 @@ package com.chobichokro.controllers;
 
 import com.chobichokro.controllerHelper.Helper;
 import com.chobichokro.models.Movie;
+import com.chobichokro.models.Schedule;
 import com.chobichokro.models.User;
 import com.chobichokro.payload.request.MovieRequest;
 import com.chobichokro.payload.response.MovieResponse;
 import com.chobichokro.repository.MovieRepository;
+import com.chobichokro.repository.ScheduleRepository;
 import com.chobichokro.repository.UserRepository;
 import com.chobichokro.security.jwt.JwtUtils;
 import com.chobichokro.services.FileServices;
@@ -23,10 +25,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 //@CrossOrigin(origins = {"*", "http://localhost:3000"})
 @RestController
@@ -202,6 +201,32 @@ public class MovieController {
     @GetMapping("/get/distributor_information/{movieId}")
     ResponseEntity<?> getDistributorInformation(@PathVariable("movieId") String movieId){
         return helper.getDistributorInformation(movieId);
+    }
+    @Autowired
+    private ScheduleRepository scheduleRepository;
+    @GetMapping("/get/running")
+    ResponseEntity<?> getRunningMovie(){
+        List<Schedule> allSchedule = scheduleRepository.findAll();
+        Set<String> movieNames = new HashSet<>();
+        allSchedule.forEach(schedule -> {
+            movieNames.add(schedule.getMovieName());
+        });
+        List<Movie> forReturn = new ArrayList<>();
+        for (String movieName : movieNames) {
+            Movie movie = movieRepository.findByMovieName(movieName).orElse(null);
+            if(movie != null) forReturn.add(movie);
+        }
+        return ResponseEntity.ok(forReturn);
+    }
+
+    @GetMapping("/get/released")
+    ResponseEntity<?> getReleasedMovies(){
+        List<Movie> allMovie = movieRepository.findAll();
+        List<Movie> forReturn = new ArrayList<>();
+        for (Movie movie : allMovie) {
+            if(movie.getStatus().equals("Released")) forReturn.add(movie);
+        }
+        return ResponseEntity.ok(forReturn);
     }
 
 }
