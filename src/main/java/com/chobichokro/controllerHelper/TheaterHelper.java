@@ -291,4 +291,18 @@ public class TheaterHelper {
         }
         return forReturn;
     }
+
+    public ResponseEntity<?> getMovieAnalysisForTheater(String id, String movieName) {
+        List<Schedule> schedules = scheduleRepository.findAllByMovieNameAndTheaterId(movieName, id);
+        if(schedules.isEmpty()) return null;
+
+        int totalTicket = 0;
+        for(Schedule schedule : schedules){
+            List<Ticket> tickets = ticketRepository.findAllByScheduleId(schedule.getScheduleId());
+            for(Ticket ticket : tickets){
+                if(ticket.isBooked()) totalTicket++;
+            }
+        }
+        return ResponseEntity.ok(totalTicket);
+    }
 }
