@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("add_money")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_THEATER_OWNER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR') or hasRole('ROLE_DISTRIBUTOR')")
     public ResponseEntity<?> addMoney(@RequestHeader("Authorization") String token, @RequestParam("amount") Double amount) {
         return ResponseEntity.ok(userHelper.addMoney(token, amount));
     }
