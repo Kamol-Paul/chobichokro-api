@@ -1,6 +1,7 @@
 package com.chobichokro.controllerHelper;
 
 import com.chobichokro.models.*;
+import com.chobichokro.payload.response.MovieAnalysis;
 import com.chobichokro.relation.TheaterOwnerMovieRelation;
 import com.chobichokro.relationRepository.TheaterMoviePendingRepository;
 import com.chobichokro.relationRepository.TheaterMovieRelationRepository;
@@ -45,6 +46,8 @@ public class TheaterHelper {
     private TheaterMoviePendingRepository theaterMoviePendingRepository;
     @Autowired
     private TheaterOwnerMovieRelationRepository theaterOwnerMovieRelationRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     public ResponseEntity<?> getRunningMovieInTheater(String theaterId) {
         List<Schedule> schedules = scheduleRepository.findByTheaterId(theaterId);
@@ -167,10 +170,10 @@ public class TheaterHelper {
         Set<Movie> movieSet = new HashSet<>();
         Date date = new Date();
         List<TheaterOwnerMovieRelation> theaterOwnerMovieRelations = theaterOwnerMovieRelationRepository.findAllByTheaterOwnerId(theaterOwner.getId());
-        for(TheaterOwnerMovieRelation theaterOwnerMovieRelation: theaterOwnerMovieRelations){
+        for (TheaterOwnerMovieRelation theaterOwnerMovieRelation : theaterOwnerMovieRelations) {
             Movie movie = movieRepository.findById(theaterOwnerMovieRelation.getMovieId()).orElse(null);
-            if(movie == null) continue;
-            if(date.after(movie.getReleaseDate())) continue;
+            if (movie == null) continue;
+            if (date.after(movie.getReleaseDate())) continue;
             movieSet.add(movie);
         }
 
@@ -187,15 +190,15 @@ public class TheaterHelper {
 
     }
 
-    public ResponseEntity<?> getMovieTheaterShowTime(String movieName, String theaterOwnerId){
+    public ResponseEntity<?> getMovieTheaterShowTime(String movieName, String theaterOwnerId) {
         Theater theater = getTheaterFromTheaterOwner(theaterOwnerId);
-        if(theater == null){
+        if (theater == null) {
             return ResponseEntity.ok("getting theater has a problem.");
         }
         System.out.println(theater);
         List<Schedule> schedules = scheduleRepository.findAllByMovieName(movieName);
         String theaterId = theater.getId();
-        List<Map<String,String>> forReturn = new ArrayList<>();
+        List<Map<String, String>> forReturn = new ArrayList<>();
         for (Schedule schedule : schedules) {
             if (schedule.getTheaterId().equals(theaterId)) {
                 Map<String, String> potol = new HashMap<>();
@@ -209,13 +212,14 @@ public class TheaterHelper {
         return ResponseEntity.ok(forReturn);
 
     }
-    public Theater getTheaterFromTheaterOwner(String theaterOwnerId){
+
+    public Theater getTheaterFromTheaterOwner(String theaterOwnerId) {
         Optional<User> theaterOwner = userRepository.findById(theaterOwnerId);
-        if(theaterOwner.isEmpty()){
+        if (theaterOwner.isEmpty()) {
             return null;
         }
         List<Theater> theaters = theaterRepository.findAllByLicenseId(theaterOwner.get().getLicenseId());
-        if (theaters == null){
+        if (theaters == null) {
             return null;
 
         }
@@ -223,10 +227,68 @@ public class TheaterHelper {
     }
 
     public ResponseEntity<?> getScheduleId(String movieName, String theaterId, String date, int hallNumber) {
-        List<Schedule> schedules = scheduleRepository.findAllByMovieNameAndTheaterIdAndScheduleDateAndAndHallNumber(movieName,theaterId,date,hallNumber);
-        if(schedules.isEmpty()){
-            return  ResponseEntity.ok("Schedule not found");
+        List<Schedule> schedules = scheduleRepository.findAllByMovieNameAndTheaterIdAndScheduleDateAndAndHallNumber(movieName, theaterId, date, hallNumber);
+        if (schedules.isEmpty()) {
+            return ResponseEntity.ok("Schedule not found");
         }
         return ResponseEntity.ok(schedules);
+    }
+
+    public MovieAnalysis getMovieAnalysis(String theaterId, String movieName) {
+        Movie movie = movieRepository.findByMovieName(movieName).orElse(null);
+        if (movie == null) return null;
+        List<Schedule> scheduleList = scheduleRepository.findAllByMovieNameAndTheaterId(movieName, theaterId);
+        Set<String> theaterIdSet = new HashSet<>();
+        List<Ticket> tickets = ticketRepository.findAll();
+        MovieAnalysis movieAnalysis = new MovieAnalysis();
+        movieAnalysis.setMovie(movie);
+        movieAnalysis.setTotalScreening(scheduleList.size());
+        int totalTicketSell = 0;
+        int totalRevenue = 0;
+        int ticketPrice = 100;
+        for (Schedule schedule : scheduleList) {
+            theaterIdSet.add(schedule.getTheaterId());
+            int countTicket = countTickerOfSchedule(tickets, schedule.getScheduleId());
+            totalTicketSell += countTicket;
+            totalRevenue += totalTicketSell * ticketPrice;
+
+        }
+        movieAnalysis.setTotalTheater(theaterIdSet.size());
+        movieAnalysis.setTotalRevenue(totalRevenue);
+        movieAnalysis.setTotalTicket(totalTicketSell);
+        List<Review> reviews = reviewRepository.findAllByMovieId(movie.getId());
+        movieAnalysis.setReviews(reviews);
+        if (!reviews.isEmpty()) {
+            double totalRating = 0;
+            for (Review review : reviews) {
+                totalRating += review.getSentimentScore();
+            }
+            movieAnalysis.setAverageSentiment(totalRating / reviews.size());
+        } else {
+            movieAnalysis.setAverageSentiment(0);
+        }
+        return movieAnalysis;
+    }
+
+    int countTickerOfSchedule(List<Ticket> tickets, String scheduleId) {
+        int count = 0;
+        for (Ticket ticket : tickets) {
+            if (ticket.getScheduleId().equals(scheduleId) && ticket.isBooked()) {
+                count++;
+            }
+        }
+        return count;
+
+    }
+    public Map<String, MovieAnalysis> getAllMovieAnalysis(String theaterId){
+        List<Schedule> schedules = scheduleRepository.findAllByTheaterId(theaterId);
+        Map<String, MovieAnalysis> forReturn = new HashMap<>();
+        for(Schedule schedule: schedules){
+            String movieName = schedule.getMovieName();
+            if(!forReturn.containsKey(movieName))
+                forReturn.put(movieName, getMovieAnalysis(theaterId,movieName));
+
+        }
+        return forReturn;
     }
 }

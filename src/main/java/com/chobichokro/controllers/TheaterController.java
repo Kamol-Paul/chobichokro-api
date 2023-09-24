@@ -162,6 +162,32 @@ public class TheaterController {
     ResponseEntity<?> getUpcomingMovie(@RequestHeader("Authorization") String token){
         return theaterHelper.getUpComingMovie(token);
     }
+    @GetMapping("/get_analysis")
+    @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
+    ResponseEntity<?> getAllMovieAnalysis(@RequestHeader("Authorization") String token){
+        String theaterOwner = helper.getUserId(token);
+        if(theaterOwner == null){
+            return  ResponseEntity.ok("Theater owner not found");
+        }
+        Theater theater = theaterHelper.getTheaterFromTheaterOwner(theaterOwner);
+        if(theater == null){
+            return ResponseEntity.ok("Theater not found.");
+        }
+        return  ResponseEntity.ok(theaterHelper.getAllMovieAnalysis(theater.getId()));
+    }
+    @GetMapping("/get_analysis/{movieName}")
+    @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
+    ResponseEntity<?> getMovieAnalysis(@RequestHeader("Authorization") String token, @PathVariable("movieName") String movieName){
+        String theaterOwner = helper.getUserId(token);
+        if(theaterOwner == null){
+            return  ResponseEntity.ok("Theater owner not found");
+        }
+        Theater theater = theaterHelper.getTheaterFromTheaterOwner(theaterOwner);
+        if(theater == null){
+            return ResponseEntity.ok("Theater not found.");
+        }
+        return ResponseEntity.ok(theaterHelper.getMovieAnalysis(theater.getId(), movieName));
+    }
 
 
 }

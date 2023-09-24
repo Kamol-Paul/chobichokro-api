@@ -18,9 +18,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class UserHelper {
@@ -61,25 +59,66 @@ public class UserHelper {
 
     }
 
-    public Pair<User, String> setAmount(String token, Double amount) {
+    public Map<String,String> setAmount(String token, Double amount) {
+        Map<String , String> forReturn = new HashMap<>();
         User user = getMe(token);
-        if (user == null) return null;
+        if (user == null) {
+            forReturn.put("message" , "user not found");
+            return forReturn;
+        }
         user.setAmountBalance(amount);
         user = userRepository.save(user);
-        return Pair.of(user, "successfully set amount balance");
+
+        forReturn.put("userName", user.getUsername());
+        forReturn.put("email", user.getEmail());
+        forReturn.put("amountBalance", String.valueOf(user.getAmountBalance()));
+        forReturn.put("message", "ammount set successfully");
+        
+        return forReturn;
     }
 
     public List<Schedule> getAllSchedule() {
         return scheduleRepository.findAll();
     }
 
-    public Pair<User, String> addMoney(String token, Double amount) {
+    public Map<String, String> addMoney(String token, Double amount) {
+        Map<String , String> forReturn = new HashMap<>();
         User user = getMe(token);
-        if (user == null) return null;
+        if (user == null) {
+            forReturn.put("message" , "user not found");
+            return forReturn;
+        }
         Double currentAmount = user.getAmountBalance();
         user.setAmountBalance(amount + currentAmount);
         user = userRepository.save(user);
-        return Pair.of(user, "successfully add amount balance");
+
+        forReturn.put("userName", user.getUsername());
+        forReturn.put("email", user.getEmail());
+        forReturn.put("amountBalance", String.valueOf(user.getAmountBalance()));
+        forReturn.put("message", "ammount add successfully");
+        return forReturn;
+    }
+    public Map<String, String> withdraw(String token, Double amount) {
+        Map<String , String> forReturn = new HashMap<>();
+        User user = getMe(token);
+        if (user == null) {
+            forReturn.put("message" , "user not found");
+            return forReturn;
+        }
+        Double currentAmount = user.getAmountBalance();
+        if(currentAmount < amount){
+            forReturn.put("message", "not enough balance to withdraw");
+            return forReturn;
+
+        }
+        user.setAmountBalance(amount + currentAmount);
+        user = userRepository.save(user);
+
+        forReturn.put("userName", user.getUsername());
+        forReturn.put("email", user.getEmail());
+        forReturn.put("amountBalance", String.valueOf(user.getAmountBalance()));
+        forReturn.put("message", "money withdraw successfully");
+        return forReturn;
     }
 
     public List<Ticket> query(String scheduleId) {
