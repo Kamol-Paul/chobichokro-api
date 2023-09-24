@@ -37,6 +37,11 @@ public class UserController {
     public ResponseEntity<?> addMoney(@RequestHeader("Authorization") String token, @RequestParam("amount") Double amount) {
         return ResponseEntity.ok(userHelper.addMoney(token, amount));
     }
+    @PostMapping("withdraw_money")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_THEATER_OWNER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR') or hasRole('ROLE_DISTRIBUTOR')")
+    public ResponseEntity<?> withdrawMoney(@RequestHeader("Authorization") String token, @RequestParam("amount") Double amount) {
+        return ResponseEntity.ok(userHelper.withdraw(token,amount));
+    }
 
     @GetMapping("/query/{scheduleId}")
     public ResponseEntity<?> query(@PathVariable("scheduleId") String scheduleId) {
