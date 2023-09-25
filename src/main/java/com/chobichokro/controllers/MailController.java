@@ -6,12 +6,10 @@ import com.chobichokro.payload.request.SignupRequest;
 import com.chobichokro.repository.OTPRepository;
 import com.chobichokro.repository.UserRepository;
 import com.chobichokro.services.EmailService;
+import jakarta.ws.rs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Random;
 
@@ -60,5 +58,28 @@ public class MailController {
             return ResponseEntity.ok(otpString);
         }
         return ResponseEntity.ok("Failed to send OTP");
+    }
+    @PostMapping("/get-mail-otp/{email}")
+    public ResponseEntity<?> getMailOtp(@PathVariable("email") String email){
+        OTP otpObject = otpRepository.findByEmail(email);
+        Random random = new Random();
+        int otp = random.nextInt(9999);
+        String otpString = String.format("%04d", otp);
+        EmailRequest emailRequest = new EmailRequest();
+        emailRequest.setRecipient(email);
+        emailRequest.setSubject("OTP for Chobi Chokro");
+        emailRequest.setMsgBody("Your OTP is: " + otpString);
+        String status = emailService.sendSimpleMail(emailRequest);
+        OTP forReturn = new OTP();
+        if(otpObject != null){
+            forReturn.setId(otpObject.getId());
+        }
+        if(status.equals("success")){
+            forReturn.setOtp(otpString);
+            otpRepository.save(forReturn);
+            return ResponseEntity.ok(otpString);
+        }
+        return ResponseEntity.ok("Failed to send OTP");
+
     }
 }
