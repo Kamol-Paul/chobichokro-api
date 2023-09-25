@@ -26,30 +26,30 @@ public class Helper {
      * This class is used to store the helper methods that are used in the controllers
      */
     @Autowired
-    private UserRepository userRepository;
+    public UserRepository userRepository;
     @Autowired
-    private TheaterRepository theaterRepository;
+    public TheaterRepository theaterRepository;
     @Autowired
-    private TicketRepository ticketRepository;
+    public TicketRepository ticketRepository;
     @Autowired
-    private MovieRepository movieRepository;
+    public MovieRepository movieRepository;
     @Autowired
-    private ScheduleRepository scheduleRepository;
+    public ScheduleRepository scheduleRepository;
     @Autowired
-    private TheaterMovieRelationRepository theaterMovieRelationRepository;
+    public TheaterMovieRelationRepository theaterMovieRelationRepository;
 
     @Autowired
-    private TheaterNewMovieRelationRepository theaterNewMovieRelationRepository;
+    public TheaterNewMovieRelationRepository theaterNewMovieRelationRepository;
     @Autowired
-    private LicenseRepository licenseRepository;
+    public LicenseRepository licenseRepository;
     @Autowired
-    private RoleRepository roleRepository;
+    public RoleRepository roleRepository;
     @Autowired
-    private JwtUtils jwtUtils;
+    public JwtUtils jwtUtils;
     @Autowired
-    private TheaterMoviePendingRepository theaterMoviePendingRepository;
+    public TheaterMoviePendingRepository theaterMoviePendingRepository;
     @Autowired
-    private TheaterOwnerMovieRelationRepository theaterOwnerMovieRelationRepository;
+    public TheaterOwnerMovieRelationRepository theaterOwnerMovieRelationRepository;
 
     public List<String> sendAllTheaterOwner(String movieId) {
         List<User> allTheaterOwner = getAllTheaterOwner();
@@ -130,12 +130,20 @@ public class Helper {
     }
 
 
-    public List<TheaterNewMovieRelation> getNewMovies(String token) {
+    public List<Movie> getNewMovies(String token) {
         String userId = getUserId(token);
         if (userId == null) {
             return null;
         }
-        return theaterNewMovieRelationRepository.findAllByTheaterOwnerId(userId);
+        List<TheaterNewMovieRelation> list =  theaterNewMovieRelationRepository.findAllByTheaterOwnerId(userId);
+        List<Movie> forReturn = new ArrayList<>();
+        for(TheaterNewMovieRelation theaterNewMovieRelation : list){
+            String movieId = theaterNewMovieRelation.getNewMovieId();
+            Movie movie = movieRepository.findById(movieId).orElse(null);
+            if(movie == null) continue;
+            forReturn.add(movie);
+        }
+        return forReturn;
     }
 
     public List<PendingResponses> getPendingMovies(String token) {

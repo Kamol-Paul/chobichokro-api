@@ -30,4 +30,5 @@ public interface ScheduleRepository extends MongoRepository<Schedule, String> {
     List<Schedule> findAllByMovieNameAndTheaterId(String movieName, String theaterId);
     List<Schedule> findAllByMovieNameAndTheaterIdAndScheduleDateAndAndHallNumber(String movieName, String theaterId, String scheduleDate, int hallnumber);
 
+    List<Schedule> findAllByMovieNameAndTheaterIdAndScheduleDate(String movieName, String theaterId, String showTime);
 }
