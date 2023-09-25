@@ -27,4 +27,5 @@ public class MovieRequest {
     private MultipartFile image;
     private String status;
     private String description;
+    private Double cost;
 }

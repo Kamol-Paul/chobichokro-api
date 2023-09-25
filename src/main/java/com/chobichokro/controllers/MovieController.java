@@ -228,5 +228,13 @@ public class MovieController {
         }
         return ResponseEntity.ok(forReturn);
     }
-
+//    @PutMapping("/")
+//    public ResponseEntity<?> updateMovie(){
+//       List<Movie> allMovie = movieRepository.findAll();
+//         allMovie.forEach(movie -> {
+//              movie.setCost(2.5e7);
+//              movieRepository.save(movie);
+//         });
+//         return ResponseEntity.ok(movieRepository.findAll());
+//    }
 }
