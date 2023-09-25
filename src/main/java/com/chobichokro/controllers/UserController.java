@@ -1,6 +1,7 @@
 package com.chobichokro.controllers;
 
 import com.chobichokro.controllerHelper.UserHelper;
+import com.chobichokro.models.Review;
 import com.chobichokro.payload.request.ReviewRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -80,6 +81,10 @@ public class UserController {
     @GetMapping("/")
     public ResponseEntity<?> score() throws IOException, InterruptedException {
         return ResponseEntity.ok(userHelper.getSentimentScore("I hate this movie"));
+    }
+    @PostMapping("/add_released_movie_review")
+    public ResponseEntity<?> addReviewForReleasedMovie(@ModelAttribute Review review) {
+        return userHelper.addReviewForReleasedMovie(review);
     }
 
 

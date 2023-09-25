@@ -324,8 +324,18 @@ public class UserHelper {
         try {
             return getSentimentScore(opinion);
         } catch (IOException e) {
-            e.printStackTrace();
+            return (double) 0;
         }
-        return null;
+    }
+
+    public ResponseEntity<?> addReviewForReleasedMovie(Review review) {
+        String opinion = review.getOpinion();
+
+        // need to replace all the special characters and new line
+        opinion = opinion.replaceAll("[^a-zA-Z0-9 ]", "");
+        review.setOpinion(opinion);
+        review.setSentimentScore(getSentimentScoreWithTry(opinion));
+        review = reviewRepository.save(review);
+        return ResponseEntity.ok(review);
     }
 }
