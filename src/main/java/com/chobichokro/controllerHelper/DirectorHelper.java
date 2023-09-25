@@ -144,6 +144,11 @@ public class DirectorHelper {
 
         }
         movieAnalysis.setTotalTheater(theaterIdSet.size());
+        List<Theater> theaters = new ArrayList<>();
+        for (String id : theaterIdSet) {
+            theaterRepository.findById(id).ifPresent(theaters::add);
+        }
+        movieAnalysis.setTheaters(theaters);
         movieAnalysis.setTotalRevenue(totalRevenue);
         movieAnalysis.setTotalTicket(totalTicketSell);
         List<Review> reviews = reviewRepository.findAllByMovieId(movie.getId());
