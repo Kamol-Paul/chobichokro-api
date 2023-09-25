@@ -14,7 +14,7 @@ import java.util.List;
 public class MovieAnalysis {
     private Movie movie;
     private int totalTicket;
-    private int totalRevenue;
+    private double totalRevenue;
     private int totalScreening;
     private int totalTheater;
     private double averageSentiment;

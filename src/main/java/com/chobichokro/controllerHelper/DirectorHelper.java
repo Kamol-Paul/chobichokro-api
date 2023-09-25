@@ -118,7 +118,7 @@ public class DirectorHelper {
     public ResponseEntity<?> getSingleMovieAnalysis(String token, String movieId){
         User director = getMe(token);
         if (director == null) {
-            return ResponseEntity.ok("Director not found");
+            return ResponseEntity.ok("Distributor not found");
         }
         Movie movie = movieRepository.findById(movieId).orElse(null);
         if(movie == null){
@@ -216,6 +216,7 @@ public class DirectorHelper {
         newMovie.setGenre(movie.getGenre());
         newMovie.setCast(movie.getCast());
         newMovie.setDirector(movie.getDirector());
+        newMovie.setCost(movie.getCost());
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         newMovie.setReleaseDate(df.parse(movie.getReleaseDate()));
         newMovie.setTrailerLink(movie.getTrailerLink());
@@ -232,7 +233,7 @@ public class DirectorHelper {
         newMovie.setStatus(movie.getStatus());
         newMovie.setDescription(movie.getDescription());
         newMovie.setDistributorId(distributorId);
-        movieRepository.save(newMovie);
+        newMovie = movieRepository.save(newMovie);
         movieResponse.setMessage("Movie added successfully");
         movieResponse.setMovieName(movie.getMovieName());
         movieResponse.setGenre(movie.getGenre());
@@ -244,6 +245,7 @@ public class DirectorHelper {
         movieResponse.setStatus(movie.getStatus());
         movieResponse.setDescription(movie.getDescription());
         movieResponse.setDistributorId(distributorId);
+        movieResponse.setCost(movie.getCost());
         System.out.println(movieResponse);
         movieResponse.setTheaterOwnerToSend(helper.sendAllTheaterOwner(newMovie.getId()));
         return ResponseEntity.ok(movieResponse);
@@ -319,10 +321,28 @@ public class DirectorHelper {
         }else {
             movieAnalysis.setAverageSentiment(0);
         }
-        movieAnalysis.setTotalScreening(1000);
-        movieAnalysis.setTotalTheater(100);
+        movieAnalysis.setTotalScreening(140);
+        movieAnalysis.setTotalTheater(184);
         movieAnalysis.setTotalTicket(100000);
-        movieAnalysis.setTotalRevenue(10000000);
+        movieAnalysis.setTotalRevenue(41e+7);
+        double cost = movie.getCost();
+        double ratio = movieAnalysis.getTotalRevenue() / cost;
+        if( ratio < 0.5) {
+            movieAnalysis.setMovieVerdict("Disaster");
+        }else if(ratio < 1.1){
+            movieAnalysis.setMovieVerdict("Flop");
+        } else if (ratio < 1.5) {
+            movieAnalysis.setMovieVerdict("Average");
+        } else if (ratio < 2.5) {
+            movieAnalysis.setMovieVerdict("Hit");
+        } else if (ratio < 5) {
+            movieAnalysis.setMovieVerdict("Super Hit");
+
+        } else if (ratio < 20) {
+            movieAnalysis.setMovieVerdict("Block Bluster");
+        }else {
+            movieAnalysis.setMovieVerdict("Industry Hit");
+        }
         return ResponseEntity.ok(movieAnalysis);
     }
 
