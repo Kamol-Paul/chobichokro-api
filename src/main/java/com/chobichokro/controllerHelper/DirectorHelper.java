@@ -253,19 +253,17 @@ public class DirectorHelper {
         }
         List<Movie> movieList = movieRepository.findAllByDistributorId(user.getId());
         List<Movie> runningMovieList = new ArrayList<>();
-        Date currentDate = new Date();
         List<Schedule> scheduleList = scheduleRepository.findAll();
         Set<String> runningMovieName = new HashSet<>();
         scheduleList.forEach(schedule -> {
             runningMovieName.add(schedule.getMovieName());
         });
         for(Movie movie: movieList){
-            Date date = movie.getReleaseDate();
-            if(date.before(currentDate)){
+
                 if(runningMovieName.contains(movie.getMovieName())){
                     runningMovieList.add(movie);
                 }
-            }
+
         }
         return ResponseEntity.ok(runningMovieList);
     }
