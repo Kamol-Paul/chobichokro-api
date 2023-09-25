@@ -2,6 +2,7 @@ package com.chobichokro.payload.response;
 
 import com.chobichokro.models.Movie;
 import com.chobichokro.models.Review;
+import com.chobichokro.models.Theater;
 import lombok.*;
 
 import java.util.List;
@@ -20,4 +21,5 @@ public class MovieAnalysis {
     private double averageSentiment;
     private String movieVerdict;
     List<Review> reviews;
+    List<Theater> theaters;
 }
