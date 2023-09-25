@@ -287,4 +287,21 @@ public class DirectorHelper {
         return ResponseEntity.ok(upComingMovieList);
     }
 
+    public ResponseEntity<?> getRealizedMovie(String token) {
+        User user = getMe(token);
+        if(user == null){
+            return ResponseEntity.ok("User not found");
+        }
+        List<Movie> movieList = movieRepository.findAllByDistributorId(user.getId());
+        List<Movie> realizedMovieList = new ArrayList<>();
+        Date currentDate = new Date();
+        for(Movie movie: movieList){
+            Date date = movie.getReleaseDate();
+            if(date.before(currentDate)){
+                realizedMovieList.add(movie);
+            }
+        }
+        return ResponseEntity.ok(realizedMovieList);
+
+    }
 }
