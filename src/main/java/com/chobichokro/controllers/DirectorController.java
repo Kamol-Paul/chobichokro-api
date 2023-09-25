@@ -25,7 +25,7 @@ public class DirectorController {
         return directorHelper.getDirectorAnalysis(token);
     }
     @GetMapping("/get/analysis/{movieId}")
-    public ResponseEntity<?> getSingleMovieAanlysis(@RequestHeader("Authorization") String token, @PathVariable String movieId){
+    public ResponseEntity<?> getSingleMovieAnalysis(@RequestHeader("Authorization") String token, @PathVariable String movieId){
         return directorHelper.getSingleMovieAnalysis(token, movieId);
     }
     @GetMapping("/get/myMovies")

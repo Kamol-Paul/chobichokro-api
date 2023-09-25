@@ -124,6 +124,9 @@ public class DirectorHelper {
         if(movie == null){
             return ResponseEntity.ok("Movie not found");
         }
+        if(Objects.equals(movie.getStatus(), "Released")){
+            return getSingleMovieAnalysis(movie);
+        }
         List<Schedule> scheduleList = scheduleRepository.findAllByMovieName(movie.getMovieName());
         Set<String> theaterIdSet = new HashSet<>();
         List<Ticket> tickets = ticketRepository.findAll();
@@ -302,4 +305,25 @@ public class DirectorHelper {
         return ResponseEntity.ok(realizedMovieList);
 
     }
+    public ResponseEntity<?> getSingleMovieAnalysis(Movie movie){
+        MovieAnalysis movieAnalysis = new MovieAnalysis();
+        movieAnalysis.setMovie(movie);
+        List<Review> reviews = reviewRepository.findAllByMovieId(movie.getId());
+        movieAnalysis.setReviews(reviews);
+        if(!reviews.isEmpty()){
+            double totalRating = 0;
+            for(Review review: reviews){
+                totalRating+=review.getSentimentScore();
+            }
+            movieAnalysis.setAverageSentiment(totalRating/reviews.size());
+        }else {
+            movieAnalysis.setAverageSentiment(0);
+        }
+        movieAnalysis.setTotalScreening(1000);
+        movieAnalysis.setTotalTheater(100);
+        movieAnalysis.setTotalTicket(100000);
+        movieAnalysis.setTotalRevenue(10000000);
+        return ResponseEntity.ok(movieAnalysis);
+    }
+
 }
