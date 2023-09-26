@@ -127,7 +127,7 @@ public class TheaterController {
         return ResponseEntity.ok(helper.getPendingTheater(token));
     }
 
-    @GetMapping("/new_movie")
+    @GetMapping("/get/new_movie")
     @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
     public ResponseEntity<?> getNewMovies(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(helper.getNewMovies(token));
@@ -160,8 +160,8 @@ public class TheaterController {
     @GetMapping("/get/upcoming_movie")
     @PreAuthorize("hasRole('ROLE_THEATER_OWNER') or hasRole('ADMIN')")
     ResponseEntity<?> getUpcomingMovie(@RequestHeader("Authorization") String token){
-        return ResponseEntity.ok(helper.getNewMovies(token));
-//        return theaterHelper.getUpComingMovie(token);
+//        return ResponseEntity.ok(helper.getNewMovies(token));
+        return theaterHelper.getUpComingMovie(token);
     }
     @GetMapping("/get_analysis")
     @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")

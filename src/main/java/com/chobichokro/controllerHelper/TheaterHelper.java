@@ -60,6 +60,8 @@ public class TheaterHelper {
             Optional<Movie> movie = movieRepository.findByMovieName(schedule.getMovieName());
             if (movie.isEmpty()) continue;
             if (date.before(movie.get().getReleaseDate())) continue;
+            movie.get().setStatus("running");
+            movieRepository.save(movie.get());
             movieSet.add(movie.get());
         }
         return ResponseEntity.ok(movieSet);
@@ -80,6 +82,8 @@ public class TheaterHelper {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
             Date date1 = formatter.parse(str);
             if (date1.before(date)) continue;
+            movie.get().setStatus("running");
+            movieRepository.save(movie.get());
             movieSet.add(movie.get());
         }
         return movieSet;
@@ -138,11 +142,13 @@ public class TheaterHelper {
         }
         List<Theater> theaters = theaterRepository.findAllByLicenseId(license.get().getId());
         Set<Movie> movieSet = new HashSet<>();
+        System.out.println(theaters);
         for (Theater theater : theaters) {
             Set<Movie> movieSet1 = getRunningMovieSetInTheater(theater.getId());
             if (movieSet1 == null) continue;
             movieSet.addAll(movieSet1);
         }
+//        System.out.println(movieSet);
         Set<String> movieIdSet = new HashSet<>();
         for (Movie movie : movieSet) {
             movieIdSet.add(movie.getId());
@@ -174,6 +180,8 @@ public class TheaterHelper {
             Movie movie = movieRepository.findById(theaterOwnerMovieRelation.getMovieId()).orElse(null);
             if (movie == null) continue;
             if (date.after(movie.getReleaseDate())) continue;
+            movie.setStatus("upcoming");
+            movieRepository.save(movie);
             movieSet.add(movie);
         }
 
