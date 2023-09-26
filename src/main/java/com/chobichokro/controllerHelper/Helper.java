@@ -141,6 +141,7 @@ public class Helper {
             String movieId = theaterNewMovieRelation.getNewMovieId();
             Movie movie = movieRepository.findById(movieId).orElse(null);
             if(movie == null) continue;
+            movie.setStatus("new");
             forReturn.add(movie);
         }
         return forReturn;
