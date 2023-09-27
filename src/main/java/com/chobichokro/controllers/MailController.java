@@ -82,4 +82,13 @@ public class MailController {
         return ResponseEntity.ok("Failed to send OTP");
 
     }
+//    @PostMapping("/")
+//    public ResponseEntity<?> checker(){
+//        EmailRequest emailRequest = new EmailRequest();
+//        emailRequest.setRecipient("s1910176121@ru.ac.bd");
+//        emailRequest.setSubject("OTP for Chobi Chokro");
+//        emailRequest.setMsgBody("Your OTP is: ");
+//        String status = emailService.sendSimpleMail(emailRequest);
+//        return ResponseEntity.ok(status);
+//    }
 }
