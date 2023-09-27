@@ -48,7 +48,7 @@ public class AudienceHelper {
     }
 
     public Object getTicketList(String scheduleId) {
-        List<Ticket> tickets =  ticketRepository.findAllByScheduleId(scheduleId);
+        List<Ticket> tickets = ticketRepository.findAllByScheduleId(scheduleId);
         List<String> available_seat = new ArrayList<>();
         List<String> booked_seat = new ArrayList<>();
         for (Ticket ticket : tickets) {
