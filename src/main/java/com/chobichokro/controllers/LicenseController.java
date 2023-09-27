@@ -69,14 +69,14 @@ public class LicenseController {
     @PutMapping("/update_status")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     private ResponseEntity<?> updateLicenseStatus(@RequestParam("licenseId") String licenseId, @RequestParam("status") String status) {
-        System.out.println(licenseId);
-        System.out.println(status);
+//        System.out.println(licenseId);
+//        System.out.println(status);
         License license = licenseRepository.findLicenseById(licenseId).orElse(null);
         if (license == null) {
             return ResponseEntity.badRequest().body("License not found");
         }
         license.setStatus(status);
-        System.out.println(license);
+//        System.out.println(license);
         license = licenseRepository.save(license);
         return ResponseEntity.ok(license);
 

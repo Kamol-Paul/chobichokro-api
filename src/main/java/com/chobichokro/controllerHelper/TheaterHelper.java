@@ -3,12 +3,8 @@ package com.chobichokro.controllerHelper;
 import com.chobichokro.models.*;
 import com.chobichokro.payload.response.MovieAnalysis;
 import com.chobichokro.relation.TheaterOwnerMovieRelation;
-import com.chobichokro.relationRepository.TheaterMoviePendingRepository;
-import com.chobichokro.relationRepository.TheaterMovieRelationRepository;
-import com.chobichokro.relationRepository.TheaterNewMovieRelationRepository;
 import com.chobichokro.relationRepository.TheaterOwnerMovieRelationRepository;
 import com.chobichokro.repository.*;
-import com.chobichokro.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -32,18 +28,7 @@ public class TheaterHelper {
     @Autowired
     private ScheduleRepository scheduleRepository;
     @Autowired
-    private TheaterMovieRelationRepository theaterMovieRelationRepository;
-
-    @Autowired
-    private TheaterNewMovieRelationRepository theaterNewMovieRelationRepository;
-    @Autowired
     private LicenseRepository licenseRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private JwtUtils jwtUtils;
-    @Autowired
-    private TheaterMoviePendingRepository theaterMoviePendingRepository;
     @Autowired
     private TheaterOwnerMovieRelationRepository theaterOwnerMovieRelationRepository;
     @Autowired
@@ -117,18 +102,18 @@ public class TheaterHelper {
 
     }
 
-    public ResponseEntity<?> getMyTheater(String token) {
-        User theaterOwner = helper.getUser(token);
-        if (theaterOwner == null) {
-            return ResponseEntity.ok("User not found");
-        }
-        Optional<License> license = licenseRepository.findLicenseById(theaterOwner.getLicenseId());
-        if (license.isEmpty()) {
-            return ResponseEntity.ok("License not found");
-        }
-        List<Theater> theaters = theaterRepository.findAllByLicenseId(license.get().getId());
-        return ResponseEntity.ok(theaters);
-    }
+//    public ResponseEntity<?> getMyTheater(String token) {
+//        User theaterOwner = helper.getUser(token);
+//        if (theaterOwner == null) {
+//            return ResponseEntity.ok("User not found");
+//        }
+//        Optional<License> license = licenseRepository.findLicenseById(theaterOwner.getLicenseId());
+//        if (license.isEmpty()) {
+//            return ResponseEntity.ok("License not found");
+//        }
+//        List<Theater> theaters = theaterRepository.findAllByLicenseId(license.get().getId());
+//        return ResponseEntity.ok(theaters);
+//    }
 
     public ResponseEntity<?> getRunningMovie(String token) throws ParseException {
         User theaterOwner = helper.getUser(token);
@@ -288,13 +273,14 @@ public class TheaterHelper {
         return count;
 
     }
-    public Map<String, MovieAnalysis> getAllMovieAnalysis(String theaterId){
+
+    public Map<String, MovieAnalysis> getAllMovieAnalysis(String theaterId) {
         List<Schedule> schedules = scheduleRepository.findAllByTheaterId(theaterId);
         Map<String, MovieAnalysis> forReturn = new HashMap<>();
-        for(Schedule schedule: schedules){
+        for (Schedule schedule : schedules) {
             String movieName = schedule.getMovieName();
-            if(!forReturn.containsKey(movieName))
-                forReturn.put(movieName, getMovieAnalysis(theaterId,movieName));
+            if (!forReturn.containsKey(movieName))
+                forReturn.put(movieName, getMovieAnalysis(theaterId, movieName));
 
         }
         return forReturn;
@@ -302,13 +288,13 @@ public class TheaterHelper {
 
     public ResponseEntity<?> getMovieAnalysisForTheater(String id, String movieName) {
         List<Schedule> schedules = scheduleRepository.findAllByMovieNameAndTheaterId(movieName, id);
-        if(schedules.isEmpty()) return null;
+        if (schedules.isEmpty()) return null;
 
         int totalTicket = 0;
-        for(Schedule schedule : schedules){
+        for (Schedule schedule : schedules) {
             List<Ticket> tickets = ticketRepository.findAllByScheduleId(schedule.getScheduleId());
-            for(Ticket ticket : tickets){
-                if(ticket.isBooked()) totalTicket++;
+            for (Ticket ticket : tickets) {
+                if (ticket.isBooked()) totalTicket++;
             }
         }
         return ResponseEntity.ok(totalTicket);

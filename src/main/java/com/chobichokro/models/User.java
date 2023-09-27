@@ -38,19 +38,17 @@ public class User {
 
     @DBRef
     private Set<Role> roles = new HashSet<>();
+    private String licenseId;
+    private Double amountBalance;
+
 
     public User() {
     }
-
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
     }
-
-
-    private String licenseId;
-    private Double amountBalance;
 
 
 }

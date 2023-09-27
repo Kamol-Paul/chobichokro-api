@@ -4,15 +4,16 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.List;
+
 @ToString
 @Getter
 public class JwtResponse {
     private final String token;
     private final String type = "Bearer";
+    private final List<String> roles;
     private String id;
     private String username;
     private String email;
-    private final List<String> roles;
 
     public JwtResponse(String accessToken, String id, String username, String email, List<String> roles) {
         this.token = accessToken;

@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Date;
+
 @Getter
 @Setter
 @ToString
@@ -25,7 +26,7 @@ public class DistributorMovieResponse {
     private String status;
     private String description;
     private String distributorId;
-    private  String distributorName;
+    private String distributorName;
 
 
 }

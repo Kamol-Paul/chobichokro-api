@@ -39,14 +39,14 @@ public class ScheduleController {
         return ResponseEntity.ok(scheduleRepository.findAll());
     }
 
-    @GetMapping("/id/{id}")
-    public ResponseEntity<?> getScheduleById(@PathVariable String id) {
-        Optional<Schedule> schedule = scheduleRepository.findById(id);
-        if (schedule.isEmpty()) {
-            return ResponseEntity.badRequest().body("Schedule not found");
-        }
-        return ResponseEntity.ok(scheduleRepository.findById(id));
-    }
+//    @GetMapping("/id/{id}")
+//    public ResponseEntity<?> getScheduleById(@PathVariable String id) {
+//        Optional<Schedule> schedule = scheduleRepository.findById(id);
+//        if (schedule.isEmpty()) {
+//            return ResponseEntity.badRequest().body("Schedule not found");
+//        }
+//        return ResponseEntity.ok(scheduleRepository.findById(id));
+//    }
 
     @GetMapping("/movie/{name}")
     public ResponseEntity<?> getScheduleByMovieName(@PathVariable String name) {
@@ -62,6 +62,7 @@ public class ScheduleController {
     public ResponseEntity<?> getScheduleByDate(@PathVariable String date) {
         return ResponseEntity.ok(scheduleRepository.findByScheduleDate(date));
     }
+
     @GetMapping("/dropdown/{movieName}")
     public ResponseEntity<?> getScheduleByMovieNameDropdown(@PathVariable String movieName) {
         List<Schedule> schedules = scheduleRepository.findAllByMovieName(movieName);
@@ -72,10 +73,11 @@ public class ScheduleController {
         }
         return ResponseEntity.ok(theaterSet);
     }
+
     @GetMapping("/dropdown/movieName/{movieName}/theaterId/{theaterId}")
     public ResponseEntity<?> getScheduleByMovieNameDropdown(@PathVariable String movieName, @PathVariable String theaterId) {
         List<Schedule> schedules = scheduleRepository.findAllByMovieName(movieName);
-        List<List<String >> scheduleSet = new ArrayList<>();
+        List<List<String>> scheduleSet = new ArrayList<>();
         for (Schedule schedule : schedules) {
             if (schedule.getTheaterId().equals(theaterId)) {
                 List<String> alu = new ArrayList<>();
@@ -87,11 +89,12 @@ public class ScheduleController {
         }
         return ResponseEntity.ok(scheduleSet);
     }
+
     @GetMapping("/getScheduleId")
     public ResponseEntity<?> getSchedule(@ModelAttribute Schedule schedule) {
         List<Schedule> schedules = scheduleRepository.findAllByMovieName(schedule.getMovieName());
-        for(Schedule sch : schedules) {
-            if(Objects.equals(sch.getTheaterId(), schedule.getTheaterId()) && Objects.equals(sch.getScheduleDate(), schedule.getScheduleDate()) && sch.getHallNumber() == schedule.getHallNumber()) {
+        for (Schedule sch : schedules) {
+            if (Objects.equals(sch.getTheaterId(), schedule.getTheaterId()) && Objects.equals(sch.getScheduleDate(), schedule.getScheduleDate()) && sch.getHallNumber() == schedule.getHallNumber()) {
                 return ResponseEntity.ok(sch);
             }
         }

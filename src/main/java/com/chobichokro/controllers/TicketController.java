@@ -15,15 +15,15 @@ public class TicketController {
     @Autowired
     private TicketHelper ticketHelper;
 
-    @GetMapping("/test")
-    public String test() {
-        return "test";
-    }
+//    @GetMapping("/test")
+//    public String test() {
+//        return "test";
+//    }
 
-    @GetMapping("/all_available")
-    public ResponseEntity<?> getAllAvailableTickets() {
-        return ticketHelper.getAllAvailableTickets();
-    }
+//    @GetMapping("/all_available")
+//    public ResponseEntity<?> getAllAvailableTickets() {
+//        return ticketHelper.getAllAvailableTickets();
+//    }
 
     @GetMapping("/{scheduleId}")
     public ResponseEntity<?> getTicketsByScheduleId(@PathVariable String scheduleId) {

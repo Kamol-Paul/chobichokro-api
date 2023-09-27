@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface LicenseRepository extends MongoRepository<License, String> {
     Optional<License> findLicenseByPhoneNumber(String phoneNumber);
+
     Optional<License> findByLicenseNumber(String licenseNumber);
 
     Boolean existsByPhoneNumber(String phoneNumber);
@@ -44,7 +45,7 @@ public interface LicenseRepository extends MongoRepository<License, String> {
     }
 
 
-    default List<License> getApproved(){
+    default List<License> getApproved() {
         List<License> licenses = findAll();
         licenses.removeIf(license -> !license.getStatus().equals("approved"));
         return licenses;

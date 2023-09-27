@@ -2,10 +2,6 @@ package com.chobichokro.controllerHelper;
 
 import com.chobichokro.models.*;
 import com.chobichokro.payload.request.ReviewRequest;
-import com.chobichokro.relationRepository.TheaterMoviePendingRepository;
-import com.chobichokro.relationRepository.TheaterMovieRelationRepository;
-import com.chobichokro.relationRepository.TheaterNewMovieRelationRepository;
-import com.chobichokro.relationRepository.TheaterOwnerMovieRelationRepository;
 import com.chobichokro.repository.*;
 import com.chobichokro.security.jwt.JwtUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -17,7 +13,8 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.*;
 
 @Component
@@ -32,22 +29,22 @@ public class UserHelper {
     private MovieRepository movieRepository;
     @Autowired
     private ScheduleRepository scheduleRepository;
-    @Autowired
-    private TheaterMovieRelationRepository theaterMovieRelationRepository;
-
-    @Autowired
-    private TheaterNewMovieRelationRepository theaterNewMovieRelationRepository;
-    @Autowired
+    //    @Autowired
+//    private TheaterMovieRelationRepository theaterMovieRelationRepository;
+//
+//    @Autowired
+//    private TheaterNewMovieRelationRepository theaterNewMovieRelationRepository;
+//    @Autowired
     private LicenseRepository licenseRepository;
-    @Autowired
-    private RoleRepository roleRepository;
+    //    @Autowired
+//    private RoleRepository roleRepository;
     @Autowired
     private JwtUtils jwtUtils;
-    @Autowired
-    private TheaterMoviePendingRepository theaterMoviePendingRepository;
-    @Autowired
-    private TheaterOwnerMovieRelationRepository theaterOwnerMovieRelationRepository;
-    @Autowired
+    //    @Autowired
+//    private TheaterMoviePendingRepository theaterMoviePendingRepository;
+//    @Autowired
+//    private TheaterOwnerMovieRelationRepository theaterOwnerMovieRelationRepository;
+//    @Autowired
     private TaxRepository taxRepository;
     @Autowired
     private ReviewRepository reviewRepository;
@@ -59,33 +56,33 @@ public class UserHelper {
 
     }
 
-    public Map<String,String> setAmount(String token, Double amount) {
-        Map<String , String> forReturn = new HashMap<>();
-        User user = getMe(token);
-        if (user == null) {
-            forReturn.put("message" , "user not found");
-            return forReturn;
-        }
-        user.setAmountBalance(amount);
-        user = userRepository.save(user);
-
-        forReturn.put("userName", user.getUsername());
-        forReturn.put("email", user.getEmail());
-        forReturn.put("amountBalance", String.valueOf(user.getAmountBalance()));
-        forReturn.put("message", "ammount set successfully");
-        
-        return forReturn;
-    }
+//    public Map<String,String> setAmount(String token, Double amount) {
+//        Map<String , String> forReturn = new HashMap<>();
+//        User user = getMe(token);
+//        if (user == null) {
+//            forReturn.put("message" , "user not found");
+//            return forReturn;
+//        }
+//        user.setAmountBalance(amount);
+//        user = userRepository.save(user);
+//
+//        forReturn.put("userName", user.getUsername());
+//        forReturn.put("email", user.getEmail());
+//        forReturn.put("amountBalance", String.valueOf(user.getAmountBalance()));
+//        forReturn.put("message", "ammount set successfully");
+//
+//        return forReturn;
+//    }
 
     public List<Schedule> getAllSchedule() {
         return scheduleRepository.findAll();
     }
 
     public Map<String, String> addMoney(String token, Double amount) {
-        Map<String , String> forReturn = new HashMap<>();
+        Map<String, String> forReturn = new HashMap<>();
         User user = getMe(token);
         if (user == null) {
-            forReturn.put("message" , "user not found");
+            forReturn.put("message", "user not found");
             return forReturn;
         }
         Double currentAmount = user.getAmountBalance();
@@ -98,44 +95,44 @@ public class UserHelper {
         forReturn.put("message", "ammount add successfully");
         return forReturn;
     }
-    public Map<String, String> withdraw(String token, Double amount) {
-        Map<String , String> forReturn = new HashMap<>();
-        User user = getMe(token);
-        if (user == null) {
-            forReturn.put("message" , "user not found");
-            return forReturn;
-        }
-        Double currentAmount = user.getAmountBalance();
-        if(currentAmount < amount){
-            forReturn.put("message", "not enough balance to withdraw");
-            return forReturn;
-
-        }
-        user.setAmountBalance(amount + currentAmount);
-        user = userRepository.save(user);
-
-        forReturn.put("userName", user.getUsername());
-        forReturn.put("email", user.getEmail());
-        forReturn.put("amountBalance", String.valueOf(user.getAmountBalance()));
-        forReturn.put("message", "money withdraw successfully");
-        return forReturn;
-    }
+//    public Map<String, String> withdraw(String token, Double amount) {
+//        Map<String , String> forReturn = new HashMap<>();
+//        User user = getMe(token);
+//        if (user == null) {
+//            forReturn.put("message" , "user not found");
+//            return forReturn;
+//        }
+//        Double currentAmount = user.getAmountBalance();
+//        if(currentAmount < amount){
+//            forReturn.put("message", "not enough balance to withdraw");
+//            return forReturn;
+//
+//        }
+//        user.setAmountBalance(amount + currentAmount);
+//        user = userRepository.save(user);
+//
+//        forReturn.put("userName", user.getUsername());
+//        forReturn.put("email", user.getEmail());
+//        forReturn.put("amountBalance", String.valueOf(user.getAmountBalance()));
+//        forReturn.put("message", "money withdraw successfully");
+//        return forReturn;
+//    }
 
     public List<Ticket> query(String scheduleId) {
         return ticketRepository.findByScheduleId(scheduleId);
     }
-
-    public ResponseEntity<?> queryForSeat(String token, String scheduleId, String seatNumber) {
-        User user = getMe(token);
-        Ticket ticket = ticketRepository.findByScheduleIdAndSeatNumber(scheduleId, seatNumber);
-        if (ticket == null) return ResponseEntity.ok("Ticket not found");
-        if (ticket.isBooked()) {
-            if (ticket.getUserId().equals(user.getId())) return ResponseEntity.ok(ticket);
-            else return ResponseEntity.ok("Ticket is booked by another user");
-
-        }
-        return ResponseEntity.ok(ticket);
-    }
+//
+//    public ResponseEntity<?> queryForSeat(String token, String scheduleId, String seatNumber) {
+//        User user = getMe(token);
+//        Ticket ticket = ticketRepository.findByScheduleIdAndSeatNumber(scheduleId, seatNumber);
+//        if (ticket == null) return ResponseEntity.ok("Ticket not found");
+//        if (ticket.isBooked()) {
+//            if (ticket.getUserId().equals(user.getId())) return ResponseEntity.ok(ticket);
+//            else return ResponseEntity.ok("Ticket is booked by another user");
+//
+//        }
+//        return ResponseEntity.ok(ticket);
+//    }
 
     public ResponseEntity<?> book(String token, String scheduleId, String seatNumber, String paymentId) {
         User user = getMe(token);
@@ -264,7 +261,7 @@ public class UserHelper {
 
     }
 
-    public ResponseEntity<?> addReview(String token, ReviewRequest review){
+    public ResponseEntity<?> addReview(String token, ReviewRequest review) {
         User user = getMe(token);
         if (user == null) return ResponseEntity.ok("User not found");
         var schedule = scheduleRepository.findById(review.getScheduleId());
@@ -316,10 +313,12 @@ public class UserHelper {
         return get_double_from_string(response.toString());
 
     }
+
     double get_double_from_string(String s) {
         s = s.substring(1, s.length() - 2);
         return Double.parseDouble(s);
     }
+
     Double getSentimentScoreWithTry(String opinion) {
         try {
             return getSentimentScore(opinion);
@@ -352,16 +351,17 @@ public class UserHelper {
 
         List<Schedule> scheduleList = scheduleRepository.findAllByMovieName(movieName);
         Schedule schedule = findAvailableSchedule(scheduleList, scheduleIds);
-        if(schedule == null){
+        if (schedule == null) {
             return ResponseEntity.ok("User have not seen the movie");
         }
         review.setScheduleId(schedule.getScheduleId());
         return addReview(token, review);
 
     }
-    Schedule findAvailableSchedule(List<Schedule> scheduleList, Set<String> scheduleIds){
+
+    Schedule findAvailableSchedule(List<Schedule> scheduleList, Set<String> scheduleIds) {
         for (Schedule schedule : scheduleList) {
-            if(!scheduleIds.contains(schedule.getScheduleId())){
+            if (!scheduleIds.contains(schedule.getScheduleId())) {
                 return schedule;
             }
         }
