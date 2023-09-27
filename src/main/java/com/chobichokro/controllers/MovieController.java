@@ -135,27 +135,38 @@ public class MovieController {
     @GetMapping("/query/{queryString}")
     public List<Movie> searchMovie(@PathVariable String queryString) {
         List<Movie> allMovie = movieRepository.findAll();
+        System.out.println(allMovie);
         List<Movie> for_ans = new ArrayList<>();
         for (Movie movie : allMovie) {
             if (isSameMovie(movie, queryString)) {
                 for_ans.add(movie);
             }
         }
+        System.out.println(for_ans);
         return for_ans;
 
     }
 
     private boolean isSameMovie(Movie movie, String matching) {
-        if (movie.getMovieName() != null && movie.getMovieName().contains(matching)) return true;
-        for (String genre : movie.getGenre()) {
-            if (genre.contains(matching)) return true;
+        matching = matching.toLowerCase();
+        if (movie.getMovieName() != null && movie.getMovieName().toLowerCase().contains(matching)) return true;
+        if(movie.getGenre() != null) {
+            for (String genre : movie.getGenre()) {
+                if (genre.toLowerCase().contains(matching)) return true;
+            }
         }
-        for (String cast : movie.getCast()) {
-            if (cast.contains(matching)) return true;
+        if(movie.getCast() != null) {
+            for (String cast : movie.getCast()) {
+                if (cast.toLowerCase().contains(matching)) return true;
+            }
         }
-        for (String director : movie.getDirector()) {
-            if (director.contains(matching)) return true;
+
+        if(movie.getDirector() != null){
+            for (String director : movie.getDirector()) {
+                if (director.toLowerCase().contains(matching)) return true;
+            }
         }
+
         return false;
     }
 

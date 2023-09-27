@@ -328,14 +328,43 @@ public class UserHelper {
         }
     }
 
-    public ResponseEntity<?> addReviewForReleasedMovie(Review review) {
-        String opinion = review.getOpinion();
+//    public ResponseEntity<?> addReviewForReleasedMovie(Review review) {
+//        String opinion = review.getOpinion();
+//
+//        // need to replace all the special characters and new line
+//        opinion = opinion.replaceAll("[^a-zA-Z0-9 ]", "");
+//        review.setOpinion(opinion);
+//        review.setSentimentScore(getSentimentScoreWithTry(opinion));
+//        review = reviewRepository.save(review);
+//        return ResponseEntity.ok(review);
+//    }
 
-        // need to replace all the special characters and new line
-        opinion = opinion.replaceAll("[^a-zA-Z0-9 ]", "");
-        review.setOpinion(opinion);
-        review.setSentimentScore(getSentimentScoreWithTry(opinion));
-        review = reviewRepository.save(review);
-        return ResponseEntity.ok(review);
+    public ResponseEntity<?> addReviewForMovieName(String token, String movieName, ReviewRequest review) {
+        User user = getMe(token);
+        if (user == null) return ResponseEntity.ok("User not found");
+        var movie = movieRepository.findByMovieName(movieName);
+        if (movie.isEmpty()) return ResponseEntity.ok("Movie not found");
+        List<Ticket> tickets = ticketRepository.findAllByUserId(user.getId());
+        Set<String> scheduleIds = new HashSet<>();
+        for (Ticket ticket : tickets) {
+            scheduleIds.add(ticket.getScheduleId());
+        }
+
+        List<Schedule> scheduleList = scheduleRepository.findAllByMovieName(movieName);
+        Schedule schedule = findAvailableSchedule(scheduleList, scheduleIds);
+        if(schedule == null){
+            return ResponseEntity.ok("User have not seen the movie");
+        }
+        review.setScheduleId(schedule.getScheduleId());
+        return addReview(token, review);
+
+    }
+    Schedule findAvailableSchedule(List<Schedule> scheduleList, Set<String> scheduleIds){
+        for (Schedule schedule : scheduleList) {
+            if(!scheduleIds.contains(schedule.getScheduleId())){
+                return schedule;
+            }
+        }
+        return null;
     }
 }

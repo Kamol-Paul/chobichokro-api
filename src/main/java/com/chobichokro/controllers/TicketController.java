@@ -27,6 +27,7 @@ public class TicketController {
 
     @GetMapping("/{scheduleId}")
     public ResponseEntity<?> getTicketsByScheduleId(@PathVariable String scheduleId) {
+        System.out.println(scheduleId);
         return ticketHelper.getTicketsByScheduleId(scheduleId);
     }
 }

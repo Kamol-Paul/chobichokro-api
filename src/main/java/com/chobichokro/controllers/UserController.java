@@ -23,43 +23,43 @@ public class UserController {
         return ResponseEntity.ok(userHelper.getMe(token));
     }
 
-    @PostMapping("/set_amount")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<?> setAmount(@RequestHeader("Authorization") String token, @RequestParam("amount") Double amount) {
-        return ResponseEntity.ok(userHelper.setAmount(token, amount));
-    }
+//    @PostMapping("/set_amount")
+//    @PreAuthorize("hasRole('ROLE_USER')")
+//    public ResponseEntity<?> setAmount(@RequestHeader("Authorization") String token, @RequestParam("amount") Double amount) {
+//        return ResponseEntity.ok(userHelper.setAmount(token, amount));
+//    }
 
     @GetMapping("/all_schedule")
     public ResponseEntity<?> getAllSchedule() {
         return ResponseEntity.ok(userHelper.getAllSchedule());
     }
 
-    @PostMapping("add_money")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_THEATER_OWNER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR') or hasRole('ROLE_DISTRIBUTOR')")
-    public ResponseEntity<?> addMoney(@RequestHeader("Authorization") String token, @RequestParam("amount") Double amount) {
-        return ResponseEntity.ok(userHelper.addMoney(token, amount));
-    }
-    @PostMapping("withdraw_money")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_THEATER_OWNER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR') or hasRole('ROLE_DISTRIBUTOR')")
-    public ResponseEntity<?> withdrawMoney(@RequestHeader("Authorization") String token, @RequestParam("amount") Double amount) {
-        return ResponseEntity.ok(userHelper.withdraw(token,amount));
-    }
+//    @PostMapping("add_money")
+//    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_THEATER_OWNER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR') or hasRole('ROLE_DISTRIBUTOR')")
+//    public ResponseEntity<?> addMoney(@RequestHeader("Authorization") String token, @RequestParam("amount") Double amount) {
+//        return ResponseEntity.ok(userHelper.addMoney(token, amount));
+//    }
+//    @PostMapping("withdraw_money")
+//    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_THEATER_OWNER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR') or hasRole('ROLE_DISTRIBUTOR')")
+//    public ResponseEntity<?> withdrawMoney(@RequestHeader("Authorization") String token, @RequestParam("amount") Double amount) {
+//        return ResponseEntity.ok(userHelper.withdraw(token,amount));
+//    }
 
-    @GetMapping("/query/{scheduleId}")
-    public ResponseEntity<?> query(@PathVariable("scheduleId") String scheduleId) {
-        return ResponseEntity.ok(userHelper.query(scheduleId));
-    }
+//    @GetMapping("/query/{scheduleId}")
+//    public ResponseEntity<?> query(@PathVariable("scheduleId") String scheduleId) {
+//        return ResponseEntity.ok(userHelper.query(scheduleId));
+//    }
 
-    @GetMapping("/query/{scheduleId}/{seatNumber}")
-    public ResponseEntity<?> query(@RequestHeader("Authorization") String token, @PathVariable("scheduleId") String scheduleId, @PathVariable("seatNumber") String seatNumber) {
-        return userHelper.queryForSeat(token, scheduleId, seatNumber);
-    }
+//    @GetMapping("/query/{scheduleId}/{seatNumber}")
+//    public ResponseEntity<?> query(@RequestHeader("Authorization") String token, @PathVariable("scheduleId") String scheduleId, @PathVariable("seatNumber") String seatNumber) {
+//        return userHelper.queryForSeat(token, scheduleId, seatNumber);
+//    }
 
-    @PostMapping("/book/{scheduleId}/{seatNumber}")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_THEATER_OWNER')")
-    public ResponseEntity<?> book(@RequestHeader("Authorization") String token, @PathVariable("scheduleId") String scheduleId, @PathVariable("seatNumber") String seatNumber, @RequestParam("paymentId") String paymentId) {
-        return userHelper.book(token, scheduleId, seatNumber, paymentId);
-    }
+//    @PostMapping("/book/{scheduleId}/{seatNumber}")
+//    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_THEATER_OWNER')")
+//    public ResponseEntity<?> book(@RequestHeader("Authorization") String token, @PathVariable("scheduleId") String scheduleId, @PathVariable("seatNumber") String seatNumber, @RequestParam("paymentId") String paymentId) {
+//        return userHelper.book(token, scheduleId, seatNumber, paymentId);
+//    }
 
     @GetMapping("/my_tickets")
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -73,19 +73,23 @@ public class UserController {
         System.out.println(paymentId);
         return userHelper.bookMultiple(token, scheduleId, seatNumbers, paymentId);
     }
-    @PostMapping("/add_review")
+//    @PostMapping("/add_review")
+//    @PreAuthorize("hasRole('ROLE_USER')")
+//    public ResponseEntity<?> addReview(@RequestHeader("Authorization") String token, @ModelAttribute ReviewRequest review) {
+//        return userHelper.addReview(token , review);
+//    }
+//    @GetMapping("/")
+//    public ResponseEntity<?> score() throws IOException, InterruptedException {
+//        return ResponseEntity.ok(userHelper.getSentimentScore("I hate this movie"));
+//    }
+//    @PostMapping("/add_released_movie_review")
+//    public ResponseEntity<?> addReviewForReleasedMovie(@ModelAttribute Review review) {
+//        return userHelper.addReviewForReleasedMovie(review);
+//    }
+    @PostMapping("/add_review/{movieName}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<?> addReview(@RequestHeader("Authorization") String token, @ModelAttribute ReviewRequest review) {
-        return userHelper.addReview(token , review);
+    public ResponseEntity<?> addReviewForReleasedMovie(@RequestHeader("Authorization") String token, @PathVariable("movieName") String movieName, @ModelAttribute ReviewRequest review) {
+        return userHelper.addReviewForMovieName(token, movieName, review);
     }
-    @GetMapping("/")
-    public ResponseEntity<?> score() throws IOException, InterruptedException {
-        return ResponseEntity.ok(userHelper.getSentimentScore("I hate this movie"));
-    }
-    @PostMapping("/add_released_movie_review")
-    public ResponseEntity<?> addReviewForReleasedMovie(@ModelAttribute Review review) {
-        return userHelper.addReviewForReleasedMovie(review);
-    }
-
 
 }
