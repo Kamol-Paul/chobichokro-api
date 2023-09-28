@@ -1,8 +1,10 @@
 package com.chobichokro.controllerHelper;
 
+import com.chobichokro.models.License;
 import com.chobichokro.models.Schedule;
 import com.chobichokro.models.Theater;
 import com.chobichokro.models.Ticket;
+import com.chobichokro.repository.LicenseRepository;
 import com.chobichokro.repository.ScheduleRepository;
 import com.chobichokro.repository.TheaterRepository;
 import com.chobichokro.repository.TicketRepository;
@@ -20,13 +22,28 @@ public class AudienceHelper {
     TheaterRepository theaterRepository;
     @Autowired
     TicketRepository ticketRepository;
+    @Autowired
+    LicenseRepository licenseRepository;
 
     public List<Theater> getTheaterlist(String movieName) {
         List<Schedule> scheduleList = scheduleRepository.findByMovieName(movieName);
         Set<String> theaterIdList = scheduleList.stream().map(Schedule::getTheaterId).collect(Collectors.toSet());
-        return theaterRepository.findAllById(theaterIdList);
+        List<Theater> theaters = theaterRepository.findAllById(theaterIdList);
+        for(Theater theater : theaters){
+            String theaterOwnerId = getTheaterOwnerId(theater);
+            theater.setId(theaterOwnerId);
+        }
+        return theaters;
+
+
     }
 
+    public String getTheaterOwnerId(Theater theater){
+        String licenseId = theater.getLicenseId();
+        Optional<License> license = licenseRepository.findById(licenseId);
+        return license.map(License::getLicenseOwner).orElse(null);
+
+    }
 
     public Object getScheduleList(String movieName, String theaterId) {
         List<Schedule> scheduleList = scheduleRepository.findAllByMovieNameAndTheaterId(movieName, theaterId);
