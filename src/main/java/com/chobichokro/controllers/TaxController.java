@@ -1,14 +1,11 @@
 package com.chobichokro.controllers;
 
-import com.chobichokro.models.Movie;
-import com.chobichokro.models.Tax;
-import com.chobichokro.models.User;
-import com.chobichokro.repository.MovieRepository;
-import com.chobichokro.repository.TaxRepository;
-import com.chobichokro.repository.UserRepository;
+import com.chobichokro.models.*;
+import com.chobichokro.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +20,7 @@ public class TaxController {
     MovieRepository movieRepository;
     @Autowired
     UserRepository userRepository;
+
 
     private static Map<String, String> getStringStringMap(String key, List<Tax> value, String distributorName) {
         Map<String, String> taxAnalysis = new HashMap<>();

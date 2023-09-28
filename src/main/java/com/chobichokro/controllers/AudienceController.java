@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.Arrays;
 
 @RestController
@@ -20,13 +21,13 @@ public class AudienceController {
     UserHelper userHelper;
 
     @GetMapping("/get_theater_list")
-    ResponseEntity<?> getTheaterList(@ModelAttribute ScheduleRequest scheduleRequest) {
+    ResponseEntity<?> getTheaterList(@ModelAttribute ScheduleRequest scheduleRequest) throws ParseException {
         System.out.println(scheduleRequest);
         return ResponseEntity.ok(audienceHelper.getTheaterlist(scheduleRequest.getMovieName()));
     }
 
     @GetMapping("/get_showtime_list")
-    ResponseEntity<?> getScheduleList(@ModelAttribute ScheduleRequest scheduleRequest) {
+    ResponseEntity<?> getScheduleList(@ModelAttribute ScheduleRequest scheduleRequest) throws ParseException {
         System.out.println(scheduleRequest);
         return ResponseEntity.ok(audienceHelper.getScheduleList(scheduleRequest.getMovieName(), scheduleRequest.getTheaterId()));
     }
