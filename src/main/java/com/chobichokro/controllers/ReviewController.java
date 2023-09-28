@@ -60,8 +60,4 @@ public class ReviewController {
         System.out.println(reviews);
         return ResponseEntity.ok(reviews);
     }
-//    @GetMapping("/theatre/{theatreId}")
-//    public ResponseEntity<?> getReviewsByTheatreId(@PathVariable("theatreId") String theatreId) {
-//        return ResponseEntity.ok(reviewRepository.findAllByTheatreId(theatreId));
-//    }
 }

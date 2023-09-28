@@ -1,7 +1,10 @@
 package com.chobichokro.controllerHelper;
 
 import com.chobichokro.models.Ticket;
+import com.chobichokro.repository.TheaterRepository;
 import com.chobichokro.repository.TicketRepository;
+import com.chobichokro.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -9,11 +12,11 @@ import java.util.List;
 
 @Component
 public class TicketHelper {
-    //    @Autowired
-//    private UserRepository userRepository;
-//    @Autowired
-//    private TheaterRepository theaterRepository;
-//    @Autowired
+        @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private TheaterRepository theaterRepository;
+    @Autowired
     private TicketRepository ticketRepository;
 //    @Autowired
 //    private MovieRepository movieRepository;
@@ -35,11 +38,11 @@ public class TicketHelper {
 //    @Autowired
 //    private TheaterOwnerMovieRelationRepository theaterOwnerMovieRelationRepository;
 
-//    public ResponseEntity<?> getAllAvailableTickets() {
-//        List<Ticket> allAvailableTickets = ticketRepository.findAll();
-//        allAvailableTickets.removeIf(Ticket::isBooked);
-//        return ResponseEntity.ok(allAvailableTickets);
-//    }
+    public ResponseEntity<?> getAllAvailableTickets() {
+        List<Ticket> allAvailableTickets = ticketRepository.findAll();
+        allAvailableTickets.removeIf(Ticket::isBooked);
+        return ResponseEntity.ok(allAvailableTickets);
+    }
 
     public ResponseEntity<?> getTicketsByScheduleId(String scheduleId) {
         List<Ticket> tickets = ticketRepository.findAllByScheduleId(scheduleId);

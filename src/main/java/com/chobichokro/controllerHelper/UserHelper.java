@@ -34,7 +34,7 @@ public class UserHelper {
 //
 //    @Autowired
 //    private TheaterNewMovieRelationRepository theaterNewMovieRelationRepository;
-//    @Autowired
+    @Autowired
     private LicenseRepository licenseRepository;
     //    @Autowired
 //    private RoleRepository roleRepository;
@@ -44,7 +44,7 @@ public class UserHelper {
 //    private TheaterMoviePendingRepository theaterMoviePendingRepository;
 //    @Autowired
 //    private TheaterOwnerMovieRelationRepository theaterOwnerMovieRelationRepository;
-//    @Autowired
+    @Autowired
     private TaxRepository taxRepository;
     @Autowired
     private ReviewRepository reviewRepository;
@@ -253,6 +253,7 @@ public class UserHelper {
         List<Ticket> tickets = new LinkedList<>();
         for (String s : seatNumber) {
             Ticket ticket = ticketRepository.findByScheduleIdAndSeatNumber(scheduleId, s);
+            System.out.println(ticket + " " + s);
             if (ticket == null) return null;
             if (ticket.isBooked()) return null;
             tickets.add(ticket);

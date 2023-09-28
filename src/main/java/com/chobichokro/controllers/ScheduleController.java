@@ -39,15 +39,6 @@ public class ScheduleController {
         return ResponseEntity.ok(scheduleRepository.findAll());
     }
 
-//    @GetMapping("/id/{id}")
-//    public ResponseEntity<?> getScheduleById(@PathVariable String id) {
-//        Optional<Schedule> schedule = scheduleRepository.findById(id);
-//        if (schedule.isEmpty()) {
-//            return ResponseEntity.badRequest().body("Schedule not found");
-//        }
-//        return ResponseEntity.ok(scheduleRepository.findById(id));
-//    }
-
     @GetMapping("/movie/{name}")
     public ResponseEntity<?> getScheduleByMovieName(@PathVariable String name) {
         return ResponseEntity.ok(scheduleRepository.findAllByMovieName(name));
