@@ -37,67 +37,7 @@ public class MovieController {
     private MovieRepository movieRepository;
 
 
-//    @PostMapping("/add")
-//    @PreAuthorize("hasRole('ADMIN') or hasRole('ROLE_DISTRIBUTOR')")
-//    public ResponseEntity<?> addMovie(@ModelAttribute("movie") MovieRequest movie, @RequestHeader("Authorization") String auth) throws ParseException {
-//
-//        MovieResponse movieResponse = new MovieResponse();
-//        String distributorId = helper.getUserId(auth);
-//        System.out.println(distributorId);
-//        if (distributorId == null) {
-//            movieResponse.setMessage("Distributor id is null");
-//            return ResponseEntity.badRequest().body(movieResponse);
-//        }
-//        User distributor = userRepository.findById(distributorId).orElse(null);
-//        if (distributor == null) {
-//            movieResponse.setMessage("Distributor not found");
-//            return ResponseEntity.badRequest().body(movieResponse);
-//        }
-////        System.out.println(movie);
-//        if (movieRepository.existsByMovieName(movie.getMovieName())) {
-//            movieResponse.setMessage("Movie already exists" + movie.getMovieName());
-//            return ResponseEntity.badRequest().body(movieResponse);
-//        }
-//        Movie newMovie = new Movie();
-//
-//        newMovie.setMovieName(movie.getMovieName());
-//        newMovie.setGenre(movie.getGenre());
-//        newMovie.setCast(movie.getCast());
-//        newMovie.setDirector(movie.getDirector());
-//        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-//        newMovie.setReleaseDate(df.parse(movie.getReleaseDate()));
-//        newMovie.setTrailerLink(movie.getTrailerLink());
-//        String fileName;
-//        MultipartFile image = movie.getImage();
-//        try {
-//            fileName = fileServices.uploadImage(path, image);
-//        } catch (IOException e) {
-//            System.out.println("Error uploading image");
-//            throw new RuntimeException(e);
-//        }
-//        newMovie.setPosterImageLink(fileName);
-//        System.out.println(newMovie);
-//        newMovie.setStatus(movie.getStatus());
-//        newMovie.setDescription(movie.getDescription());
-//        newMovie.setDistributorId(distributorId);
-//        movieRepository.save(newMovie);
-//        movieResponse.setMessage("Movie added successfully");
-//        movieResponse.setMovieName(movie.getMovieName());
-//        movieResponse.setGenre(movie.getGenre());
-//        movieResponse.setCast(movie.getCast());
-//        movieResponse.setDirector(movie.getDirector());
-//        movieResponse.setReleaseDate(df.parse(movie.getReleaseDate()));
-//        movieResponse.setTrailerLink(movie.getTrailerLink());
-//        movieResponse.setPosterImageLink(fileName);
-//        movieResponse.setStatus(movie.getStatus());
-//        movieResponse.setDescription(movie.getDescription());
-//        movieResponse.setDistributorId(distributorId);
-//        System.out.println(movieResponse);
-////        helper.sendAllTheaterOwner(newMovie.getId());
-//        movieResponse.setTheaterOwnerToSend(helper.sendAllTheaterOwner(newMovie.getId()));
-//        return ResponseEntity.ok(movieResponse);
-//    }
-    @Autowired
+@Autowired
     private ScheduleRepository scheduleRepository;
 
     @GetMapping("/all")
