@@ -264,13 +264,13 @@ public class UserHelper {
 
     public ResponseEntity<?> addReview(String token, ReviewRequest review) {
         User user = getMe(token);
-        if (user == null) return ResponseEntity.ok("User not found");
+        if (user == null) return ResponseEntity.badRequest().body("User not found");
         var schedule = scheduleRepository.findById(review.getScheduleId());
-        if (schedule.isEmpty()) return ResponseEntity.ok("Invalid ticket");
+        if (schedule.isEmpty()) return ResponseEntity.badRequest().body("Invalid ticket");
         var movie = movieRepository.findByMovieName(schedule.get().getMovieName());
-        if (movie.isEmpty()) return ResponseEntity.ok("Movie not found");
+        if (movie.isEmpty()) return ResponseEntity.badRequest().body("Movie not found");
         var theaterId = schedule.get().getTheaterId();
-        if (theaterId == null) return ResponseEntity.ok("Theater not found");
+        if (theaterId == null) return ResponseEntity.badRequest().body("Theater not found");
 
         Review newReview = new Review();
         newReview.setMovieId(movie.get().getId());
@@ -341,9 +341,9 @@ public class UserHelper {
 
     public ResponseEntity<?> addReviewForMovieName(String token, String movieName, ReviewRequest review) {
         User user = getMe(token);
-        if (user == null) return ResponseEntity.ok("User not found");
+        if (user == null) return ResponseEntity.badRequest().body("user not found");
         var movie = movieRepository.findByMovieName(movieName);
-        if (movie.isEmpty()) return ResponseEntity.ok("Movie not found");
+        if (movie.isEmpty()) return ResponseEntity.badRequest().body("Movie not found");
         List<Ticket> tickets = ticketRepository.findAllByUserId(user.getId());
         Set<String> scheduleIds = new HashSet<>();
         for (Ticket ticket : tickets) {
@@ -353,7 +353,7 @@ public class UserHelper {
         List<Schedule> scheduleList = scheduleRepository.findAllByMovieName(movieName);
         Schedule schedule = findAvailableSchedule(scheduleList, scheduleIds);
         if (schedule == null) {
-            return ResponseEntity.ok("User have not seen the movie");
+            return ResponseEntity.badRequest().body("User have not seen the movie");
         }
         review.setScheduleId(schedule.getScheduleId());
         return addReview(token, review);

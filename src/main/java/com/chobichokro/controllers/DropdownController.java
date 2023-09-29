@@ -28,14 +28,14 @@ public class DropdownController {
 //        System.out.println(theaterId);
         return theaterHelper.getMovieTheaterShowTime(movieName, theaterId);
     }
-
-    @GetMapping("/get/schedule")
-    public ResponseEntity<?> getScheduleId(@ModelAttribute ScheduleRequest scheduleRequest) {
-        String movieName = scheduleRequest.getMovieName();
-        String date = scheduleRequest.getDate();
-        int hallNumber = scheduleRequest.getHallNumber();
-        String theaterId = theaterHelper.getTheaterFromTheaterOwner(scheduleRequest.getTheaterId()).getId();
-        return theaterHelper.getScheduleId(movieName, theaterId, date, hallNumber);
-    }
+//
+//    @GetMapping("/get/schedule")
+//    public ResponseEntity<?> getScheduleId(@ModelAttribute ScheduleRequest scheduleRequest) {
+//        String movieName = scheduleRequest.getMovieName();
+//        String date = scheduleRequest.getDate();
+//        int hallNumber = scheduleRequest.getHallNumber();
+//        String theaterId = theaterHelper.getTheaterFromTheaterOwner(scheduleRequest.getTheaterId()).getId();
+//        return theaterHelper.getScheduleId(movieName, theaterId, date, hallNumber);
+//    }
 
 }

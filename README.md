@@ -1,5 +1,6 @@
 # the-java-fest-chobichokro
 The project is about therap java fest
+## The front end of the project is [Chobichokro](https://github.com/khalid-shohag/chobichokro/)
 
 ## How to run the python model app
 
@@ -18,6 +19,7 @@ The project is about therap java fest
 5. the app will run on port 8080
 
 ![Logo](./images/chobichokro.png)
+![seat_booking](./images/seat_bookin.png)
 
 ## Chobichokro for Therap Java Fest 2023 ##
 
@@ -59,6 +61,14 @@ Chobichokro is a web application that will intrigate the distributor , theater o
 - MongoDB
 
 ## REST API Documentation
+![1](./images/1.png)
+![2](./images/2.png)
+![4](./images/4.png)
+![5](./images/5.png)
+![6](./images/6.png)
+![8](./images/8.png)
+
+
 
 ## License
 

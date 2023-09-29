@@ -40,7 +40,7 @@ public class AudienceController {
 
     @GetMapping("/get_schedule_id")
     ResponseEntity<?> getScheduleId(@ModelAttribute ScheduleRequest scheduleRequest) {
-        System.out.println(scheduleRequest);
+        System.out.println("in the function " + scheduleRequest);
         return ResponseEntity.ok(audienceHelper.getScheduleId(scheduleRequest.getMovieName(), scheduleRequest.getTheaterId(), scheduleRequest.getDate(), scheduleRequest.getHallNumber()));
     }
 

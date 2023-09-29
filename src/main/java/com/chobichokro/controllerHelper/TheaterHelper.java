@@ -208,6 +208,7 @@ public class TheaterHelper {
 
     public Theater getTheaterFromTheaterOwner(String theaterOwnerId) {
         Optional<User> theaterOwner = userRepository.findById(theaterOwnerId);
+        System.out.println(theaterOwner);
         if (theaterOwner.isEmpty()) {
             return null;
         }
