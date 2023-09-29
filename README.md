@@ -33,13 +33,7 @@ The project is about therap java fest
 ![Badge](https://img.shields.io/badge/Flask-2.0-informational?style=flat&logo=flask&logoColor=white&color=EA6607)
 ![Badge](https://img.shields.io/badge/RobertaForSequenceClassification-1.0-informational?style=flat&logo=pytorch&logoColor=white&color=EA6607)
 
-The movie industry in Bangladesh has undergone significant transformations over the years, shaped by
-a multitude of factors including technological advancements, changing audience preferences and economic
-dynamics. While it is true that the Bangladesh movie industry has faced challenges related to box office revenues and tax compliance, it is essential to acknowledge the broader context that contributes to this situation.
-The Chobichokro Web App is a comprehensive platform that aims to streamline the movie distribution
-and theater management process within the Bangladeshi film industry. This web app will facilitate interactions among distributors, theater owners, and audiences, providing an efficient and user-friendly way to
-manage movie releases, ticket bookings, financial transactions, and performance analysis.
-
+##### The Chobichokro Web App is a comprehensive platform that aims to streamline the movie distribution and theater management process within the Bangladeshi film industry. This web app will facilitate interactions among distributors, theater owners, and audiences, providing an efficient and user-friendly way to manage movie releases, ticket bookings, financial transactions, and performance analysis. #
 # Screenshot of Chobichokro #
 ## home page ##
 ![home_page](./chobichokropictures/home_page.png)
@@ -95,9 +89,8 @@ manage movie releases, ticket bookings, financial transactions, and performance 
 - pytorch 1.9
 - flask 2.0
 - RobertaForSequenceClassification
-**Frontend**
-- react
-- 
+
+
 **Data Base:**
 
 - MongoDB
@@ -112,98 +105,137 @@ manage movie releases, ticket bookings, financial transactions, and performance 
 |
 ## Project Structure
 ```
-chobichokro-api
-            image
-            Sentiment Analyzer model
-                model
-                    RobertaModelForSequentialClassification
-                app.py
-            src/main/java/com/chobichokro
-                                controller
-                                    AudienceController
-                                    AuthController
-                                    DirectorController
-                                    DropdownController
-                                    LicenseController
-                                    MailController
-                                    MovieController
-                                    ReviewController
-                                    ScheduleController
-                                    TaxController
-                                    TheaterController
-                                    TicketController
-                                    UserController
-                                controllerHelper
-                                    AudienceHelper
-                                    DirectorHelper
-                                    Helper
-                                    TheaterHelper
-                                    TicketHelper
-                                    UserHelper
-                                impl
-                                    EmailServiceImpl
-                                    FileServiceImpl
-                                models
-                                    Erole
-                                    Licenese
-                                    Movie
-                                    OTP
-                                    Review
-                                    Role
-                                    Schedule
-                                    Tax
-                                    Theater
-                                    Ticket
-                                    User
-                                payload
-                                    Request
-                                        EmailRequest
-                                        LoginRequest
-                                        MovieRequest
-                                        ReviewRequest
-                                        ScheduleRequest
-                                        SignupRequest
-                                        TheaterRequest
-                                    Response
-                                        DirectorAnalysis
-                                        DistributorMovieResponse
-                                        JwtResponse
-                                        MessageResponse
-                                        MovieAnalysis
-                                        MyMovieResponse
-                                        PendingResponse
-                                        ScheduleResponse  
-                                relation
-                                    TheaterMoviePending
-                                    TheaterMovieRelation
-                                    TheaterNewMovieRelation
-                                    TheaterOnwerMovieRelation
-                                relationRepository
-                                    TheaterMoviePendingRepository
-                                    TheaterMovieRelationRepository
-                                    TheaterNewMovieRelationRepository
-                                    TheaterOnwerMovieRelationRepository
-
-                                repository
-                                    EroleRepository
-                                    LiceneseRepository
-                                    MovieRepository
-                                    OTPRepository
-                                    ReviewRepository
-                                    RoleRepository
-                                    ScheduleRepository
-                                    TaxRepository
-                                    TheaterRepository
-                                    TicketRepository
-                                    UserRepository
-                                security
-                                    jwt
-                                        AuthEntryPonitJwt
-                                        AuthTokenFilter
-                                        JwtUtils
-                                    servies
-                                        UserDetailsImpl
-                                        UserDetailsServiceImpl
+backend
+├─ .git
+│  ├─ config
+│  ├─ description
+├─ .gitattributes
+├─ .gitignore
+├─ .mvn
+│  └─ wrapper
+│     ├─ maven-wrapper.jar
+│     ├─ maven-wrapper.properties
+│     └─ MavenWrapperDownloader.java
+├─ images
+├─ LICENSE
+├─ mvnw
+├─ mvnw.cmd
+├─ pom.xml
+├─ qodana.yaml
+├─ README.md
+├─ Sentiment-Alanizer-Model
+│  ├─ app.py
+│  ├─ model
+│  │  ├─ config.json
+│  │  ├─ gitattributes.txt
+│  │  ├─ merges.txt
+│  │  ├─ pytorch_model.bin
+│  │  ├─ README.md
+│  │  ├─ special_tokens_map.json
+│  │  └─ vocab.json
+│  └─ need.txt
+└─ src
+├─ main
+│  ├─ java
+│  │  └─ com
+│  │     └─ chobichokro
+│  │        ├─ ChobiChokroApi.java
+│  │        ├─ controllerHelper
+│  │        │  ├─ AudienceHelper.java
+│  │        │  ├─ DirectorHelper.java
+│  │        │  ├─ Helper.java
+│  │        │  ├─ TheaterHelper.java
+│  │        │  ├─ TicketHelper.java
+│  │        │  └─ UserHelper.java
+│  │        ├─ controllers
+│  │        │  ├─ AudienceController.java
+│  │        │  ├─ AuthController.java
+│  │        │  ├─ DirectorController.java
+│  │        │  ├─ DropdownController.java
+│  │        │  ├─ LicenseController.java
+│  │        │  ├─ MailController.java
+│  │        │  ├─ MovieController.java
+│  │        │  ├─ ReviewController.java
+│  │        │  ├─ ScheduleController.java
+│  │        │  ├─ TaxController.java
+│  │        │  ├─ TestController.java
+│  │        │  ├─ TheaterController.java
+│  │        │  ├─ TicketController.java
+│  │        │  └─ UserController.java
+│  │        ├─ impl
+│  │        │  ├─ EmailServiceImpl.java
+│  │        │  └─ FileServicesImpl.java
+│  │        ├─ models
+│  │        │  ├─ ERole.java
+│  │        │  ├─ License.java
+│  │        │  ├─ Movie.java
+│  │        │  ├─ OTP.java
+│  │        │  ├─ Review.java
+│  │        │  ├─ Role.java
+│  │        │  ├─ Schedule.java
+│  │        │  ├─ Tax.java
+│  │        │  ├─ Theater.java
+│  │        │  ├─ Ticket.java
+│  │        │  └─ User.java
+│  │        ├─ payload
+│  │        │  ├─ request
+│  │        │  │  ├─ EmailRequest.java
+│  │        │  │  ├─ LoginRequest.java
+│  │        │  │  ├─ MovieRequest.java
+│  │        │  │  ├─ ReviewRequest.java
+│  │        │  │  ├─ ScheduleRequest.java
+│  │        │  │  ├─ SignupRequest.java
+│  │        │  │  └─ TheaterRequest.java
+│  │        │  └─ response
+│  │        │     ├─ DirectorAnalysis.java
+│  │        │     ├─ DistributorMovieResponse.java
+│  │        │     ├─ JwtResponse.java
+│  │        │     ├─ MessageResponse.java
+│  │        │     ├─ MovieAnalysis.java
+│  │        │     ├─ MovieResponse.java
+│  │        │     ├─ MyMovieResponse.java
+│  │        │     ├─ PendingResponses.java
+│  │        │     └─ ScheduleResponse.java
+│  │        ├─ relation
+│  │        │  ├─ TheaterMoviePending.java
+│  │        │  ├─ TheaterMovieRelation.java
+│  │        │  ├─ TheaterNewMovieRelation.java
+│  │        │  └─ TheaterOwnerMovieRelation.java
+│  │        ├─ relationRepository
+│  │        │  ├─ TheaterMoviePendingRepository.java
+│  │        │  ├─ TheaterMovieRelationRepository.java
+│  │        │  ├─ TheaterNewMovieRelationRepository.java
+│  │        │  └─ TheaterOwnerMovieRelationRepository.java
+│  │        ├─ repository
+│  │        │  ├─ LicenseRepository.java
+│  │        │  ├─ MovieRepository.java
+│  │        │  ├─ OTPRepository.java
+│  │        │  ├─ ReviewRepository.java
+│  │        │  ├─ RoleRepository.java
+│  │        │  ├─ ScheduleRepository.java
+│  │        │  ├─ TaxRepository.java
+│  │        │  ├─ TheaterRepository.java
+│  │        │  ├─ TicketRepository.java
+│  │        │  └─ UserRepository.java
+│  │        ├─ security
+│  │        │  ├─ jwt
+│  │        │  │  ├─ AuthEntryPointJwt.java
+│  │        │  │  ├─ AuthTokenFilter.java
+│  │        │  │  └─ JwtUtils.java
+│  │        │  ├─ services
+│  │        │  │  ├─ UserDetailsImpl.java
+│  │        │  │  └─ UserDetailsServiceImpl.java
+│  │        │  └─ WebSecurityConfig.java
+│  │        └─ services
+│  │           ├─ EmailService.java
+│  │           └─ FileServices.java
+│  └─ resources
+│     └─ application.properties
+└─ test
+└─ java
+└─ com
+└─ chobichokro
+└─ ChobiChokroApiTests.java
 
 ```
 ## License
