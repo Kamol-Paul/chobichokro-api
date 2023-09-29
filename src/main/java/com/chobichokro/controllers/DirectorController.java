@@ -28,15 +28,15 @@ public class DirectorController {
         return directorHelper.getSingleMovieAnalysis(token, movieId);
     }
 
-    @GetMapping("/get/myMovies")
-    public ResponseEntity<?> getMyMovies(@RequestHeader("Authorization") String token) {
-        return directorHelper.getMyMovies(token);
-    }
-
-    @GetMapping("/get/me")
-    public ResponseEntity<?> getMyNameId(@RequestHeader("Authorization") String token) {
-        return directorHelper.getMyNameId(token);
-    }
+//    @GetMapping("/get/myMovies")
+//    public ResponseEntity<?> getMyMovies(@RequestHeader("Authorization") String token) {
+//        return directorHelper.getMyMovies(token);
+//    }
+//
+//    @GetMapping("/get/me")
+//    public ResponseEntity<?> getMyNameId(@RequestHeader("Authorization") String token) {
+//        return directorHelper.getMyNameId(token);
+//    }
 
     @PostMapping("/addMovie")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ROLE_DISTRIBUTOR')")

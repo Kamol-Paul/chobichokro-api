@@ -69,7 +69,7 @@ public class MailController {
         String otpString = String.format("%04d", otp);
         EmailRequest emailRequest = new EmailRequest();
         emailRequest.setRecipient(email);
-        emailRequest.setSubject("OTP for Cho-bi Chokro");
+        emailRequest.setSubject("OTP for chobichokro app");
         emailRequest.setMsgBody("Your OTP is: " + otpString);
         String status = emailService.sendSimpleMail(emailRequest);
         OTP forReturn = new OTP();

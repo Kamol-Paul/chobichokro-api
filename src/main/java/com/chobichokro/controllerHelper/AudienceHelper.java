@@ -79,11 +79,14 @@ public class AudienceHelper {
     }
 
     public Object getHallNumberList(String movieName, String theaterId, String showTime) {
+        theaterId = theaterHelper.getTheaterFromTheaterOwner(theaterId).getId();
         List<Schedule> scheduleList = scheduleRepository.findAllByMovieNameAndTheaterIdAndScheduleDate(movieName, theaterId, showTime);
         return scheduleList.stream().map(Schedule::getHallNumber).collect(Collectors.toSet());
     }
 
     public Object getScheduleId(String movieName, String theaterId, String date, int hallNumber) {
+        theaterId = theaterHelper.getTheaterFromTheaterOwner(theaterId).getId();
+
         List<Schedule> scheduleList = scheduleRepository.findAllByMovieNameAndTheaterIdAndScheduleDateAndAndHallNumber(movieName, theaterId, date, hallNumber);
         if (scheduleList.isEmpty()) {
             return "No Schedule Found";
