@@ -341,21 +341,39 @@ public class UserHelper {
 
     public ResponseEntity<?> addReviewForMovieName(String token, String movieName, ReviewRequest review) {
         User user = getMe(token);
+        System.out.println(user);
         if (user == null) return ResponseEntity.badRequest().body("user not found");
         var movie = movieRepository.findByMovieName(movieName);
         if (movie.isEmpty()) return ResponseEntity.badRequest().body("Movie not found");
         List<Ticket> tickets = ticketRepository.findAllByUserId(user.getId());
+        System.out.println(tickets);
+        if(tickets.isEmpty()){
+            return ResponseEntity.badRequest().body("User have not seen the movie");
+
+        }
         Set<String> scheduleIds = new HashSet<>();
         for (Ticket ticket : tickets) {
             scheduleIds.add(ticket.getScheduleId());
         }
-
+        System.out.println(scheduleIds);
         List<Schedule> scheduleList = scheduleRepository.findAllByMovieName(movieName);
-        Schedule schedule = findAvailableSchedule(scheduleList, scheduleIds);
-        if (schedule == null) {
-            return ResponseEntity.badRequest().body("User have not seen the movie");
+//        Schedule schedule = findAvailableSchedule(scheduleList, scheduleIds);
+        boolean haveSeen = false;
+        for(String scheduleId : scheduleIds){
+            Optional<Schedule> schedule = scheduleRepository.findById(scheduleId);
+            if(schedule.isPresent()){
+                if(Objects.equals(schedule.get().getMovieName(), movieName)){
+                    haveSeen = true;
+                    review.setScheduleId(scheduleId);
+                    break;
+                }
+            }
         }
-        review.setScheduleId(schedule.getScheduleId());
+        if(!haveSeen){
+            return ResponseEntity.badRequest().body("User have not seen the movie");
+
+        }
+
         return addReview(token, review);
 
     }
