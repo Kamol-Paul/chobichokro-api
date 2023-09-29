@@ -18,9 +18,6 @@ The project is about therap java fest
 4. run the app using ``` mvn spring-boot:run ```
 5. the app will run on port 8080
 
-![Logo](./images/chobichokro.png)
-![seat_booking](./images/seat_bookin.png)
-
 ## Chobichokro for Therap Java Fest 2023 ##
 
 # **Chobichokro**
@@ -36,7 +33,50 @@ The project is about therap java fest
 ![Badge](https://img.shields.io/badge/Flask-2.0-informational?style=flat&logo=flask&logoColor=white&color=EA6607)
 ![Badge](https://img.shields.io/badge/RobertaForSequenceClassification-1.0-informational?style=flat&logo=pytorch&logoColor=white&color=EA6607)
 
-Chobichokro is a web application that will intrigate the distributor , theater ownder and audience in a single platform. It is a platform where distributor can upload their movies and theater owner can book the movies for their theater. Audience can see the movies and book the tickets for their favorite movies. The Theater owner can also see the booking status of their movie reels.
+The movie industry in Bangladesh has undergone significant transformations over the years, shaped by
+a multitude of factors including technological advancements, changing audience preferences and economic
+dynamics. While it is true that the Bangladesh movie industry has faced challenges related to box office revenues and tax compliance, it is essential to acknowledge the broader context that contributes to this situation.
+The Chobichokro Web App is a comprehensive platform that aims to streamline the movie distribution
+and theater management process within the Bangladeshi film industry. This web app will facilitate interactions among distributors, theater owners, and audiences, providing an efficient and user-friendly way to
+manage movie releases, ticket bookings, financial transactions, and performance analysis.
+
+# Screenshot of Chobichokro #
+## home page ##
+![home_page](./chobichokropictures/home_page.png)
+
+## search result actor ##
+![search result khan](./chobichokropictures/searching_result_khan.png)
+
+## search result genre ##
+
+![search result genre](./chobichokropictures/search_result_genre.png)
+
+## search result movie name ##
+![search result movie](./chobichokropictures/search_result.png)
+
+## seat booking request ##
+![seat booking request](./chobichokropictures/theatre_seat_booking_submit.png)
+
+## seat booking confirmation ##
+![seat booking confirmation](./chobichokropictures/theatre_seat_booking_confirmation.png)
+
+## Audience dashboard ##
+![audience dashboard](./chobichokropictures/audience_dashboard.png)
+
+## Movie review ##
+![movie review](./chobichokropictures/movie_review.png)
+
+## review adding ##
+![review adding](./chobichokropictures/review_addding.png)
+
+## distributor movie info ##
+![distributor movie info](./chobichokropictures/distributor_movie_info.png)
+
+## License request form ##
+![license request form](./chobichokropictures/license_request_form.png)
+
+## Admin tax information ## 
+![tax information](./chobichokropictures/tax_reports.png)
 
 
 ## Tech Stack
@@ -55,7 +95,9 @@ Chobichokro is a web application that will intrigate the distributor , theater o
 - pytorch 1.9
 - flask 2.0
 - RobertaForSequenceClassification
-
+**Frontend**
+- react
+- 
 **Data Base:**
 
 - MongoDB
@@ -67,11 +109,108 @@ Chobichokro is a web application that will intrigate the distributor , theater o
 ![5](./images/5.png)
 ![6](./images/6.png)
 ![8](./images/8.png)
+|
+## Project Structure
+```
+chobichokro-api
+            image
+            Sentiment Analyzer model
+                model
+                    RobertaModelForSequentialClassification
+                app.py
+            src/main/java/com/chobichokro
+                                controller
+                                    AudienceController
+                                    AuthController
+                                    DirectorController
+                                    DropdownController
+                                    LicenseController
+                                    MailController
+                                    MovieController
+                                    ReviewController
+                                    ScheduleController
+                                    TaxController
+                                    TheaterController
+                                    TicketController
+                                    UserController
+                                controllerHelper
+                                    AudienceHelper
+                                    DirectorHelper
+                                    Helper
+                                    TheaterHelper
+                                    TicketHelper
+                                    UserHelper
+                                impl
+                                    EmailServiceImpl
+                                    FileServiceImpl
+                                models
+                                    Erole
+                                    Licenese
+                                    Movie
+                                    OTP
+                                    Review
+                                    Role
+                                    Schedule
+                                    Tax
+                                    Theater
+                                    Ticket
+                                    User
+                                payload
+                                    Request
+                                        EmailRequest
+                                        LoginRequest
+                                        MovieRequest
+                                        ReviewRequest
+                                        ScheduleRequest
+                                        SignupRequest
+                                        TheaterRequest
+                                    Response
+                                        DirectorAnalysis
+                                        DistributorMovieResponse
+                                        JwtResponse
+                                        MessageResponse
+                                        MovieAnalysis
+                                        MyMovieResponse
+                                        PendingResponse
+                                        ScheduleResponse  
+                                relation
+                                    TheaterMoviePending
+                                    TheaterMovieRelation
+                                    TheaterNewMovieRelation
+                                    TheaterOnwerMovieRelation
+                                relationRepository
+                                    TheaterMoviePendingRepository
+                                    TheaterMovieRelationRepository
+                                    TheaterNewMovieRelationRepository
+                                    TheaterOnwerMovieRelationRepository
 
+                                repository
+                                    EroleRepository
+                                    LiceneseRepository
+                                    MovieRepository
+                                    OTPRepository
+                                    ReviewRepository
+                                    RoleRepository
+                                    ScheduleRepository
+                                    TaxRepository
+                                    TheaterRepository
+                                    TicketRepository
+                                    UserRepository
+                                security
+                                    jwt
+                                        AuthEntryPonitJwt
+                                        AuthTokenFilter
+                                        JwtUtils
+                                    servies
+                                        UserDetailsImpl
+                                        UserDetailsServiceImpl
 
-
+```
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
+##  Contributor ##
+[@khalid-shohag](https://github.com/khalid-shohag)
+[@Kamol-Paul](https://github.com/Kamol-Paul)
 
