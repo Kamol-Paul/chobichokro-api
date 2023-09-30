@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.*;
 
 //@CrossOrigin(origins = {"*", "http://localhost:3000"})
@@ -43,9 +44,6 @@ public class MovieController {
     private UserRepository userRepository;
     @Autowired
     TheaterRepository theaterRepository;
-
-    @Value("${project.image}")
-    String path;
 
     @Autowired
     private MovieRepository movieRepository;
