@@ -102,9 +102,8 @@ public class TheaterController {
     @GetMapping("/my_theater")
     @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
     ResponseEntity<?> getTheaterByOwner(@RequestHeader("Authorization") String token) {
-        String licenseId = authenticate(token);
-        Theater theater = theaterRepository.findByLicenseId(licenseId).orElse(null);
-        return ResponseEntity.ok(Objects.requireNonNullElse(theater, "No Theater found"));
+        return ResponseEntity.ok(theaterHelper.getMyTheater(token));
+
     }
 
     String authenticate(String authHeader) {

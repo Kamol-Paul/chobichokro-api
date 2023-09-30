@@ -89,21 +89,8 @@ public class TheaterHelper {
         return movieSet;
     }
 
-    public ResponseEntity<?> getUpcomingMovieInTheater(String theaterId) throws ParseException {
-        Theater theater = theaterRepository.findById(theaterId).orElse(null);
-        if (theater == null) {
-            return ResponseEntity.ok("Theater not found");
-        }
-        Optional<License> license = licenseRepository.findLicenseById(theater.getLicenseId());
-        if (license.isEmpty()) {
-            return ResponseEntity.ok("License not found");
-        }
-        Optional<User> theaterOwner = userRepository.findById(license.get().getLicenseOwner());
-        if (theaterOwner.isEmpty()) {
-            return ResponseEntity.ok("Theater owner not found");
-        }
-        List<TheaterOwnerMovieRelation> theaterOwnerMovieRelations = theaterOwnerMovieRelationRepository.findAllByTheaterOwnerId(theaterOwner.get().getId());
-        Set<Movie> movieSet = getRunningMovieSetInTheater(theaterId);
+    public ResponseEntity<?> getUpcomingMovieInTheater(String theaterId) {
+     List<TheaterOwnerMovieRelation> theaterOwnerMovieRelations = theaterOwnerMovieRelationRepository.findAllByTheaterOwnerId(theaterId);
         Set<Movie> forRet = new HashSet<>();
         Date date = new Date();
         for (TheaterOwnerMovieRelation theaterOwnerMovieRelation : theaterOwnerMovieRelations) {
@@ -122,12 +109,15 @@ public class TheaterHelper {
         if (theaterOwner == null) {
             return ResponseEntity.ok("User not found");
         }
-        Optional<License> license = licenseRepository.findLicenseById(theaterOwner.getLicenseId());
-        if (license.isEmpty()) {
-            return ResponseEntity.ok("License not found");
-        }
-        List<Theater> theaters = theaterRepository.findAllByLicenseId(license.get().getId());
-        return ResponseEntity.ok(theaters);
+        Optional<Theater> theater =theaterRepository.findById(theaterOwner.getId());
+        theater.ifPresent(ResponseEntity::ok);
+        return ResponseEntity.badRequest().body("Theater not found");
+//        Optional<License> license = licenseRepository.findLicenseById(theaterOwner.getLicenseId());
+//        if (license.isEmpty()) {
+//            return ResponseEntity.ok("License not found");
+//        }
+//        List<Theater> theaters = theaterRepository.findAllByLicenseId(license.get().getId());
+//        return ResponseEntity.ok(theaters);
     }
 
     public ResponseEntity<?> getRunningMovie(String token) throws ParseException {
@@ -136,29 +126,15 @@ public class TheaterHelper {
             return ResponseEntity.ok("theater owner not found");
 
         }
-        Optional<License> license = licenseRepository.findLicenseById(theaterOwner.getLicenseId());
-        if (license.isEmpty()) {
-            return ResponseEntity.ok("License not found");
-        }
-        List<Theater> theaters = theaterRepository.findAllByLicenseId(license.get().getId());
-        Set<Movie> movieSet = new HashSet<>();
-        System.out.println(theaters);
-        for (Theater theater : theaters) {
-            Set<Movie> movieSet1 = getRunningMovieSetInTheater(theater.getId());
-            if (movieSet1 == null) continue;
-            movieSet.addAll(movieSet1);
-        }
-//        System.out.println(movieSet);
+        List<Movie> forReturn = new ArrayList<>();
         Set<String> movieIdSet = new HashSet<>();
-        for (Movie movie : movieSet) {
+        Set<Movie> allRunningMovies = getRunningMovieSetInTheater(theaterOwner.getId());
+        for(Movie movie : allRunningMovies){
+            if(movieIdSet.contains(movie.getId())) continue;
             movieIdSet.add(movie.getId());
+            forReturn.add(movie);
         }
-        movieSet.clear();
-        for (String movieId : movieIdSet) {
-            Optional<Movie> movie = movieRepository.findById(movieId);
-            movie.ifPresent(movieSet::add);
-        }
-        return ResponseEntity.ok(movieSet);
+        return ResponseEntity.ok(forReturn);
 
     }
 
