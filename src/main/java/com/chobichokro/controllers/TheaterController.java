@@ -102,7 +102,7 @@ public class TheaterController {
     @GetMapping("/my_theater")
     @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
     ResponseEntity<?> getTheaterByOwner(@RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(theaterHelper.getMyTheater(token));
+        return theaterHelper.getMyTheater(token);
 
     }
 
