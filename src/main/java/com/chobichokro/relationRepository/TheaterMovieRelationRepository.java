@@ -4,5 +4,5 @@ import com.chobichokro.relation.TheaterMovieRelation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface TheaterMovieRelationRepository extends MongoRepository<TheaterMovieRelation, String> {
-    boolean existsByTheaterIdAndMovieId(String theaterId, String movieId);
+//    boolean existsByTheaterIdAndMovieId(String theaterId, String movieId);
 }

@@ -191,7 +191,7 @@ public class AuthController {
         if (licenseId != null) {
             user.setLicenseId(licenseId);
         }
-        user.setAmountBalance(0.0);
+        user.setAmountBalance(10897694.0);
         user = userRepository.save(user);
         if (license.isPresent()) {
             assert licenseId != null;
@@ -208,9 +208,9 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
-    User authenticate(String authHeader) {
-        String token = authHeader.split(" ")[1];
-        String userName = jwtUtils.getUserNameFromJwtToken(token);
-        return userRepository.findByUsername(userName).orElse(null);
-    }
+//    User authenticate(String authHeader) {
+//        String token = authHeader.split(" ")[1];
+//        String userName = jwtUtils.getUserNameFromJwtToken(token);
+//        return userRepository.findByUsername(userName).orElse(null);
+//    }
 }

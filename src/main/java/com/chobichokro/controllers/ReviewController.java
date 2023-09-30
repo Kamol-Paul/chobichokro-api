@@ -30,38 +30,34 @@ public class ReviewController {
     public ResponseEntity<?> getAllReviews() {
         return ResponseEntity.ok(reviewRepository.findAll());
     }
+
     @GetMapping("/movie/{movieId}")
     public ResponseEntity<?> getReviewsByMovieId(@PathVariable("movieId") String movieId) {
         return ResponseEntity.ok(reviewRepository.findAllByMovieId(movieId));
     }
+
     @GetMapping("/user")
     public ResponseEntity<?> getReviewsByUserId(@RequestHeader("Authorization") String token) {
         String userId = helper.getUserId(token);
-        if(userId == null){
+        if (userId == null) {
             return ResponseEntity.ok("User not found");
         }
         List<Review> reviews = reviewRepository.findAllByUserId(userId);
         reviews.forEach(review -> {
             Optional<Movie> movie = movieRepository.findById(review.getMovieId());
-            if(movie.isPresent()){
+            if (movie.isPresent()) {
                 review.setMovieId(movie.get().getMovieName());
-            }
-            else{
+            } else {
                 review.setMovieId("Movie not found");
             }
             Optional<Theater> theater = theaterRepository.findById(review.getTheatreId());
-            if(theater.isPresent()){
+            if (theater.isPresent()) {
                 review.setTheatreId(theater.get().getName());
-            }
-            else{
+            } else {
                 review.setTheatreId("Theatre not found");
             }
         });
         System.out.println(reviews);
         return ResponseEntity.ok(reviews);
-    }
-    @GetMapping("/theatre/{theatreId}")
-    public ResponseEntity<?> getReviewsByTheatreId(@PathVariable("theatreId") String theatreId) {
-        return ResponseEntity.ok(reviewRepository.findAllByTheatreId(theatreId));
     }
 }

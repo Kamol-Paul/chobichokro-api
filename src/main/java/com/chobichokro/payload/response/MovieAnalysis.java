@@ -13,6 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class MovieAnalysis {
+    List<Review> reviews;
+    List<Theater> theaters;
     private Movie movie;
     private int totalTicket;
     private double totalRevenue;
@@ -20,6 +22,4 @@ public class MovieAnalysis {
     private int totalTheater;
     private double averageSentiment;
     private String movieVerdict;
-    List<Review> reviews;
-    List<Theater> theaters;
 }

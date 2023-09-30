@@ -13,6 +13,7 @@ public interface TheaterRepository extends MongoRepository<Theater, String> {
     boolean existsByName(String name);
 
     Optional<Theater> findByLicenseId(String licenseId);
+
     List<Theater> findAllByLicenseId(String licenseId);
 
 }

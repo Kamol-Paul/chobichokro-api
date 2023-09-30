@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class DirectorAnalysis {
+    List<MovieAnalysis> movieAnalysisList;
     private String directorName;
     private int totalMovie;
-    List<MovieAnalysis> movieAnalysisList;
 }

@@ -28,13 +28,15 @@ public class TheaterController {
     @Autowired
     Helper helper;
     @Autowired
-    private TheaterRepository theaterRepository;
-    @Autowired
-    private LicenseRepository licenseRepository;
-    @Autowired
     UserRepository userRepository;
     @Autowired
     com.chobichokro.security.jwt.JwtUtils jwtUtils;
+    @Autowired
+    TheaterHelper theaterHelper;
+    @Autowired
+    private TheaterRepository theaterRepository;
+    @Autowired
+    private LicenseRepository licenseRepository;
 
     @GetMapping("/all")
     public List<Theater> getAllTheaters() {
@@ -135,45 +137,51 @@ public class TheaterController {
     @GetMapping("/get/all_my_movie")
     @PreAuthorize("hasRole('ROLE_THEATER_OWNER') or hasRole('ADMIN')")
     public ResponseEntity<?> getAllTheaterOwnerMovie(@RequestHeader("Authorization") String token) {
+        var for_return = helper.getAllTheaterOwnerMovie(token);
+        System.out.println(for_return);
         return ResponseEntity.ok(helper.getAllTheaterOwnerMovie(token));
     }
-    @Autowired
-    TheaterHelper theaterHelper;
+
     @GetMapping("/running/{theaterId}")
-    public ResponseEntity<?> getRunningMovieInTheater(@PathVariable("theaterId") String theaterId){
+    public ResponseEntity<?> getRunningMovieInTheater(@PathVariable("theaterId") String theaterId) {
         return theaterHelper.getRunningMovieInTheater(theaterId);
     }
+
     @GetMapping("/upcoming/{theaterId}")
     public ResponseEntity<?> getUpcomingMovieInTheater(@PathVariable("theaterId") String theaterId) throws ParseException {
         return theaterHelper.getUpcomingMovieInTheater(theaterId);
     }
-    @GetMapping("/get/myTheater")
-    public ResponseEntity<?> getMyTheater(@RequestHeader("Authorization") String token){
-        return ResponseEntity.ok(theaterHelper.getMyTheater(token));
-    }
+
+    //    @GetMapping("/get/myTheater")
+//    public ResponseEntity<?> getMyTheater(@RequestHeader("Authorization") String token){
+//        return ResponseEntity.ok(theaterHelper.getMyTheater(token));
+//    }
     @GetMapping("/get/running_movie")
     @PreAuthorize("hasRole('ROLE_THEATER_OWNER') or hasRole('ADMIN')")
     ResponseEntity<?> getRunningMovie(@RequestHeader("Authorization") String token) throws ParseException {
         return theaterHelper.getRunningMovie(token);
     }
+
     @GetMapping("/get/upcoming_movie")
     @PreAuthorize("hasRole('ROLE_THEATER_OWNER') or hasRole('ADMIN')")
-    ResponseEntity<?> getUpcomingMovie(@RequestHeader("Authorization") String token){
+    ResponseEntity<?> getUpcomingMovie(@RequestHeader("Authorization") String token) {
 //        return ResponseEntity.ok(helper.getNewMovies(token));
         return theaterHelper.getUpComingMovie(token);
     }
+
     @GetMapping("/get_analysis")
     @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
-    ResponseEntity<?> getAllMovieAnalysis(@RequestHeader("Authorization") String token){
+    ResponseEntity<?> getAllMovieAnalysis(@RequestHeader("Authorization") String token) {
         String theaterOwner = helper.getUserId(token);
         return  ResponseEntity.ok(theaterHelper.getAllMovieAnalysis(theaterOwner));
     }
+
     @GetMapping("/get_analysis/{movieName}")
     @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
-    ResponseEntity<?> getMovieAnalysis(@RequestHeader("Authorization") String token, @PathVariable("movieName") String movieName){
+    ResponseEntity<?> getMovieAnalysis(@RequestHeader("Authorization") String token, @PathVariable("movieName") String movieName) {
         String theaterOwner = helper.getUserId(token);
-        if(theaterOwner == null){
-            return  ResponseEntity.ok("Theater owner not found");
+        if (theaterOwner == null) {
+            return ResponseEntity.ok("Theater owner not found");
         }
         return ResponseEntity.ok(theaterHelper.getMovieAnalysis(theaterOwner, movieName));
     }
