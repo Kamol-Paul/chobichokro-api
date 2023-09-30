@@ -109,8 +109,12 @@ public class TheaterHelper {
         if (theaterOwner == null) {
             return ResponseEntity.ok("User not found");
         }
+        System.out.println(theaterOwner);
         Optional<Theater> theater =theaterRepository.findById(theaterOwner.getId());
-        theater.ifPresent(ResponseEntity::ok);
+        if(theater.isPresent()){
+            System.out.println(theater.get());
+            return ResponseEntity.ok(theater.get());
+        }
         return ResponseEntity.badRequest().body("Theater not found");
 //        Optional<License> license = licenseRepository.findLicenseById(theaterOwner.getLicenseId());
 //        if (license.isEmpty()) {
