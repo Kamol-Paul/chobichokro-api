@@ -128,6 +128,8 @@ public class DirectorHelper {
             return getSingleMovieAnalysis(movie);
         }
         List<Schedule> scheduleList = scheduleRepository.findAllByMovieName(movie.getMovieName());
+        System.out.println(movie);
+        System.out.println(scheduleList);
         Set<String> theaterIdSet = new HashSet<>();
         List<Ticket> tickets = ticketRepository.findAll();
         MovieAnalysis movieAnalysis = new MovieAnalysis();

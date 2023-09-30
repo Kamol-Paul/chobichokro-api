@@ -41,7 +41,7 @@ public class FeatureController {
         List<Schedule> scheduleList = scheduleRepository.findAll();
         for (Schedule schedule : scheduleList) {
             String theaterID = schedule.getTheaterId();
-            schedule.setTheaterId(getTheaterOwner(theaterID));
+            schedule.setTheaterId(getTheaterOwnerForTicket(theaterID));
             scheduleRepository.save(schedule);
         }
 
@@ -90,6 +90,19 @@ public class FeatureController {
             return null;
         }
         return licenseRepository.findById(licenseId).get().getLicenseOwner();
+    }
+    public String getTheaterOwnerForTicket(String theaterId) {
+        Optional<Theater> theater = theaterRepository.findById(theaterId);
+        Optional<License> license = licenseRepository.findLicenseById(theater.get().getLicenseId());
+        if(license.isPresent()){
+            System.out.println(license);
+        }
+        else{
+            System.out.println("no license");
+            return null;
+        }
+
+        return license.get().getLicenseOwner();
     }
 
 }
