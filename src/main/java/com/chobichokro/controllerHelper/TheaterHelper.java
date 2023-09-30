@@ -152,7 +152,7 @@ public class TheaterHelper {
         if (license.isEmpty()) {
             return ResponseEntity.ok("License not found");
         }
-        List<Theater> theaters = theaterRepository.findAllByLicenseId(license.get().getId());
+//        List<Theater> theaters = theaterRepository.findAllByLicenseId(license.get().getId());
         Set<Movie> movieSet = new HashSet<>();
         Date date = new Date();
         List<TheaterOwnerMovieRelation> theaterOwnerMovieRelations = theaterOwnerMovieRelationRepository.findAllByTheaterOwnerId(theaterOwner.getId());
@@ -202,16 +202,9 @@ public class TheaterHelper {
     }
 
     public Theater getTheaterFromTheaterOwner(String theaterOwnerId) {
-        Optional<User> theaterOwner = userRepository.findById(theaterOwnerId);
-        if (theaterOwner.isEmpty()) {
-            return null;
-        }
-        List<Theater> theaters = theaterRepository.findAllByLicenseId(theaterOwner.get().getLicenseId());
-        if (theaters == null) {
-            return null;
+        Optional<Theater> theater = theaterRepository.findById(theaterOwnerId);
+        return theater.orElse(null);
 
-        }
-        return theaters.get(0);
     }
 
     public ResponseEntity<?> getScheduleId(String movieName, String theaterId, String date, int hallNumber) {
