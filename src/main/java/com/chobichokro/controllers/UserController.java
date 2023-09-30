@@ -1,14 +1,12 @@
 package com.chobichokro.controllers;
 
 import com.chobichokro.controllerHelper.UserHelper;
-import com.chobichokro.models.Review;
 import com.chobichokro.payload.request.ReviewRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 @RestController
@@ -66,14 +64,16 @@ public class UserController {
     public ResponseEntity<?> myTickets(@RequestHeader("Authorization") String token) {
         return userHelper.myTickets(token);
     }
+
     @PostMapping("/book_multiple/{scheduleId}")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_THEATER_OWNER')")
-    public ResponseEntity<?> bookMultiple(@RequestHeader("Authorization") String token, @PathVariable("scheduleId") String scheduleId,@RequestParam("paymentId") String paymentId, @RequestParam("seatNumbers") String[] seatNumbers) {
+    public ResponseEntity<?> bookMultiple(@RequestHeader("Authorization") String token, @PathVariable("scheduleId") String scheduleId, @RequestParam("paymentId") String paymentId, @RequestParam("seatNumbers") String[] seatNumbers) {
         System.out.println(Arrays.toString(seatNumbers));
         System.out.println(paymentId);
         return userHelper.bookMultiple(token, scheduleId, seatNumbers, paymentId);
     }
-//    @PostMapping("/add_review")
+
+    //    @PostMapping("/add_review")
 //    @PreAuthorize("hasRole('ROLE_USER')")
 //    public ResponseEntity<?> addReview(@RequestHeader("Authorization") String token, @ModelAttribute ReviewRequest review) {
 //        return userHelper.addReview(token , review);

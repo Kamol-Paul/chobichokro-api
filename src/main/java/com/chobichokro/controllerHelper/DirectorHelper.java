@@ -5,10 +5,6 @@ import com.chobichokro.payload.request.MovieRequest;
 import com.chobichokro.payload.response.DirectorAnalysis;
 import com.chobichokro.payload.response.MovieAnalysis;
 import com.chobichokro.payload.response.MovieResponse;
-import com.chobichokro.relationRepository.TheaterMoviePendingRepository;
-import com.chobichokro.relationRepository.TheaterMovieRelationRepository;
-import com.chobichokro.relationRepository.TheaterNewMovieRelationRepository;
-import com.chobichokro.relationRepository.TheaterOwnerMovieRelationRepository;
 import com.chobichokro.repository.*;
 import com.chobichokro.security.jwt.JwtUtils;
 import com.chobichokro.services.FileServices;
@@ -16,10 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -32,6 +24,14 @@ import java.util.*;
 public class DirectorHelper {
     @Value("${project.image}")
     String path;
+    //    @Autowired
+//    private TheaterMoviePendingRepository theaterMoviePendingRepository;
+//    @Autowired
+//    private TheaterOwnerMovieRelationRepository theaterOwnerMovieRelationRepository;
+    @Autowired
+    FileServices fileServices;
+    @Autowired
+    Helper helper;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -42,27 +42,18 @@ public class DirectorHelper {
     private MovieRepository movieRepository;
     @Autowired
     private ScheduleRepository scheduleRepository;
+    //    @Autowired
+//    private TheaterMovieRelationRepository theaterMovieRelationRepository;
     @Autowired
-    private TheaterMovieRelationRepository theaterMovieRelationRepository;
-    @Autowired
-    private  ReviewRepository reviewRepository;
-
-    @Autowired
-    private TheaterNewMovieRelationRepository theaterNewMovieRelationRepository;
-    @Autowired
-    private LicenseRepository licenseRepository;
-    @Autowired
-    private RoleRepository roleRepository;
+    private ReviewRepository reviewRepository;
+    //    @Autowired
+//    private TheaterNewMovieRelationRepository theaterNewMovieRelationRepository;
+//    @Autowired
+//    private LicenseRepository licenseRepository;
+//    @Autowired
+//    private RoleRepository roleRepository;
     @Autowired
     private JwtUtils jwtUtils;
-    @Autowired
-    private TheaterMoviePendingRepository theaterMoviePendingRepository;
-    @Autowired
-    private TheaterOwnerMovieRelationRepository theaterOwnerMovieRelationRepository;
-    @Autowired
-    FileServices fileServices;
-    @Autowired
-    Helper helper;
 
     public ResponseEntity<?> getDirectorAnalysis(String token) {
         User director = getMe(token);
@@ -99,13 +90,13 @@ public class DirectorHelper {
             movieAnalysis.setTotalTicket(totalTicketSell);
             List<Review> reviews = reviewRepository.findAllByMovieId(movie.getId());
             movieAnalysis.setReviews(reviews);
-            if(!reviews.isEmpty()){
+            if (!reviews.isEmpty()) {
                 double totalRating = 0;
-                for(Review review: reviews){
-                    totalRating+=review.getSentimentScore();
+                for (Review review : reviews) {
+                    totalRating += review.getSentimentScore();
                 }
-                movieAnalysis.setAverageSentiment(totalRating/reviews.size());
-            }else {
+                movieAnalysis.setAverageSentiment(totalRating / reviews.size());
+            } else {
                 movieAnalysis.setAverageSentiment(0);
             }
             movieAnalysisList.add(movieAnalysis);
@@ -115,16 +106,17 @@ public class DirectorHelper {
         return ResponseEntity.ok(directorAnalysis);
 
     }
-    public ResponseEntity<?> getSingleMovieAnalysis(String token, String movieId){
+
+    public ResponseEntity<?> getSingleMovieAnalysis(String token, String movieId) {
         User director = getMe(token);
         if (director == null) {
             return ResponseEntity.ok("Distributor not found");
         }
         Movie movie = movieRepository.findById(movieId).orElse(null);
-        if(movie == null){
+        if (movie == null) {
             return ResponseEntity.ok("Movie not found");
         }
-        if(Objects.equals(movie.getStatus(), "Released")){
+        if (Objects.equals(movie.getStatus(), "Released")) {
             return getSingleMovieAnalysis(movie);
         }
         List<Schedule> scheduleList = scheduleRepository.findAllByMovieName(movie.getMovieName());
@@ -155,17 +147,18 @@ public class DirectorHelper {
         movieAnalysis.setTotalTicket(totalTicketSell);
         List<Review> reviews = reviewRepository.findAllByMovieId(movie.getId());
         movieAnalysis.setReviews(reviews);
-        if(!reviews.isEmpty()){
+        if (!reviews.isEmpty()) {
             double totalRating = 0;
-            for(Review review: reviews){
-                totalRating+=review.getSentimentScore();
+            for (Review review : reviews) {
+                totalRating += review.getSentimentScore();
             }
-            movieAnalysis.setAverageSentiment(totalRating/reviews.size());
-        }else {
+            movieAnalysis.setAverageSentiment(totalRating / reviews.size());
+        } else {
             movieAnalysis.setAverageSentiment(0);
         }
         return ResponseEntity.ok(movieAnalysis);
     }
+
     int countTickerOfSchedule(List<Ticket> tickets, String scheduleId) {
         int count = 0;
         for (Ticket ticket : tickets) {
@@ -185,7 +178,7 @@ public class DirectorHelper {
 
     public ResponseEntity<?> getMyMovies(String token) {
         User user = getMe(token);
-        if(user == null){
+        if (user == null) {
             return ResponseEntity.ok("User not found");
         }
         List<Movie> movieList = movieRepository.findAllByDistributorId(user.getId());
@@ -200,7 +193,8 @@ public class DirectorHelper {
         map.put("email", user.getEmail());
         return ResponseEntity.ok(map);
     }
-    public ResponseEntity<?> addMovie(MovieRequest movie,String auth) throws ParseException {
+
+    public ResponseEntity<?> addMovie(MovieRequest movie, String auth) throws ParseException {
 
         MovieResponse movieResponse = new MovieResponse();
         String distributorId = getMe(auth).getId();
@@ -260,7 +254,7 @@ public class DirectorHelper {
 
     public ResponseEntity<?> getRunningMovie(String token) {
         User user = getMe(token);
-        if(user == null){
+        if (user == null) {
             return ResponseEntity.ok("User not found");
         }
         List<Movie> movieList = movieRepository.findAllByDistributorId(user.getId());
@@ -270,27 +264,28 @@ public class DirectorHelper {
         scheduleList.forEach(schedule -> {
             runningMovieName.add(schedule.getMovieName());
         });
-        for(Movie movie: movieList){
+        for (Movie movie : movieList) {
 
-                if(runningMovieName.contains(movie.getMovieName())){
-                    runningMovieList.add(movie);
-                }
+            if (runningMovieName.contains(movie.getMovieName())) {
+                runningMovieList.add(movie);
+            }
 
         }
         return ResponseEntity.ok(runningMovieList);
     }
+
     public ResponseEntity<?> getUpComingMovie(String token) {
         User user = getMe(token);
-        if(user == null){
+        if (user == null) {
             return ResponseEntity.ok("User not found");
         }
         List<Movie> movieList = movieRepository.findAllByDistributorId(user.getId());
         List<Movie> upComingMovieList = new ArrayList<>();
         Date currentDate = new Date();
         List<Schedule> scheduleList = scheduleRepository.findAll();
-        for(Movie movie: movieList){
+        for (Movie movie : movieList) {
             Date date = movie.getReleaseDate();
-            if(date.after(currentDate)){
+            if (date.after(currentDate)) {
                 upComingMovieList.add(movie);
             }
         }
@@ -299,33 +294,34 @@ public class DirectorHelper {
 
     public ResponseEntity<?> getRealizedMovie(String token) {
         User user = getMe(token);
-        if(user == null){
+        if (user == null) {
             return ResponseEntity.ok("User not found");
         }
         List<Movie> movieList = movieRepository.findAllByDistributorId(user.getId());
         List<Movie> realizedMovieList = new ArrayList<>();
         Date currentDate = new Date();
-        for(Movie movie: movieList){
+        for (Movie movie : movieList) {
             Date date = movie.getReleaseDate();
-            if(date.before(currentDate)){
+            if (date.before(currentDate)) {
                 realizedMovieList.add(movie);
             }
         }
         return ResponseEntity.ok(realizedMovieList);
 
     }
-    public ResponseEntity<?> getSingleMovieAnalysis(Movie movie){
+
+    public ResponseEntity<?> getSingleMovieAnalysis(Movie movie) {
         MovieAnalysis movieAnalysis = new MovieAnalysis();
         movieAnalysis.setMovie(movie);
         List<Review> reviews = reviewRepository.findAllByMovieId(movie.getId());
         movieAnalysis.setReviews(reviews);
-        if(!reviews.isEmpty()){
+        if (!reviews.isEmpty()) {
             double totalRating = 0;
-            for(Review review: reviews){
-                totalRating+=review.getSentimentScore();
+            for (Review review : reviews) {
+                totalRating += review.getSentimentScore();
             }
-            movieAnalysis.setAverageSentiment(totalRating/reviews.size());
-        }else {
+            movieAnalysis.setAverageSentiment(totalRating / reviews.size());
+        } else {
             movieAnalysis.setAverageSentiment(0);
         }
         movieAnalysis.setTotalScreening(140);
@@ -334,9 +330,9 @@ public class DirectorHelper {
         movieAnalysis.setTotalRevenue(41e+7);
         double cost = movie.getCost();
         double ratio = movieAnalysis.getTotalRevenue() / cost;
-        if( ratio < 0.5) {
+        if (ratio < 0.5) {
             movieAnalysis.setMovieVerdict("Disaster");
-        }else if(ratio < 1.1){
+        } else if (ratio < 1.1) {
             movieAnalysis.setMovieVerdict("Flop");
         } else if (ratio < 1.5) {
             movieAnalysis.setMovieVerdict("Average");
@@ -347,7 +343,7 @@ public class DirectorHelper {
 
         } else if (ratio < 20) {
             movieAnalysis.setMovieVerdict("Block Bluster");
-        }else {
+        } else {
             movieAnalysis.setMovieVerdict("Industry Hit");
         }
         return ResponseEntity.ok(movieAnalysis);

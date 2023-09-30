@@ -1,7 +1,10 @@
 package com.chobichokro.controllerHelper;
 
 import com.chobichokro.models.*;
-import com.chobichokro.payload.response.*;
+import com.chobichokro.payload.response.DistributorMovieResponse;
+import com.chobichokro.payload.response.MyMovieResponse;
+import com.chobichokro.payload.response.PendingResponses;
+import com.chobichokro.payload.response.ScheduleResponse;
 import com.chobichokro.relation.TheaterMoviePending;
 import com.chobichokro.relation.TheaterNewMovieRelation;
 import com.chobichokro.relation.TheaterOwnerMovieRelation;
@@ -82,10 +85,10 @@ public class Helper {
 
         for (User user : allUser) {
 
-            for(Role role : user.getRoles()){
+            for (Role role : user.getRoles()) {
                 assert theater_owner_role != null;
 //                System.out.println(theater_owner_role);
-                if(role.getName() == theater_owner_role.getName()){
+                if (role.getName() == theater_owner_role.getName()) {
                     allTheaterOwner.add(user);
                 }
             }
@@ -135,12 +138,12 @@ public class Helper {
         if (userId == null) {
             return null;
         }
-        List<TheaterNewMovieRelation> list =  theaterNewMovieRelationRepository.findAllByTheaterOwnerId(userId);
+        List<TheaterNewMovieRelation> list = theaterNewMovieRelationRepository.findAllByTheaterOwnerId(userId);
         List<Movie> forReturn = new ArrayList<>();
-        for(TheaterNewMovieRelation theaterNewMovieRelation : list){
+        for (TheaterNewMovieRelation theaterNewMovieRelation : list) {
             String movieId = theaterNewMovieRelation.getNewMovieId();
             Movie movie = movieRepository.findById(movieId).orElse(null);
-            if(movie == null) continue;
+            if (movie == null) continue;
             movie.setStatus("new");
             forReturn.add(movie);
         }
@@ -201,6 +204,7 @@ public class Helper {
             return null;
         }
         List<TheaterOwnerMovieRelation> all = theaterOwnerMovieRelationRepository.findAllByTheaterOwnerId(userId);
+        System.out.println(all);
         List<MyMovieResponse> myMovieResponses = new ArrayList<>();
         for (TheaterOwnerMovieRelation theaterOwnerMovieRelation : all) {
             String movieId = theaterOwnerMovieRelation.getMovieId();
@@ -286,17 +290,17 @@ public class Helper {
         return userRepository.findByUsername(username).orElse(null);
     }
 
-    public ResponseEntity<?> getRunningMovie(String theaterId){
+    public ResponseEntity<?> getRunningMovie(String theaterId) {
         var schedules = scheduleRepository.findAllByTheaterId(theaterId);
         return ResponseEntity.ok(Objects.requireNonNullElse(schedules, "No movie running"));
     }
 
     public ResponseEntity<?> getDistributorInformation(String movieId) {
         Movie movie = movieRepository.findById(movieId).orElse(null);
-        if(movie == null) return ResponseEntity.ok("Movie not found");
+        if (movie == null) return ResponseEntity.ok("Movie not found");
         String distributorId = movie.getDistributorId();
         User user = userRepository.findById(distributorId).orElse(null);
-        if(user == null) {
+        if (user == null) {
             return ResponseEntity.ok("Distributor not found");
         }
         DistributorMovieResponse distributorMovieResponse = new DistributorMovieResponse();
@@ -326,7 +330,7 @@ public class Helper {
             String movieId = theaterMoviePending.getMovieId();
             Movie movie = movieRepository.findById(movieId).orElse(null);
             if (movie == null) continue;
-            if(Objects.equals(movie.getMovieName(), movieName)){
+            if (Objects.equals(movie.getMovieName(), movieName)) {
                 String distributorId = movie.getDistributorId();
                 if (Objects.equals(distributorId, userId)) {
                     PendingResponses pendingResponses = new PendingResponses();

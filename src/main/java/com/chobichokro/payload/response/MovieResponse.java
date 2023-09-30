@@ -34,6 +34,7 @@ public class MovieResponse {
     private String distributorId;
     private List<String> theaterOwnerToSend;
     private Double cost;
+
     public MovieResponse(String message) {
         this.message = message;
     }

@@ -11,10 +11,6 @@ public interface MovieRepository extends MongoRepository<Movie, String> {
 
     public Boolean existsByMovieName(String movieName);
 
-    @Override
-    List<Movie> findAll();
-
-
     List<Movie> findAllByDistributorId(String distributorId);
 
 
