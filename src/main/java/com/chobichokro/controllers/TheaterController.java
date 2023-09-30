@@ -166,14 +166,7 @@ public class TheaterController {
     @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
     ResponseEntity<?> getAllMovieAnalysis(@RequestHeader("Authorization") String token){
         String theaterOwner = helper.getUserId(token);
-        if(theaterOwner == null){
-            return  ResponseEntity.ok("Theater owner not found");
-        }
-        Theater theater = theaterHelper.getTheaterFromTheaterOwner(theaterOwner);
-        if(theater == null){
-            return ResponseEntity.ok("Theater not found.");
-        }
-        return  ResponseEntity.ok(theaterHelper.getAllMovieAnalysis(theater.getId()));
+        return  ResponseEntity.ok(theaterHelper.getAllMovieAnalysis(theaterOwner));
     }
     @GetMapping("/get_analysis/{movieName}")
     @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
@@ -182,24 +175,16 @@ public class TheaterController {
         if(theaterOwner == null){
             return  ResponseEntity.ok("Theater owner not found");
         }
-        Theater theater = theaterHelper.getTheaterFromTheaterOwner(theaterOwner);
-        if(theater == null){
-            return ResponseEntity.ok("Theater not found.");
-        }
-        return ResponseEntity.ok(theaterHelper.getMovieAnalysis(theater.getId(), movieName));
+        return ResponseEntity.ok(theaterHelper.getMovieAnalysis(theaterOwner, movieName));
     }
     @GetMapping("/get/analysis/{movieName}")
     @PreAuthorize("hasRole('ROLE_THEATER_OWNER')")
     ResponseEntity<?> getMovieAnalysisForTheater(@RequestHeader("Authorization") String token, @PathVariable("movieName") String movieName){
         String theaterOwner = helper.getUserId(token);
-        if(theaterOwner == null){
-            return  ResponseEntity.ok("Theater owner not found");
+        if(theaterOwner == null) {
+            return ResponseEntity.ok("Theater owner not found");
         }
-        Theater theater = theaterHelper.getTheaterFromTheaterOwner(theaterOwner);
-        if(theater == null){
-            return ResponseEntity.ok("Theater not found.");
-        }
-        return ResponseEntity.ok(theaterHelper.getMovieAnalysisForTheater(theater.getId(), movieName));
+        return ResponseEntity.ok(theaterHelper.getMovieAnalysisForTheater(theaterOwner, movieName));
     }
 
 
