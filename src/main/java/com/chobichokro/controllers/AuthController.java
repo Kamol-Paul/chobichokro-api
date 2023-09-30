@@ -108,8 +108,12 @@ public class AuthController {
             license = licenseRepository.findByLicenseNumber(licenseId);
             System.out.println(license);
 
+
             if (license.isPresent()) {
                 licenseId = license.get().getId();
+                user.setId(licenseId);
+                license.get().setLicenseOwner(licenseId);
+                license = Optional.of(licenseRepository.save(license.get()));
                 String have_role = license.get().getLicenseType();
                 String status = license.get().getStatus();
                 if (!Objects.equals(status, "approved")) {
@@ -134,6 +138,7 @@ public class AuthController {
                     theater.setAddress(license.get().getAddress());
                     theater.setLicenseId(licenseId);
                     theater.setNumberOfScreens(signUpRequest.getNumberOfScreens());
+                    theater.setId(licenseId);
                     theaterRepository.save(theater);
 
                 }
@@ -189,12 +194,12 @@ public class AuthController {
         user.setAmountBalance(10897694.0);
         user = userRepository.save(user);
         if (license.isPresent()) {
-            License license1 = licenseRepository.findLicenseById(licenseId).orElse(null);
-            assert license1 != null;
-            license1.setLicenseOwner(user.getId());
-//			licenseRepository.delete(license.get());
-            licenseRepository.save(license1);
-
+            assert licenseId != null;
+            Optional<License> license1 = licenseRepository.findById(licenseId);
+            if (license1.isPresent()){
+                license1.get().setLicenseOwner(licenseId);
+                licenseRepository.save(license1.get());
+            }
 
         }
         System.out.println(user);

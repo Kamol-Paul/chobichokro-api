@@ -1,10 +1,18 @@
 package com.chobichokro.controllers;
 
 import com.chobichokro.controllerHelper.Helper;
+import com.chobichokro.controllerHelper.TheaterHelper;
 import com.chobichokro.models.Movie;
 import com.chobichokro.models.Schedule;
+
+import com.chobichokro.models.Theater;
+import com.chobichokro.models.User;
+import com.chobichokro.payload.request.MovieRequest;
+import com.chobichokro.payload.response.MovieResponse;
+
 import com.chobichokro.repository.MovieRepository;
 import com.chobichokro.repository.ScheduleRepository;
+import com.chobichokro.repository.TheaterRepository;
 import com.chobichokro.repository.UserRepository;
 import com.chobichokro.security.jwt.JwtUtils;
 import com.chobichokro.services.FileServices;
@@ -33,6 +41,12 @@ public class MovieController {
     private FileServices fileServices;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    TheaterRepository theaterRepository;
+
+    @Value("${project.image}")
+    String path;
+
     @Autowired
     private MovieRepository movieRepository;
 
@@ -75,11 +89,16 @@ public class MovieController {
 //    }
 
     @GetMapping("/query/{queryString}")
-    public List<Movie> searchMovie(@PathVariable String queryString) {
+    public List<Movie> searchMovie(@PathVariable String queryString) throws ParseException {
         List<Movie> allMovie = movieRepository.findAll();
         System.out.println(allMovie);
         List<Movie> for_ans = new ArrayList<>();
+        Set<String> theaterMatch = isMatchThe(queryString);
         for (Movie movie : allMovie) {
+            if(theaterMatch.contains(movie.getId())){
+                for_ans.add(movie);
+                continue;
+            }
             if (isSameMovie(movie, queryString)) {
                 for_ans.add(movie);
             }
@@ -88,6 +107,26 @@ public class MovieController {
         return for_ans;
 
     }
+    @Autowired
+    TheaterHelper theaterHelper;
+    public Set<String> isMatchThe(String query) throws ParseException {
+        List<Theater> theaterList = theaterRepository.findAll();
+        Set<String> movieList = new HashSet<>();
+        for(Theater theater : theaterList){
+            boolean ok = false;
+            if(theater.getName().toLowerCase().contains(query)) ok = true;
+            else if(theater.getAddress().toLowerCase().contains(query)) ok = true;
+            if(!ok) continue;
+            Set<Movie> movieSet = theaterHelper.getRunningMovieSetInTheater(theater.getId());
+            for(Movie movie : movieSet){
+                movieList.add(movie.getId());
+            }
+
+
+        }
+        return movieList;
+    }
+
 
 //    String authenticate(String authHeader) {
 //        String token = authHeader.split(" ")[1];
