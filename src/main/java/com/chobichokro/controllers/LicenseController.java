@@ -49,6 +49,8 @@ public class LicenseController {
         }
 
         license = licenseRepository.save(license);
+        license.setLicenseOwner(license.getId());
+        license = licenseRepository.save(license);
         System.out.println(license);
         return ResponseEntity.ok(license);
 
